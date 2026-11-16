@@ -997,12 +997,27 @@ press:['sh','sh',.5,5.5],lat:['sh','sh',.5,5.5],curl:['sh','en',.5,4.6],slam:['h
 thrust:['hip','hip',.5,7.5],legcurl:['hip','kn',.55,6],kick:['hip','hip',.5,7],calf:['kn','an',.35,5],tib:['kn','an',.5,4.6],sl:['hip','kn',.4,6.5],slhop:['hip','kn',.4,6.5],sknee:['hip','kn',.4,6.5],lat2:['hip','kn',.3,6.5],
 plank:['hip','sh',.5,6],cope:['hip','sh',.5,6],pushup:['sh','sh',.5,6],bug:['hip','sh',.45,6],rcrunch:['hip','sh',.4,6],incline:['sh','sh',.5,6],cpass:['sh','sh',.5,6],skull:['sh','en',.5,4.8]};
 for(const k in M){D[k].mus=[M[k][0],M[k][1],M[k][2]];D[k].mr=M[k][3];}
+/* nouveaux bonhommes pour les routines Hevy */
+const cp=o=>JSON.parse(JSON.stringify(o));
+D.smith=cp(D.squat);
+D.lpress={anc:'hip',furn:['seat'],A:{t:-62,a:[40,40],l:[150,70],dl:0},B:{t:-62,a:[40,40],l:[128,128],dl:0},mus:['hip','kn',.5,7],mr:7};
+D.rdlb=cp(D.rdl);D.rdlb.prop='plateE';
+D.rower={anc:'hip',furn:['rowmach'],A:{t:-10,a:[88,88],l:[100,40]},B:{t:-34,a:[14,70],l:[96,92]},cable:[84,'h'],mv:'hn',mus:['hip','sh',.65,6],mr:6};
+D.bench={anc:'foot',furn:['bench'],A:{t:-86,a:[100,160],l:[110,6],dl:2},B:{t:-86,a:[178,178],l:[110,6],dl:2},prop:'dbs',mus:['sh','sh',.5,6],mr:6};
+D.curlez=cp(D.curl);
+D.pushdown={anc:'foot',A:{t:0,a:[6,112],l:[0,0]},B:{t:0,a:[6,6],l:[0,0]},cable:[84,10],mus:['sh','en',.5,4.8],mr:4.8};
+D.dips={anc:'hip',A:{t:8,a:[-48,12],l:[4,-66],dl:0,da:0,up:0},B:{t:3,a:[0,0],l:[4,-66],dl:0,da:0,up:9},mv:'sh',mus:['sh','en',.5,4.8],mr:4.8};
+D.legraise={anc:'hip',A:{t:-90,a:[0,0],l:[92,92],dl:0},B:{t:-90,a:[0,0],l:[178,178],dl:0},dur:2.8,mus:['hip','sh',.4,6],mr:6};
+D.bike={anc:'hip',A:{t:-78,a:[250,250],l:[140,40],l2:[100,100],dl:0},B:{t:-78,a:[250,250],l:[100,100],l2:[140,40],dl:0},dur:2.2,mus:['hip','sh',.4,6],mr:6};
+D.heel={anc:'hip',A:{t:-90,a:[96,96],l:[135,40],dl:0},B:{t:-62,a:[96,40],l:[135,40],dl:0},dur:2.2,mus:['hip','sh',.4,6],mr:6};
 G.FEQ={squat:'Poids du corps',fsquat:'Barre',sissy:'Poids du corps',rdl:'Haltères',gm:'Barre',kbs:'Kettlebell',hop:'Poids du corps',snap:'Poids du corps',box:'Box',sjump:'Poids du corps',press:'Haltères',lat:'Haltères',curl:'Haltères',slam:'Medicine ball',lunge:'Poids du corps',curtsy:'Landmine',row:'Landmine',crow:'Poulie',pull:'Machine',face:'Poulie',rot:'Poulie',thrust:'Banc',legcurl:'Machine',kick:'Poulie',calf:'Poids du corps',tib:'Mur',sl:'Poids du corps',slhop:'Banc',sknee:'Élastique',lat2:'Poids du corps',plank:'Tapis',cope:'Banc',pushup:'Poids du corps',bug:'Élastique',rcrunch:'Tapis',incline:'Banc + haltères',skull:'Banc + haltères',cpass:'Medicine ball'};
+Object.assign(G.FEQ,{thrust:'Banc + barre',smith:'Smith',lpress:'Machine',rdlb:'Barre',rower:'Rameur',bench:'Banc + haltères',curlez:'Barre EZ',pushdown:'Poulie',dips:'Machine',legraise:'Tapis',bike:'Tapis',heel:'Tapis'});
 G.FDEF=D;
 G.FMAP={
-'Snap down':'snap','Seated jump':'sjump','Romanian deadlift':'rdl','KB swings':'kbs','Overhead press':'press','Rotational slam':'slam','Zercher landmine curtsy lunge':'curtsy','Landmine SA row':'row','Face pull':'face','Sissy squat':'sissy','Banded dead bug':'bug','Standing calves raise':'calf',
-'Pogo hops':'hop','Alternating plate hops':'hop','Front squat':'fsquat','Stiff leg low box jump':'box','Chin-up / lat pull down':'pull','Medicine ball slam':'slam','Hip thrust':'thrust','DB lateral raise':'lat','Seated leg curl':'legcurl','Copenhagen plank':'cope','DB incline bench press':'incline','Reverse crunch':'rcrunch',
-'Lateral step out to balance':'lat2','SL bench assisted hop':'slhop','Zercher b-stance good morning':'gm','SL banded explosive knee drive':'sknee','Push-up':'pushup','Lying medicine ball chest pass':'cpass','Seated cable row':'crow','Tibialis raise':'tib','45° kick-back':'kick','DB rotating curl':'curl','Standing cable rotation':'rot','DB skull crusher':'skull'
+'Relevé de bassin (barre)':'thrust','Squat (machine Smith)':'smith','Presse à cuisses':'lpress','Soulevé de terre jambes tendues':'rdlb','Leg curl assis (machine)':'legcurl',
+'Rameur':'rower','Traction assistée':'pull','Tirage poitrine (poulie)':'pull','Rowing poulie assis, prise en V':'crow','Développé couché (haltères)':'bench','Tirage vers le visage':'face','Élévation latérale (haltères)':'lat','Curl biceps (haltères)':'curl',
+'Développé militaire (haltères)':'press','Extension triceps (haltère)':'skull','Curl biceps (barre EZ)':'curlez','Extension triceps à la corde':'pushdown','Dips triceps (assistés)':'dips',
+'Planche':'plank','Relevé de jambes allongé':'legraise','Crunch vélo':'bike','Touchers de talons':'heel','Crunch inversé':'rcrunch'
 };
 })(typeof module!=='undefined'?module.exports:window);
 
@@ -1093,12 +1108,15 @@ const RULES=[
   {t:'7 à 9 heures de sommeil par nuit',icon:'moon',p:'Le sommeil nourrit la récupération, l’équilibre mental et les performances. C’est souvent la première chose qu’on sacrifie, alors on lui redonne sa place.',tips:['Des horaires de coucher et de réveil réguliers, planifiés à l’avance.','Moins d’écrans avant de dormir.','Une chambre calme, sombre et à bonne température.','Ne pas repousser systématiquement le coucher.']}
 ];
 
+/* routines Hevy : Legs, Back, Arms (+ finisher abdos à la fin de chaque séance) */
+const FIN=[['F1','Planche','1 série','1 min'],['F2','Relevé de jambes allongé','1 × 20 reps','1 min'],['F3','Crunch vélo','1 × 20 reps','1 min'],['F4','Touchers de talons','1 × 20 reps','1 min'],['F5','Crunch inversé','1 × 20 reps','1 min']];
 const SESS=[
- [['P1','Snap down','2 × 10-20 sauts','30 s'],['P2','Seated jump','2 × 10-20 sauts','30 s'],['A1','Romanian deadlift','3 × 6-8 reps','30 s'],['A2','KB swings','3 × 3-5 reps','2 min'],['B1','Overhead press','3 × 6-8 reps','30 s'],['B2','Rotational slam','3 × 3-5 reps','2 min'],['C1','Zercher landmine curtsy lunge','3 × 8-10 reps','1 min'],['C2','Landmine SA row','3 × 8-10 reps','1 min'],['D1','Face pull','3 × 8-10 reps','1 min'],['D2','Sissy squat','3 × 8-10 reps','1 min'],['E1','Banded dead bug','3 × 12-15 reps','1 min'],['E2','Standing calves raise','3 × 12-15 reps','1 min']],
- [['P1','Pogo hops','2 × 10-20 sauts','30 s'],['P2','Alternating plate hops','2 × 10-20 sauts','30 s'],['A1','Front squat','3 × 6-8 reps','30 s'],['A2','Stiff leg low box jump','3 × 3-5 reps','2 min'],['B1','Chin-up / lat pull down','3 × 6-8 reps','30 s'],['B2','Medicine ball slam','3 × 3-5 reps','2 min'],['C1','Hip thrust','3 × 8-10 reps','1 min'],['C2','DB lateral raise','3 × 8-10 reps','1 min'],['D1','Seated leg curl','3 × 8-10 reps','1 min'],['D2','Copenhagen plank','3 × 30 s par côté','1 min'],['E1','DB incline bench press','3 × 8-10 reps','1 min'],['E2','Reverse crunch','3 × 6 reps','1 min']],
- [['P1','Lateral step out to balance','2 × 10-20 sauts','30 s'],['P2','SL bench assisted hop','2 × 10-20 sauts','30 s'],['A1','Zercher b-stance good morning','3 × 6-8 reps','30 s'],['A2','SL banded explosive knee drive','3 × 3-5 reps','2 min'],['B1','Push-up','3 × 6-8 reps','30 s'],['B2','Lying medicine ball chest pass','3 × 3-5 reps','2 min'],['C1','Seated cable row','3 × 8-10 reps','1 min'],['C2','Tibialis raise','3 × 12-15 reps','1 min'],['D1','45° kick-back','3 × 12-15 reps','1 min'],['D2','DB rotating curl','3 × 8-10 reps','1 min'],['E1','Standing cable rotation','3 × 8-10 reps','1 min'],['E2','DB skull crusher','3 × 8-10 reps','1 min']]
+ [['S1','Relevé de bassin (barre)','3 × 12 reps','1 min 30'],['S2','Squat (machine Smith)','3 × 8-12 reps','2 min'],['S3','Presse à cuisses','3 × 8-12 reps','1 min 30'],['S4','Soulevé de terre jambes tendues','3 × 12 reps','1 min 30'],['S5','Leg curl assis (machine)','3 × 12 reps','1 min']].concat(FIN),
+ [['S1','Rameur','1 série',''],['S2','Traction assistée','3 × 10 reps','1 min 30'],['S3','Tirage poitrine (poulie)','3 × 12 reps','1 min 30'],['S4','Rowing poulie assis, prise en V','3 × 12 reps','1 min'],['S5','Développé couché (haltères)','3 × 10-12 reps','1 min 15'],['S6','Tirage vers le visage','2 × 10 reps','45 s'],['S7','Élévation latérale (haltères)','3 × 12 reps','1 min'],['S8','Curl biceps (haltères)','3 × 10-12 reps','45 s']].concat(FIN),
+ [['S1','Développé militaire (haltères)','3 × 12-15 reps','1 min'],['S2','Élévation latérale (haltères)','3 × 10-12 reps','1 min'],['S3','Extension triceps (haltère)','3 × 12 reps','1 min'],['S4','Curl biceps (barre EZ)','3 × 10-12 reps','1 min'],['S5','Extension triceps à la corde','3 × 9-12 reps','1 min'],['S6','Dips triceps (assistés)','3 × 10 reps','55 s']].concat(FIN)
 ];
-const BLOCKS={P:'Prépa',A:'Bloc A',B:'Bloc B',C:'Bloc C',D:'Bloc D',E:'Bloc E'};
+const SNAMES=['Legs','Back','Arms'];
+const BLOCKS={S:'Exercices',F:'Finisher abdos'};
 
 const TODO_G=[
   {g:'Être fière de 2026',items:[['t1','Lister mes 5 plus grandes fiertés de l’année'],['t2','Faire le bilan de mes apprentissages et de mes évolutions']]},
@@ -1112,17 +1130,20 @@ const LEVELS=[[0,'Braise'],[200,'Étincelle'],[500,'Flamme'],[900,'Brasier'],[14
 
 /* ---------- charges et progression ---------- */
 const exKey=(si,w,id)=>'s'+si+'w'+w+id;
-const isLoaded=e=>/reps/.test(e[2]);
+const isLoaded=e=>/reps/.test(e[2])&&e[0][0]!=='F';
+const isAssist=e=>/assist/i.test(e[1]);
+const restSec=t=>{const a=/^(\d+)\s*min(?:\s*(\d+))?/.exec(t||'');if(a)return +a[1]*60+(+a[2]||0);const b=/^(\d+)\s*s/.exec(t||'');return b?+b[1]:0;};
+const restLbl=t=>/^\d+\s*min\s*\d+$/.test(t)?t+' s':t;
 const fkg=n=>String(Math.round(n*10)/10).replace('.',',');
 const kgStep=n=>(n==null||n<10)?1:2.5;
 function repRange(e){const m=e[2].match(/(\d+)\s*[×x]\s*(\d+)(?:\s*-\s*(\d+))?/);return m?{sets:+m[1],lo:+m[2],hi:+(m[3]||m[2])}:{sets:3,lo:6,hi:8};}
 function advice(e,kg,rp){
   if(kg==null)return null;
-  const r=repRange(e),st=kgStep(kg);
+  const r=repRange(e),st=kgStep(kg),as=isAssist(e),sg=as?-1:1;
   if(rp==null)return {kg,lo:r.lo,hi:r.hi,why:'Note aussi tes répétitions pour avoir un conseil précis.'};
-  if(rp>=r.hi)return {kg:kg+st,lo:r.lo,hi:r.hi,up:1,why:'Tu tiens '+rp+' reps : c’est le haut de la fourchette, on monte.'};
+  if(rp>=r.hi)return {kg:Math.max(0,kg+sg*st),lo:r.lo,hi:r.hi,up:1,why:as?'Tu tiens '+rp+' reps : c’est le haut de la fourchette, on réduit l’assistance.':'Tu tiens '+rp+' reps : c’est le haut de la fourchette, on monte.'};
   if(rp>=r.lo)return {kg,lo:Math.min(rp+1,r.hi),hi:r.hi,why:'Garde cette charge et grappille une répétition.'};
-  return rp<r.lo-1?{kg:Math.max(0,kg-st),lo:r.lo,hi:r.hi,down:1,why:'C’était lourd : allège un peu pour garder une belle technique.'}:{kg,lo:r.lo,hi:r.hi,why:'Presque : garde la charge et vise le bas de la fourchette.'};
+  return rp<r.lo-1?{kg:Math.max(0,kg-sg*st),lo:r.lo,hi:r.hi,down:1,why:as?'C’était dur : remets un peu d’assistance pour garder une belle technique.':'C’était lourd : allège un peu pour garder une belle technique.'}:{kg,lo:r.lo,hi:r.hi,why:'Presque : garde la charge et vise le bas de la fourchette.'};
 }
 function lastLog(si,w,id){for(let x=w-1;x>=0;x--){const d=S.ex[exKey(si,x,id)];if(d&&d.kg!=null)return {w:x,kg:d.kg,rp:d.rp};}return null;}
 function sugg(si,w,e){const l=lastLog(si,w,e[0]);return l?advice(e,l.kg,l.rp):null;}
@@ -1334,7 +1355,7 @@ function viewSuivi(){
   SESS.forEach((ex,si)=>ex.forEach(e=>{if(!isLoaded(e))return;const arr=range(6).map(w=>{const d=S.ex[exKey(si,w,e[0])];return d&&d.kg!=null?d.kg:null;});if(arr.some(x=>x!=null))rows.push({si,e,arr});}));
   h+='<section class="block"><div class="sec-title"><h3>Mes <span class="k">charges</span></h3></div>';
   if(!rows.length)h+='<div class="card empty-ch"><span class="gico">'+ic('dumbbell',24)+'</span><p>Dès que tu notes une charge dans le programme, ton évolution apparaît ici.</p></div>';
-  else{const mx=Math.max(...rows.flatMap(r=>r.arr.filter(x=>x!=null)),1);h+='<div class="card chl">'+rows.map(r=>{const vals=r.arr.filter(x=>x!=null),last=vals[vals.length-1],first=vals[0],dl=last-first;return '<div class="chrow"><div class="chn"><b>'+esc(r.e[1])+'</b><span>Séance '+(r.si+1)+'</span></div><div class="chb">'+r.arr.map((x,w)=>'<i class="'+(x==null?'nil':'')+'" style="height:'+(x==null?14:Math.max(14,Math.round(x/mx*100)))+'%" title="S'+(w+1)+'"></i>').join('')+'</div><div class="chv"><b>'+fkg(last)+' kg</b>'+(vals.length>1?'<span class="'+(dl>0?'up':'')+'">'+(dl>0?'+':'')+fkg(dl)+' kg</span>':'<span>départ</span>')+'</div></div>';}).join('')+'</div>';}
+  else{const mx=Math.max(...rows.flatMap(r=>r.arr.filter(x=>x!=null)),1);h+='<div class="card chl">'+rows.map(r=>{const vals=r.arr.filter(x=>x!=null),last=vals[vals.length-1],first=vals[0],dl=last-first;return '<div class="chrow"><div class="chn"><b>'+esc(r.e[1])+'</b><span>'+SNAMES[r.si]+'</span></div><div class="chb">'+r.arr.map((x,w)=>'<i class="'+(x==null?'nil':'')+'" style="height:'+(x==null?14:Math.max(14,Math.round(x/mx*100)))+'%" title="S'+(w+1)+'"></i>').join('')+'</div><div class="chv"><b>'+fkg(last)+' kg</b>'+(vals.length>1?'<span class="'+(dl>0?'up':'')+'">'+(dl>0?'+':'')+fkg(dl)+' kg</span>':'<span>départ</span>')+'</div></div>';}).join('')+'</div>';}
   h+='</section>';
   return h;
 }
@@ -1342,10 +1363,10 @@ function viewSuivi(){
 function viewProg(){
   const t=todayIdx();const cur=Math.max(0,Math.min(Math.floor(t/7),5));
   const ses=SESS[progS];const done=ses.filter(e=>(S.ex['s'+progS+'w'+progW+e[0]]||{}).ok).length;
-  let h=banner('3 séances par semaine','<span class="l">Mon</span><br>programme','Renfo athlétique sur 6 semaines, avec un accent sur les fessiers.','la2');
+  let h=banner('3 séances par semaine','<span class="l">Mon</span><br>programme','Jambes, dos et bras, avec un finisher abdos à la fin de chaque séance.','la2');
   const exd=(si,w)=>SESS[si].filter(e=>(S.ex['s'+si+'w'+w+e[0]]||{}).ok).length,st=(n,tot)=>n>=tot?' full':(n>0?' part':'');
-  h+='<section class="block stick"><div class="picker"><div class="seg3" role="group" aria-label="Séance">'+range(3).map(k=>{const n=exd(k,progW);return '<button class="chip'+(k===progS?' on':'')+st(n,SESS[k].length)+'" data-act="ps" data-v="'+k+'">Séance '+(k+1)+'</button>';}).join('')+'</div><div class="seg6" role="group" aria-label="Semaine">'+range(6).map(k=>{const n=exd(progS,k);return '<button class="chip'+(k===progW?' on':'')+(k===cur&&t>=0?' now':'')+st(n,ses.length)+'" data-act="pw" data-v="'+k+'" aria-label="Semaine '+(k+1)+'">S'+(k+1)+'</button>';}).join('')+'</div></div></section>';
-  h+='<section class="block progress"><div class="ptop"><h3>Séance '+(progS+1)+' <span class="k">semaine '+(progW+1)+'</span></h3><span class="pcount">'+done+' / '+ses.length+'</span></div><div class="bar"><i style="width:'+Math.round(done/ses.length*100)+'%"></i></div></section>';
+  h+='<section class="block stick"><div class="picker"><div class="seg3" role="group" aria-label="Séance">'+range(3).map(k=>{const n=exd(k,progW);return '<button class="chip'+(k===progS?' on':'')+st(n,SESS[k].length)+'" data-act="ps" data-v="'+k+'">'+SNAMES[k]+'</button>';}).join('')+'</div><div class="seg6" role="group" aria-label="Semaine">'+range(6).map(k=>{const n=exd(progS,k);return '<button class="chip'+(k===progW?' on':'')+(k===cur&&t>=0?' now':'')+st(n,ses.length)+'" data-act="pw" data-v="'+k+'" aria-label="Semaine '+(k+1)+'">S'+(k+1)+'</button>';}).join('')+'</div></div></section>';
+  h+='<section class="block progress"><div class="ptop"><h3>'+SNAMES[progS]+' <span class="k">semaine '+(progW+1)+'</span></h3><span class="pcount">'+done+' / '+ses.length+'</span></div><div class="bar"><i style="width:'+Math.round(done/ses.length*100)+'%"></i></div></section>';
   let last='';
   ses.forEach(e=>{
     const b=e[0][0];
@@ -1353,8 +1374,8 @@ function viewProg(){
     const k='s'+progS+'w'+progW+e[0],v=S.ex[k]||{},pk=progW>0?(S.ex['s'+progS+'w'+(progW-1)+e[0]]||{}).v:'';
     const ld=isLoaded(e),op=ld&&!!LOGOPEN[k],sg=ld?sugg(progS,progW,e):null,hasd=v.kg!=null;
     let adv=null;if(ld&&hasd)adv=advice(e,v.kg,v.rp);
-    h+='<div class="ex'+(v.ok?' done':'')+'"><div class="exv"><span class="exn">'+e[0]+'</span>'+figHTML(e[1])+'</div><h4>'+esc(e[1])+'</h4><button class="ok'+(v.ok?' on':'')+'" data-act="exok" data-k="'+k+'" aria-label="Exercice fait" aria-pressed="'+(!!v.ok)+'">'+ic('check',22)+'</button><div class="meta"><span class="mchip">'+ic('repeat',16)+e[2]+'</span><button class="mchip rest" data-act="rest" data-s="'+(/min/.test(e[3])?parseInt(e[3])*60:parseInt(e[3]))+'" aria-label="Lancer le chrono de récupération, '+e[3]+'">'+ic('stopwatch',16)+'récup '+e[3]+'</button></div><div class="acts"><a href="https://www.youtube.com/results?search_query='+encodeURIComponent(e[1]+' exercise tutorial form')+'" target="_blank" rel="noopener">'+ic('play',18)+'Vidéo</a><a href="https://www.google.com/search?tbm=isch&q='+encodeURIComponent(e[1]+' exercise')+'" target="_blank" rel="noopener">'+ic('gallery',18)+'Images</a>'+(ld&&!op?'<button class="ldchip'+(hasd?' set':'')+'" data-act="note" data-k="'+k+'">'+ic(hasd?'dumbbell':(sg?'target':'pen'),18)+(hasd?fkg(v.kg)+' kg'+(v.rp!=null?' × '+v.rp:''):(sg?'Objectif '+fkg(sg.kg)+' kg':'Charge'))+'</button>':'')+'</div>'+(op?(()=>{const bk=hasd?v.kg:(sg?sg.kg:0),br=v.rp!=null?v.rp:(sg?sg.lo:repRange(e).lo),R=repRange(e),lg=lastLog(progS,progW,e[0]),a2=advice(e,hasd?v.kg:null,hasd?v.rp:null);
-      return '<div class="loadbox"><div class="lrow"><span class="lab">Charge</span><div class="stp"><button data-act="kg" data-k="'+k+'" data-b="'+bk+'" data-d="-'+kgStep(bk)+'" aria-label="Moins">−</button><label><input class="kgin" type="number" inputmode="decimal" step="0.5" min="0" data-k="'+k+'" data-f="kg" value="'+(hasd?v.kg:'')+'" placeholder="'+fkg(bk)+'"><small>kg</small></label><button data-act="kg" data-k="'+k+'" data-b="'+bk+'" data-d="'+kgStep(bk)+'" aria-label="Plus">+</button></div></div><div class="lrow"><span class="lab">Reps tenues<small>sur ta série la plus basse</small></span><div class="stp"><button data-act="rp" data-k="'+k+'" data-b="'+br+'" data-d="-1" aria-label="Moins">−</button><label><input class="kgin" type="number" inputmode="numeric" min="0" data-k="'+k+'" data-f="rp" value="'+(v.rp!=null?v.rp:'')+'" placeholder="'+br+'"><small>reps</small></label><button data-act="rp" data-k="'+k+'" data-b="'+br+'" data-d="1" aria-label="Plus">+</button></div></div>'
+    h+='<div class="ex'+(v.ok?' done':'')+'"><div class="exv"><span class="exn">'+e[0]+'</span>'+figHTML(e[1])+'</div><h4>'+esc(e[1])+'</h4><button class="ok'+(v.ok?' on':'')+'" data-act="exok" data-k="'+k+'" aria-label="Exercice fait" aria-pressed="'+(!!v.ok)+'">'+ic('check',22)+'</button><div class="meta"><span class="mchip">'+ic('repeat',16)+e[2]+'</span>'+(e[3]?'<button class="mchip rest" data-act="rest" data-s="'+restSec(e[3])+'" aria-label="Lancer le chrono de récupération, '+restLbl(e[3])+'">'+ic('stopwatch',16)+'récup '+restLbl(e[3])+'</button>':'')+'</div><div class="acts"><a href="https://www.tiktok.com/search?q='+encodeURIComponent(e[1].replace(/[()]/g,'')+' exercice')+'" target="_blank" rel="noopener">'+ic('play',18)+'Tuto TikTok</a>'+(ld&&!op?'<button class="ldchip'+(hasd?' set':'')+'" data-act="note" data-k="'+k+'">'+ic(hasd?'dumbbell':(sg?'target':'pen'),18)+(hasd?fkg(v.kg)+' kg'+(v.rp!=null?' × '+v.rp:''):(sg?'Objectif '+fkg(sg.kg)+' kg':'Charge'))+'</button>':'')+'</div>'+(op?(()=>{const bk=hasd?v.kg:(sg?sg.kg:0),br=v.rp!=null?v.rp:(sg?sg.lo:repRange(e).lo),R=repRange(e),lg=lastLog(progS,progW,e[0]),a2=advice(e,hasd?v.kg:null,hasd?v.rp:null);
+      return '<div class="loadbox"><div class="lrow"><span class="lab">'+(isAssist(e)?'Assistance':'Charge')+'</span><div class="stp"><button data-act="kg" data-k="'+k+'" data-b="'+bk+'" data-d="-'+kgStep(bk)+'" aria-label="Moins">−</button><label><input class="kgin" type="number" inputmode="decimal" step="0.5" min="0" data-k="'+k+'" data-f="kg" value="'+(hasd?v.kg:'')+'" placeholder="'+fkg(bk)+'"><small>kg</small></label><button data-act="kg" data-k="'+k+'" data-b="'+bk+'" data-d="'+kgStep(bk)+'" aria-label="Plus">+</button></div></div><div class="lrow"><span class="lab">Reps tenues<small>sur ta série la plus basse</small></span><div class="stp"><button data-act="rp" data-k="'+k+'" data-b="'+br+'" data-d="-1" aria-label="Moins">−</button><label><input class="kgin" type="number" inputmode="numeric" min="0" data-k="'+k+'" data-f="rp" value="'+(v.rp!=null?v.rp:'')+'" placeholder="'+br+'"><small>reps</small></label><button data-act="rp" data-k="'+k+'" data-b="'+br+'" data-d="1" aria-label="Plus">+</button></div></div>'
       +(lg?'<p class="lhist">Dernière fois (S'+(lg.w+1)+') : '+fkg(lg.kg)+' kg'+(lg.rp!=null?' × '+lg.rp:'')+'</p>':'')
       +(a2&&a2.why?'<div class="ladv'+(a2.up?' up':'')+'">'+ic(a2.up?'medal':'target',22)+'<div><b>Prochaine séance : '+fAdv(a2)+'</b><span>'+a2.why+'</span></div></div>':'<div class="ladv">'+ic('target',22)+'<div><b>Objectif : '+R.sets+' séries de '+(R.lo===R.hi?R.lo:R.lo+'-'+R.hi)+' reps</b><span>Quand tu tiens '+R.hi+' reps partout, on ajoute de la charge.</span></div></div>')+'</div>';})():'')+'</div>';
   });
