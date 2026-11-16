@@ -486,6 +486,15 @@ nav.tabs button .i{width:26px;height:26px}
 .rrow .tips li{background:rgba(255,255,255,.6);color:var(--c-fg)}
 .rbody{padding:0 16px 18px 80px}
 .rrow[open] summary{padding-bottom:10px}
+.rings{display:block;width:172px;height:172px}
+.rings .rg{transition:stroke-dasharray .5s ease}
+.rscore{display:flex;align-items:center;gap:18px;margin-top:16px}
+.rwrap{flex:none}
+.rtxt{display:flex;flex-direction:column;gap:4px;min-width:0}
+.rtxt b{font-family:var(--serif);font-weight:600;font-size:40px;line-height:1;font-variation-settings:'SOFT' 100,'WONK' 1,'opsz' 144}
+.rmsg{font-size:15px;color:var(--ink);font-weight:600}
+.rsub{font-size:13px;color:var(--wine)}
+.ringwrap .rings{width:150px;height:150px;flex:none}
 </style>
 </head>
 <body>
@@ -641,6 +650,14 @@ function banner(pill,title,sub,tone){const m=title.indexOf('Lock-in')>-1?'flame'
 
 function lockSvg(){return '<svg class="lock" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="56" fill="#CFD1F5" opacity=".22"/><circle cx="60" cy="60" r="40" fill="#CFD1F5" opacity=".26"/><path d="M42 54V42a18 18 0 0 1 36 0v12" fill="none" stroke="#CFD1F5" stroke-width="9" stroke-linecap="round"/><rect x="32" y="52" width="56" height="42" rx="14" fill="#CFD1F5"/><circle cx="60" cy="68" r="6.5" fill="#3A3156"/><rect x="57" y="70" width="6" height="14" rx="3" fill="#3A3156"/><path d="M98 20l2.2 6.3 6.3 2.2-6.3 2.2-2.2 6.3-2.2-6.3-6.3-2.2 6.3-2.2z" fill="#CFD1F5"/><path d="M20 84l1.6 4.4 4.4 1.6-4.4 1.6-1.6 4.4-1.6-4.4-4.4-1.6 4.4-1.6z" fill="#CFD1F5"/></svg>';}
 
+function rings(size,stroke,gap,items,label){
+  const c=size/2;let h='<svg class="rings" viewBox="0 0 '+size+' '+size+'" role="img" aria-label="'+label+'">';
+  items.forEach((it,k)=>{const r=c-stroke/2-2-k*(stroke+gap),C=2*Math.PI*r,v=Math.max(0,Math.min(1,it.v));
+    h+='<circle cx="'+c+'" cy="'+c+'" r="'+r.toFixed(1)+'" fill="none" stroke="'+it.t+'" stroke-width="'+stroke+'"/>';
+    if(v>0.001)h+='<circle class="rg" cx="'+c+'" cy="'+c+'" r="'+r.toFixed(1)+'" fill="none" stroke="'+it.c+'" stroke-width="'+stroke+'" stroke-linecap="round" stroke-dasharray="'+(C*v).toFixed(1)+' '+C.toFixed(1)+'" transform="rotate(-90 '+c+' '+c+')"/>';});
+  return h+'</svg>';
+}
+const RING_COL={pe:['#E08A5A','#FBE6D6'],gr:['#4FB06F','#E3F3E7'],ye:['#E9C03A','#FCF3D0'],pi:['#E5809A','#FAE3E8'],la:['#5558BD','#E3E4F8'],bl:['#4A9BE0','#DDEEFB']};
 function viewToday(){
   const t=todayIdx(),i=sel,ok=i<=t,s=score(i),x=xp(),l=level(x);
   const nextX=LEVELS[l+1]?LEVELS[l+1][0]:null;
@@ -649,7 +666,9 @@ function viewToday(){
   const dayPill=t<0?'Départ le 16 novembre':(t>=N?'Challenge terminé':'Jour '+(Math.min(t,N-1)+1)+' sur '+N);
   let h=banner(dayPill,'<span class="l">Opération</span><br>Lock-in','6 semaines, 6 règles : commencer 2027 à notre prime.','la3');
   h+='<section class="block"><div class="card"><div class="daynav"><button class="circ" data-act="day" data-d="-1" aria-label="Jour précédent"'+(i<=0?' disabled':'')+'>'+ic('chevL')+'</button><div class="lbl">'+(i===t?'<span class="pill red">Aujourd’hui</span>':'<span class="pill">Jour '+(i+1)+'</span>')+'<b>'+fmt(i)+'</b></div><button class="circ" data-act="day" data-d="1" aria-label="Jour suivant"'+(i>=N-1?' disabled':'')+'>'+ic('chevR')+'</button></div>';
-  h+='<div class="score"><div class="score-row"><b>'+s+' / 6</b><span class="muted">'+msg+'</span></div><div class="segs">'+range(6).map(k=>'<i class="'+(k<s?'on':'')+'"></i>').join('')+'</div></div></div></section>';
+  const wk=Math.floor(i/7),wd=range(7).map(k=>wk*7+k).filter(x=>x<N&&x<=Math.max(t,i));
+  const ritems=HAB.map(b=>({v:range(7).filter(k=>has(wk*7+k,b.id)).length/7,c:RING_COL[b.fam][0],t:RING_COL[b.fam][1]}));
+  h+='<div class="score rscore"><div class="rwrap">'+rings(172,13,4,ritems,'Habitudes de la semaine, un anneau par habitude')+'</div><div class="rtxt"><b>'+s+' / 6</b><span class="rmsg">'+msg+'</span><span class="rsub">Semaine '+(wk+1)+' : un anneau par habitude</span></div></div></div></section>';
   h+='<section class="block"><div class="sec-title"><h3>Mes <span class="k">cases</span> du jour</h3></div><div class="tiles">';
   HAB.forEach((b,k)=>{const on=has(i,b.id);h+='<button class="tile ccard '+b.tone+(on?' on':'')+'" data-act="tick" data-h="'+b.id+'" aria-pressed="'+on+'"><span class="top"><span class="ico">'+ic(b.icon)+'</span><span class="chk">'+ic('check',16)+'</span></span><span class="tt">'+(b.k===1?'<b>'+b.t1+'</b><span class="l">'+b.t2+'</span>':'<span class="l">'+b.t1+'</span><b>'+b.t2+'</b>')+(b.sub?'<span class="sub">'+b.sub+'</span>':'')+'</span></button>';});
   const w=Math.floor(i/7),rc=renfoWeek(w),ron=has(i,'renfo');
@@ -666,7 +685,7 @@ function viewSuivi(){
   const active=range(N).filter(i=>D(i).length>0).length;
   const weeksOk=range(6).filter(w=>renfoWeek(w)>=3).length;
   let h=banner('Mon suivi','<span class="l">Mes</span><br>progrès','Chaque case compte. Regarde le chemin parcouru.','la2');
-  h+='<section class="block"><div class="card ringwrap"><svg class="ring" viewBox="0 0 132 132" role="img" aria-label="Jour '+el+' sur '+N+'"><circle cx="66" cy="66" r="'+R+'" fill="none" stroke="#E1E2F8" stroke-width="14"/><circle cx="66" cy="66" r="'+R+'" fill="none" stroke="#3A3156" stroke-width="14" stroke-linecap="round" stroke-dasharray="'+(C*el/N).toFixed(1)+' '+C.toFixed(1)+'" transform="rotate(-90 66 66)"/><text x="66" y="68" text-anchor="middle" font-size="34" font-weight="800">'+el+'</text><text x="66" y="88" text-anchor="middle" font-size="13" font-weight="500">sur '+N+' jours</text></svg><div class="stats-mini"><div><b>'+active+'</b><span>jours avec au moins une case</span></div><div><b>'+perfect+'</b><span>journées parfaites</span></div><div><b>'+weeksOk+' / 6</b><span>semaines à 3 séances</span></div></div></div></section>';
+  h+='<section class="block"><div class="card ringwrap">'+rings(176,11,3,range(6).map(w=>({v:range(7).reduce((a,k)=>a+score(w*7+k),0)/42,c:['#2D2756','#3A3156','#5558BD','#6B6FD6','#8E92F0','#B9BCF0'][w],t:'#EEEFFC'})),'Six anneaux, un par semaine')+'<div class="stats-mini"><div><b>'+el+' / '+N+'</b><span>jours écoulés, un anneau par semaine</span></div><div><b>'+perfect+'</b><span>journées parfaites</span></div><div><b>'+weeksOk+' / 6</b><span>semaines à 3 séances</span></div></div></div></section>';
   h+='<section class="block"><div class="sec-title"><h3>Mes <span class="k">6 semaines</span></h3></div><div class="card"><div class="cal"><span></span>'+['L','M','M','J','V','S','D'].map(d=>'<span class="dow">'+d+'</span>').join('')+'<span class="dow">Renfo</span>';
   for(let w=0;w<6;w++){
     h+='<span class="wk">S'+(w+1)+'</span>';
