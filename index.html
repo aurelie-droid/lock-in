@@ -716,6 +716,55 @@ nav.tabs button.bn .i{animation:tabhop .7s var(--ease)}
 #rest{background:#3A3156;color:#ECEDFB;box-shadow:0 14px 34px rgba(58,49,86,.35)}
 #rest.end{background:#5558BD}
 #rest circle#rrg{stroke:#F3B98F}
+/* ===== charges ===== */
+.ldchip{color:#2D2756!important;background:#fff!important;box-shadow:inset 0 0 0 1.5px #D2D4F6}
+.ldchip.set{background:#3A3156!important;color:#ECEDFB!important;box-shadow:none}
+.ldchip.set .i{color:#F3B98F!important}
+.loadbox{grid-column:1/-1;grid-row:4;display:flex;flex-direction:column;gap:10px;margin-top:6px;padding:12px;border-radius:18px;background:#fff}
+.lrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.lab{display:flex;flex-direction:column;font-size:14px;font-weight:700;color:#2D2756;line-height:1.15}
+.lab small{font-size:11.5px;font-weight:500;color:#6B65A0;margin-top:2px}
+.stp{display:flex;align-items:center;gap:6px}
+.stp>button{width:42px;height:42px;border-radius:14px;background:#ECEDFB;color:#3A3156;font-size:22px;font-weight:600;line-height:1;transition:transform .3s var(--spring)}
+.stp>button:active{transform:scale(.88)}
+.stp label{display:flex;align-items:baseline;justify-content:center;gap:3px;min-width:86px;padding:6px 8px;border-radius:14px;background:#F2F3FD}
+.kgin{width:46px;border:0;background:transparent;text-align:right;font-family:var(--serif);font-weight:600;font-size:22px;color:#2D2756;padding:0;-moz-appearance:textfield}
+.kgin::placeholder{color:#B0ABD4}
+.kgin::-webkit-outer-spin-button,.kgin::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.kgin:focus{outline:none}
+.stp label small{font-size:12px;color:#6B65A0;font-weight:600}
+.lhist{margin:0;font-size:12.5px;color:#6B65A0}
+.ladv{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:14px;background:#ECEDFB;color:#2D2756}
+.ladv .i{flex:none;color:#E7A06F}
+.ladv div{display:flex;flex-direction:column;gap:2px;font-size:12.5px;line-height:1.3}
+.ladv b{font-size:14px}
+.ladv.up{background:#3A3156;color:#ECEDFB}
+.ladv.up .i{color:#F3B98F}
+.chl{padding:6px 14px}
+.chrow{display:grid;grid-template-columns:1fr 84px 66px;gap:12px;align-items:center;padding:12px 0;border-top:1px solid #ECEDFB}
+.chrow:first-child{border-top:0}
+.chn{display:flex;flex-direction:column;gap:2px;min-width:0}
+.chn b{font-size:14px;color:#2D2756;line-height:1.2}
+.chn span{font-size:12px;color:#6B65A0}
+.chb{display:flex;align-items:flex-end;gap:4px;height:34px}
+.chb i{flex:1;border-radius:5px;background:#8E92F0;transform-origin:bottom;animation:rise .8s var(--ease) backwards}
+.chb i.nil{background:#ECEDFB}
+.chv{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.chv b{font-family:var(--serif);font-weight:600;font-size:17px;color:#2D2756}
+.chv span{font-size:12px;color:#6B65A0;font-weight:600}
+.chv span.up{color:#C9784A}
+.empty-ch{display:flex;align-items:center;gap:14px}
+.empty-ch p{margin:0;font-size:14px;color:#5B5585}
+/* ===== objectif final, distinct des règles ===== */
+.closing.goal{margin:34px -16px 0;border-radius:0;padding:34px 22px 30px;background:#3A3156;color:#ECEDFB;min-height:220px}
+.closing.goal:before{display:none}
+.closing.goal .gbig{position:absolute;right:-18px;top:-22px;line-height:0;pointer-events:none}
+.closing.goal .gbig svg{color:#5558BD;opacity:.85}
+.closing.goal .gbig .i{width:170px;height:170px}
+.closing.goal .gdate{position:relative;display:inline-block;padding:5px 12px;border-radius:99px;background:#F3B98F;color:#3A3156;font-size:12px;font-weight:700;letter-spacing:.07em}
+.closing.goal h3{position:relative;color:#ECEDFB;margin:16px 0 10px;font-size:34px;line-height:1.05}
+.closing.goal h3 .k{font-weight:600;color:#fff}
+.closing.goal p{position:relative;color:#D2D4F6;max-width:34ch}
 </style>
 </head>
 <body>
@@ -990,6 +1039,25 @@ const TODO_G=[
 
 const LEVELS=[[0,'Braise'],[200,'Étincelle'],[500,'Flamme'],[900,'Brasier'],[1400,'Fournaise'],[2000,'Incandescente'],[2800,'Lock-in']];
 
+
+/* ---------- charges et progression ---------- */
+const exKey=(si,w,id)=>'s'+si+'w'+w+id;
+const isLoaded=e=>/reps/.test(e[2]);
+const fkg=n=>String(Math.round(n*10)/10).replace('.',',');
+const kgStep=n=>(n==null||n<10)?1:2.5;
+function repRange(e){const m=e[2].match(/(\d+)\s*[×x]\s*(\d+)(?:\s*-\s*(\d+))?/);return m?{sets:+m[1],lo:+m[2],hi:+(m[3]||m[2])}:{sets:3,lo:6,hi:8};}
+function advice(e,kg,rp){
+  if(kg==null)return null;
+  const r=repRange(e),st=kgStep(kg);
+  if(rp==null)return {kg,lo:r.lo,hi:r.hi,why:'Note aussi tes répétitions pour avoir un conseil précis.'};
+  if(rp>=r.hi)return {kg:kg+st,lo:r.lo,hi:r.hi,up:1,why:'Tu tiens '+rp+' reps : c’est le haut de la fourchette, on monte.'};
+  if(rp>=r.lo)return {kg,lo:Math.min(rp+1,r.hi),hi:r.hi,why:'Garde cette charge et grappille une répétition.'};
+  return rp<r.lo-1?{kg:Math.max(0,kg-st),lo:r.lo,hi:r.hi,down:1,why:'C’était lourd : allège un peu pour garder une belle technique.'}:{kg,lo:r.lo,hi:r.hi,why:'Presque : garde la charge et vise le bas de la fourchette.'};
+}
+function lastLog(si,w,id){for(let x=w-1;x>=0;x--){const d=S.ex[exKey(si,x,id)];if(d&&d.kg!=null)return {w:x,kg:d.kg,rp:d.rp};}return null;}
+function sugg(si,w,e){const l=lastLog(si,w,e[0]);return l?advice(e,l.kg,l.rp):null;}
+const fAdv=a=>fkg(a.kg)+' kg · '+(a.lo===a.hi?a.lo:a.lo+'-'+a.hi)+' reps';
+
 /* ---------- état ---------- */
 const KEY='lockin-pastel-v1';
 const blank=()=>({d:{},ex:{},todo:{},custom:[],ts:0});
@@ -1192,6 +1260,12 @@ function viewSuivi(){
   }
   h+='</div></div></section>';
   h+='<p class="foot">'+(syncMode==='cloud'?'Enregistré sur ton compte, tu retrouves tout sur tous tes appareils.':'Enregistré sur cet appareil.')+'</p>';
+  const rows=[];
+  SESS.forEach((ex,si)=>ex.forEach(e=>{if(!isLoaded(e))return;const arr=range(6).map(w=>{const d=S.ex[exKey(si,w,e[0])];return d&&d.kg!=null?d.kg:null;});if(arr.some(x=>x!=null))rows.push({si,e,arr});}));
+  h+='<section class="block"><div class="sec-title"><h3>Mes <span class="k">charges</span></h3></div>';
+  if(!rows.length)h+='<div class="card empty-ch"><span class="gico">'+ic('dumbbell',24)+'</span><p>Dès que tu notes une charge dans le programme, ton évolution apparaît ici.</p></div>';
+  else{const mx=Math.max(...rows.flatMap(r=>r.arr.filter(x=>x!=null)),1);h+='<div class="card chl">'+rows.map(r=>{const vals=r.arr.filter(x=>x!=null),last=vals[vals.length-1],first=vals[0],dl=last-first;return '<div class="chrow"><div class="chn"><b>'+esc(r.e[1])+'</b><span>Séance '+(r.si+1)+'</span></div><div class="chb">'+r.arr.map((x,w)=>'<i class="'+(x==null?'nil':'')+'" style="height:'+(x==null?14:Math.max(14,Math.round(x/mx*100)))+'%" title="S'+(w+1)+'"></i>').join('')+'</div><div class="chv"><b>'+fkg(last)+' kg</b>'+(vals.length>1?'<span class="'+(dl>0?'up':'')+'">'+(dl>0?'+':'')+fkg(dl)+' kg</span>':'<span>départ</span>')+'</div></div>';}).join('')+'</div>';}
+  h+='</section>';
   return h;
 }
 
@@ -1207,8 +1281,12 @@ function viewProg(){
     const b=e[0][0];
     if(b!==last){if(last)h+='</div>';const bs=ses.filter(x=>x[0][0]===b),bd=bs.filter(x=>(S.ex['s'+progS+'w'+progW+x[0]]||{}).ok).length;h+='<div class="group"><div class="gh"><h3>'+BLOCKS[b]+'</h3><span class="gcount'+(bd===bs.length?' full':'')+'">'+bd+' / '+bs.length+'</span></div>';last=b;}
     const k='s'+progS+'w'+progW+e[0],v=S.ex[k]||{},pk=progW>0?(S.ex['s'+progS+'w'+(progW-1)+e[0]]||{}).v:'';
-    const op=!!(v.v||LOGOPEN[k]);
-    h+='<div class="ex'+(v.ok?' done':'')+'"><div class="exv"><span class="exn">'+e[0]+'</span>'+figHTML(e[1])+'</div><h4>'+esc(e[1])+'</h4><button class="ok'+(v.ok?' on':'')+'" data-act="exok" data-k="'+k+'" aria-label="Exercice fait" aria-pressed="'+(!!v.ok)+'">'+ic('check',22)+'</button><div class="meta"><span class="mchip">'+ic('repeat',16)+e[2]+'</span><button class="mchip rest" data-act="rest" data-s="'+(/min/.test(e[3])?parseInt(e[3])*60:parseInt(e[3]))+'" aria-label="Lancer le chrono de récupération, '+e[3]+'">'+ic('stopwatch',16)+'récup '+e[3]+'</button></div><div class="acts"><a href="https://www.youtube.com/results?search_query='+encodeURIComponent(e[1]+' exercise tutorial form')+'" target="_blank" rel="noopener">'+ic('play',18)+'Vidéo</a><a href="https://www.google.com/search?tbm=isch&q='+encodeURIComponent(e[1]+' exercise')+'" target="_blank" rel="noopener">'+ic('gallery',18)+'Images</a>'+(op?'':'<button data-act="note" data-k="'+k+'">'+ic('pen',18)+'Noter</button>')+'</div>'+(op?'<div class="notebox">'+(pk&&!v.v?'<button class="prev" data-act="copyprev" data-k="'+k+'" data-pk="'+esc(pk)+'">'+ic('restart',16)+'Reprendre : '+esc(pk)+'</button>':'')+'<input class="log" id="log-'+k+'" data-ex="'+k+'" value="'+esc(v.v||'')+'" placeholder="'+(pk?'Semaine précédente : '+esc(pk):'Charge et répétitions, ex. 8-6-6 à 40 kg')+'" aria-label="Notes pour '+esc(e[1])+'"></div>':'')+'</div>';
+    const ld=isLoaded(e),op=ld&&!!LOGOPEN[k],sg=ld?sugg(progS,progW,e):null,hasd=v.kg!=null;
+    let adv=null;if(ld&&hasd)adv=advice(e,v.kg,v.rp);
+    h+='<div class="ex'+(v.ok?' done':'')+'"><div class="exv"><span class="exn">'+e[0]+'</span>'+figHTML(e[1])+'</div><h4>'+esc(e[1])+'</h4><button class="ok'+(v.ok?' on':'')+'" data-act="exok" data-k="'+k+'" aria-label="Exercice fait" aria-pressed="'+(!!v.ok)+'">'+ic('check',22)+'</button><div class="meta"><span class="mchip">'+ic('repeat',16)+e[2]+'</span><button class="mchip rest" data-act="rest" data-s="'+(/min/.test(e[3])?parseInt(e[3])*60:parseInt(e[3]))+'" aria-label="Lancer le chrono de récupération, '+e[3]+'">'+ic('stopwatch',16)+'récup '+e[3]+'</button></div><div class="acts"><a href="https://www.youtube.com/results?search_query='+encodeURIComponent(e[1]+' exercise tutorial form')+'" target="_blank" rel="noopener">'+ic('play',18)+'Vidéo</a><a href="https://www.google.com/search?tbm=isch&q='+encodeURIComponent(e[1]+' exercise')+'" target="_blank" rel="noopener">'+ic('gallery',18)+'Images</a>'+(ld&&!op?'<button class="ldchip'+(hasd?' set':'')+'" data-act="note" data-k="'+k+'">'+ic(hasd?'dumbbell':(sg?'target':'pen'),18)+(hasd?fkg(v.kg)+' kg'+(v.rp!=null?' × '+v.rp:''):(sg?'Objectif '+fkg(sg.kg)+' kg':'Charge'))+'</button>':'')+'</div>'+(op?(()=>{const bk=hasd?v.kg:(sg?sg.kg:0),br=v.rp!=null?v.rp:(sg?sg.lo:repRange(e).lo),R=repRange(e),lg=lastLog(progS,progW,e[0]),a2=advice(e,hasd?v.kg:null,hasd?v.rp:null);
+      return '<div class="loadbox"><div class="lrow"><span class="lab">Charge</span><div class="stp"><button data-act="kg" data-k="'+k+'" data-b="'+bk+'" data-d="-'+kgStep(bk)+'" aria-label="Moins">−</button><label><input class="kgin" type="number" inputmode="decimal" step="0.5" min="0" data-k="'+k+'" data-f="kg" value="'+(hasd?v.kg:'')+'" placeholder="'+fkg(bk)+'"><small>kg</small></label><button data-act="kg" data-k="'+k+'" data-b="'+bk+'" data-d="'+kgStep(bk)+'" aria-label="Plus">+</button></div></div><div class="lrow"><span class="lab">Reps tenues<small>sur ta série la plus basse</small></span><div class="stp"><button data-act="rp" data-k="'+k+'" data-b="'+br+'" data-d="-1" aria-label="Moins">−</button><label><input class="kgin" type="number" inputmode="numeric" min="0" data-k="'+k+'" data-f="rp" value="'+(v.rp!=null?v.rp:'')+'" placeholder="'+br+'"><small>reps</small></label><button data-act="rp" data-k="'+k+'" data-b="'+br+'" data-d="1" aria-label="Plus">+</button></div></div>'
+      +(lg?'<p class="lhist">Dernière fois (S'+(lg.w+1)+') : '+fkg(lg.kg)+' kg'+(lg.rp!=null?' × '+lg.rp:'')+'</p>':'')
+      +(a2&&a2.why?'<div class="ladv'+(a2.up?' up':'')+'">'+ic(a2.up?'medal':'target',22)+'<div><b>Prochaine séance : '+fAdv(a2)+'</b><span>'+a2.why+'</span></div></div>':'<div class="ladv">'+ic('target',22)+'<div><b>Objectif : '+R.sets+' séries de '+(R.lo===R.hi?R.lo:R.lo+'-'+R.hi)+' reps</b><span>Quand tu tiens '+R.hi+' reps partout, on ajoute de la charge.</span></div></div>')+'</div>';})():'')+'</div>';
   });
   h+='</div>';
   const wk=progW,canTick=(wk*7)<=t;
@@ -1220,7 +1298,7 @@ function viewProg(){
 function viewRegles(){
   let h=banner('Les 6 règles','<span class="l">Mes</span><br>engagements','Pas besoin d’être parfaite, l’important est de rester régulière.','la2');
   h+='<section class="block rlist">'+RULES.map((r,k)=>'<details class="rrow '+['pe1','pe1','gr1','ye1','pi1','la1'][k]+'"><summary><span class="rico">'+ic(r.icon)+'</span><h3>'+RULE_H[k]+'</h3><span class="rch">'+ic('chevR',20)+'</span></summary><div class="rbody"><p>'+r.p+'</p><ul class="tips">'+r.tips.map((x,j)=>'<li><span class="tico">'+ic(RULE_I[k][j],22)+'</span><div><b>'+RULE_T[k][j]+'</b><span>'+x+'</span></div></li>').join('')+'</ul></div></details>').join('')+'</section>';
-  h+='<div class="closing"><span class="cico">'+ic('flag',34)+'</span><h3>Le but du <span class="k">27 décembre</span></h3><p>Terminer en étant fière du temps qu’on s’est accordé et des habitudes construites. Il y aura des jours plus faciles que d’autres, et c’est normal. On cherche la régularité et la progression, pas la perfection.</p></div>';
+  h+='<div class="closing goal"><span class="gbig" aria-hidden="true">'+ic('flag',170)+'</span><span class="gdate">27.12.2026</span><h3>Le but du <span class="k">27 décembre</span></h3><p>Terminer en étant fière du temps qu’on s’est accordé et des habitudes construites. Il y aura des jours plus faciles que d’autres, et c’est normal. On cherche la régularité et la progression, pas la perfection.</p></div>';
   return h;
 }
 
@@ -1267,6 +1345,7 @@ document.addEventListener('click',function(e){
     after(p,k<0&&score(sel)===6);return;
   }
   if(a==='rule'){const v=Number(el.dataset.i);ruleSel=(ruleSel===v?-1:v);render();return;}
+  if(a==='kg'||a==='rp'){const k=el.dataset.k;S.ex[k]=S.ex[k]||{};const f=a==='kg'?'kg':'rp',cur=S.ex[k][f]!=null?S.ex[k][f]:Number(el.dataset.b);S.ex[k][f]=Math.max(0,Math.round((cur+Number(el.dataset.d))*10)/10);save();LOGOPEN[k]=1;render();return;}
   if(a==='note'){const k=el.dataset.k;LOGOPEN[k]=1;render();const inp=document.getElementById('log-'+k);if(inp)inp.focus({preventScroll:true});return;}
   if(a==='rest'){restStart(Number(el.dataset.s));return;}
   if(a==='copyprev'){const k=el.dataset.k;S.ex[k]=S.ex[k]||{};S.ex[k].v=el.dataset.pk;save();render();return;}
@@ -1283,6 +1362,12 @@ document.addEventListener('click',function(e){
   if(a==='ctoggle'){const c=S.custom.find(x=>x.id===el.dataset.id);if(c){c.ok=c.ok?0:1;save();render();}return;}
   if(a==='cdel'){S.custom=S.custom.filter(x=>x.id!==el.dataset.id);save();render();return;}
   if(a==='cadd'){const inp=document.getElementById('newtodo');const v=inp.value.trim();if(!v)return;S.custom.push({id:'c'+Date.now(),t:v,ok:0});save();render();return;}
+});
+document.addEventListener('change',function(e){
+  const t=e.target;if(!t.classList||!t.classList.contains('kgin'))return;
+  const k=t.dataset.k;S.ex[k]=S.ex[k]||{};
+  if(t.value===''){delete S.ex[k][t.dataset.f];}else S.ex[k][t.dataset.f]=Math.max(0,parseFloat(String(t.value).replace(',','.'))||0);
+  save();LOGOPEN[k]=1;render();
 });
 document.addEventListener('input',function(e){
   const k=e.target&&e.target.dataset&&e.target.dataset.ex;if(!k)return;
