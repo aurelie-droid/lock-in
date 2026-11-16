@@ -633,6 +633,22 @@ nav.tabs button.bn .i{animation:tabhop .7s var(--ease)}
 .vid a{display:inline-flex;align-items:center;gap:7px;width:auto;height:auto;padding:8px 13px 8px 10px;border-radius:99px;background:rgba(255,255,255,.75);color:#5A2E16;font-size:13px;font-weight:600;text-decoration:none}
 .vid a .i{color:#C9784A}
 .vid a:active{transform:scale(.95)}
+/* ===== date accueil + bouton séance ===== */
+.pdate{display:block;white-space:normal;overflow:visible;text-overflow:clip;margin:12px 0 0;font-family:var(--serif);font-weight:500;font-size:28px;line-height:1.1;color:var(--ink);font-variation-settings:'SOFT' 100,'WONK' 1,'opsz' 72}
+.pdate:first-letter{text-transform:uppercase}
+.finish{position:sticky;bottom:calc(86px + env(safe-area-inset-bottom));z-index:14;margin:18px 0 0;padding-top:10px;background:linear-gradient(to bottom,rgba(251,250,255,0),rgba(251,250,255,.0))}
+.fbtn{display:flex;align-items:center;gap:14px;width:100%;padding:12px 18px 12px 12px;border-radius:26px;background:#5A2E16;color:#FBE6D6;text-align:left;box-shadow:0 14px 30px rgba(90,46,22,.28);transition:transform .35s var(--spring),background-color .4s var(--ease)}
+.fbtn:active{transform:scale(.97)}
+.fbtn:disabled{opacity:.5}
+.fic{flex:none;display:grid;place-items:center;width:48px;height:48px;border-radius:18px;background:rgba(251,230,214,.18);color:#FBE6D6}
+.fic .i{color:#FBE6D6}
+.ftx{display:flex;flex-direction:column;gap:3px;min-width:0}
+.ftx b{font-family:var(--serif);font-weight:600;font-size:18px;line-height:1.1;font-variation-settings:'SOFT' 100,'WONK' 1,'opsz' 36}
+.ftx small{font-size:12.5px;opacity:.78;line-height:1.3}
+.fbtn.ok2{background:#F6D0B4;color:#5A2E16;box-shadow:0 8px 20px rgba(90,46,22,.12)}
+.fbtn.ok2 .fic{background:#5A2E16;color:#FBE6D6}
+.fbtn.ok2 .fic .i{color:#FBE6D6}
+.fbtn.go{animation:halo2 2.4s ease-in-out infinite}
 </style>
 </head>
 <body>
@@ -815,7 +831,7 @@ function after(prev,perfect){
   if(msgs.length)toast(msgs[0]);
 }
 
-function banner(pill,title,sub,tone){const m=title.indexOf('Lock-in')>-1?'flame':title.indexOf('progrès')>-1?'bars':title.indexOf('programme')>-1?'dumbbell':title.indexOf('engagements')>-1?'list':'todo';return '<header class="banner '+tone+'"><span class="bgico" aria-hidden="true">'+ic(m,200)+'</span><span class="pill">'+pill+'</span><h2>'+title+'</h2><p>'+sub+'</p></header>';}
+function banner(pill,title,sub,tone){const m=title.indexOf('Lock-in')>-1?'flame':title.indexOf('progrès')>-1?'bars':title.indexOf('programme')>-1?'dumbbell':title.indexOf('engagements')>-1?'list':'todo';return '<header class="banner '+tone+'"><span class="bgico" aria-hidden="true">'+ic(m,200)+'</span><h2>'+title+'</h2><p>'+sub+'</p></header>';}
 
 function lockSvg(){return '<svg class="lock" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="56" fill="#CFD1F5" opacity=".22"/><circle cx="60" cy="60" r="40" fill="#CFD1F5" opacity=".26"/><path d="M42 54V42a18 18 0 0 1 36 0v12" fill="none" stroke="#CFD1F5" stroke-width="9" stroke-linecap="round"/><rect x="32" y="52" width="56" height="42" rx="14" fill="#CFD1F5"/><circle cx="60" cy="68" r="6.5" fill="#3A3156"/><rect x="57" y="70" width="6" height="14" rx="3" fill="#3A3156"/><path d="M98 20l2.2 6.3 6.3 2.2-6.3 2.2-2.2 6.3-2.2-6.3-6.3-2.2 6.3-2.2z" fill="#CFD1F5"/><path d="M20 84l1.6 4.4 4.4 1.6-4.4 1.6-1.6 4.4-1.6-4.4-4.4-1.6 4.4-1.6z" fill="#CFD1F5"/></svg>';}
 
@@ -910,8 +926,7 @@ function viewToday(){
   const wk=Math.floor(i/7),rest=6-s,stk=streakDays();
   const msg2=s===6?'Journée parfaite. Bravo.':(s===0?'Une première case pour lancer la journée.':'Encore '+rest+(rest>1?' cases':' case')+' pour une journée parfaite.');
   const DL=['L','M','M','J','V','S','D'];
-  h+='<section class="block"><div class="card prog"><div class="ptop"><div class="pl">'+(i===t?'<span class="pill red">Aujourd’hui</span>':'<span class="pill">Jour '+(i+1)+'</span>')+'<span class="pdate">'+fmt(i)+'</span></div><span class="pstreak">'+ic('flame',18)+'<b>'+stk+'</b> '+(stk>1?'jours':'jour')+' d’affilée</span></div>';
-  h+='<div class="pmain"><div class="pring'+(s===6?' done':'')+'">'+ring1(96,11,s/6,'day'+i,s===6?SOFT2:SOFT,'Cases du jour : '+s+' sur 6')+'<span class="pnum"><b class="cnt" data-k="n'+i+'" data-v="'+s+'">'+s+'</b><i>/ 6</i></span></div><div class="ptxt"><span class="pmsg">'+msg2+'</span><span class="phint">'+(stk>0?'Garde le fil : 3 cases suffisent pour valider un jour.':'3 cases suffisent pour valider un jour et lancer une série.')+'</span></div></div>';
+  h+='<section class="block"><div class="card prog"><div class="ptop"><div class="pl">'+(i===t?'<span class="pill red">Aujourd’hui</span>':'<span class="pill">Jour '+(i+1)+' sur '+N+'</span>')+'</div><span class="pstreak">'+ic('flame',18)+'<b>'+stk+'</b> '+(stk>1?'jours':'jour')+' d’affilée</span></div><h2 class="pdate">'+fmt(i)+'</h2><div class="pmain"><div class="pring'+(s===6?' done':'')+'">'+ring1(96,11,s/6,'day'+i,s===6?SOFT2:SOFT,'Cases du jour : '+s+' sur 6')+'<span class="pnum"><b class="cnt" data-k="n'+i+'" data-v="'+s+'">'+s+'</b><i>/ 6</i></span></div><div class="ptxt"><span class="pmsg">'+msg2+'</span><span class="phint">'+(stk>0?'Garde le fil : 3 cases suffisent pour valider un jour.':'3 cases suffisent pour valider un jour et lancer une série.')+'</span></div></div>';
   h+='<div class="pweek"><button class="wnav" data-act="day" data-d="-7" aria-label="Semaine précédente"'+(wk<=0?' disabled':'')+'>'+ic('chevL',20)+'</button>'+range(7).map(k=>{const di=wk*7+k;if(di>=N)return '<span></span>';const sc=score(di);return '<button class="pday'+(di===i?' sel':'')+(di===t?' now':'')+(di>t?' fut':'')+'" data-act="seld" data-i="'+di+'" aria-label="'+fmt(di)+', '+sc+' cases sur 6"><span class="dl">'+DL[k]+'</span>'+ring1(40,5,sc/6,'w'+di,SOFT,'',`<text x="20" y="24.5" text-anchor="middle" font-size="13" font-weight="700" fill="#2D2756">${dateOf(di).getUTCDate()}</text>`)+'</button>';}).join('')+'<button class="wnav" data-act="day" data-d="7" aria-label="Semaine suivante"'+(wk>=5?' disabled':'')+'>'+ic('chevR',20)+'</button></div></div></section>';
   h+='<section class="block"><div class="sec-title"><h3>Mes <span class="k">cases</span> du jour</h3></div><div class="tiles">';
   HAB.forEach((b,k)=>{const on=has(i,b.id);h+='<button class="tile ccard '+b.tone+(on?' on':'')+'" data-act="tick" data-h="'+b.id+'" aria-pressed="'+on+'"><span class="top"><span class="ico">'+ic(b.icon)+'</span><span class="chk">'+ic('check',16)+'</span></span><span class="tt">'+(b.k===1?'<b>'+b.t1+'</b><span class="l">'+b.t2+'</span>':'<span class="l">'+b.t1+'</span><b>'+b.t2+'</b>')+(b.sub?'<span class="sub">'+b.sub+'</span>':'')+'</span></button>';});
@@ -959,8 +974,8 @@ function viewProg(){
   });
   h+='</div>';
   const wk=progW,canTick=(wk*7)<=t;
-  const full=done===ses.length;
-  h+='<button class="btn'+(full?' go':'')+'" data-act="sessdone"'+(t<0?' disabled':'')+'>'+ic(full?'medal':'dumbbell',20)+(full?'Séance complète, cocher le renfo du jour':'Séance terminée, cocher le renfo du jour')+'</button>';
+  const full=done===ses.length,tdy=Math.min(Math.max(t,0),N-1),ticked=t>=0&&has(tdy,'renfo');
+  h+='<div class="finish"><button class="fbtn'+(ticked?' ok2':'')+(full&&!ticked?' go':'')+'" data-act="sessdone"'+(t<0?' disabled':'')+'><span class="fic">'+ic(ticked?'check':(full?'medal':'dumbbell'),24)+'</span><span class="ftx"><b>'+(ticked?'Renfo du jour validé':(full?'Séance complète, bravo':'J’ai terminé ma séance'))+'</b><small>'+(ticked?'Il est coché sur ton accueil':(done+' / '+ses.length+' exercices cochés · valider le renfo du jour'))+'</small></span></button></div>';
   return h;
 }
 
@@ -1022,7 +1037,7 @@ document.addEventListener('click',function(e){
   if(a==='sessdone'){
     const t=todayIdx();if(t<0||t>=N+1){toast('Le challenge n’a pas commencé');return;}
     const day=Math.min(t,N-1),p=snap();const arr=S.d[day]?S.d[day].slice():[];
-    if(arr.indexOf('renfo')<0){arr.push('renfo');S.d[day]=arr;save();after(p,false);toast('Renfo coché pour aujourd’hui');}else toast('Le renfo est déjà coché aujourd’hui');
+    if(arr.indexOf('renfo')<0){arr.push('renfo');S.d[day]=arr;save();render();after(p,false);toast('Renfo coché pour aujourd’hui');}else toast('Le renfo est déjà coché aujourd’hui');
     return;
   }
   if(a==='todo'){const p=snap();S.todo[el.dataset.t]=S.todo[el.dataset.t]?0:1;save();render();const b=document.querySelector('[data-t="'+el.dataset.t+'"]');if(b&&S.todo[el.dataset.t])b.classList.add('pop');after(p,false);return;}
