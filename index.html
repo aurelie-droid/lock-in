@@ -495,6 +495,48 @@ nav.tabs button .i{width:26px;height:26px}
 .rmsg{font-size:15px;color:var(--ink);font-weight:600}
 .rsub{font-size:13px;color:var(--wine)}
 .ringwrap .rings{width:150px;height:150px;flex:none}
+.prog{padding:16px 16px 12px}
+.ptop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pl{display:flex;align-items:center;gap:10px;min-width:0}
+.pdate{font-size:15px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pstreak{display:flex;align-items:center;gap:5px;font-size:13px;color:#5B5585;font-weight:600;white-space:nowrap}
+.pstreak .i{color:#E7A06F}
+.pstreak b{font-family:var(--serif);font-weight:600;font-size:16px;color:var(--ink)}
+.pmain{display:flex;align-items:center;gap:16px;margin-top:14px}
+.pring{position:relative;width:96px;height:96px;flex:none}
+.pring .rings{width:96px;height:96px;display:block}
+.pnum{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.pnum b{font-family:var(--serif);font-weight:600;font-size:30px;color:var(--ink);font-variation-settings:'SOFT' 100,'WONK' 1,'opsz' 144}
+.pnum i{font-style:normal;font-size:11px;color:#5B5585;font-weight:600;margin-top:2px}
+.pring.done{animation:ringpop .7s cubic-bezier(.34,1.56,.64,1)}
+@keyframes ringpop{0%{transform:scale(1)}45%{transform:scale(1.09)}100%{transform:scale(1)}}
+.ptxt{display:flex;flex-direction:column;gap:6px;min-width:0}
+.pmsg{font-family:var(--serif);font-weight:500;font-size:19px;line-height:1.2;color:var(--ink);font-variation-settings:'SOFT' 100,'WONK' 1,'opsz' 36}
+.phint{font-size:12.5px;color:#5B5585;line-height:1.35}
+.pweek{display:grid;grid-template-columns:28px repeat(7,1fr) 28px;gap:2px;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid #ECEDFB}
+.wnav{width:28px;height:36px;display:grid;place-items:center;color:#5B5585;border-radius:10px}
+.wnav:disabled{opacity:.3}
+.pday{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 5px;border-radius:14px}
+.pday .dl{font-size:11px;font-weight:700;color:#5B5585}
+.pday .rings{width:36px;height:36px}
+.pday.sel{background:#ECEDFB}
+.pday.now .dl{color:var(--ink)}
+.pday.fut{opacity:.55}
+.sumcard{padding:16px}
+.sumtop{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.sbig{display:flex;align-items:baseline;gap:6px}
+.sbig b{font-family:var(--serif);font-weight:600;font-size:44px;line-height:.9;color:var(--ink);font-variation-settings:'SOFT' 100,'WONK' 1,'opsz' 144}
+.sbig span{font-size:13px;color:#5B5585;font-weight:600}
+.schips{display:flex;gap:6px}
+.schips span{display:flex;flex-direction:column;align-items:center;min-width:56px;padding:7px 8px;border-radius:14px;background:#F2F3FD;font-size:11px;color:#5B5585;font-weight:600;line-height:1.2}
+.schips b{font-family:var(--serif);font-weight:600;font-size:17px;color:var(--ink)}
+.caps{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:16px}
+.cap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.cap .cb{position:relative;width:100%;height:56px;border-radius:18px;background:#ECEDFB;overflow:hidden}
+.cap .cf{position:absolute;inset:0;background:#B9BCF6;transform-origin:bottom;transform:scaleY(0);border-radius:0}
+.cap.now .cf{background:#8E92F0}
+.cap span{font-size:12px;font-weight:700;color:#5B5585}
+.cap.now span{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -650,14 +692,31 @@ function banner(pill,title,sub,tone){const m=title.indexOf('Lock-in')>-1?'flame'
 
 function lockSvg(){return '<svg class="lock" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="56" fill="#CFD1F5" opacity=".22"/><circle cx="60" cy="60" r="40" fill="#CFD1F5" opacity=".26"/><path d="M42 54V42a18 18 0 0 1 36 0v12" fill="none" stroke="#CFD1F5" stroke-width="9" stroke-linecap="round"/><rect x="32" y="52" width="56" height="42" rx="14" fill="#CFD1F5"/><circle cx="60" cy="68" r="6.5" fill="#3A3156"/><rect x="57" y="70" width="6" height="14" rx="3" fill="#3A3156"/><path d="M98 20l2.2 6.3 6.3 2.2-6.3 2.2-2.2 6.3-2.2-6.3-6.3-2.2 6.3-2.2z" fill="#CFD1F5"/><path d="M20 84l1.6 4.4 4.4 1.6-4.4 1.6-1.6 4.4-1.6-4.4-4.4-1.6 4.4-1.6z" fill="#CFD1F5"/></svg>';}
 
-function rings(size,stroke,gap,items,label){
-  const c=size/2;let h='<svg class="rings" viewBox="0 0 '+size+' '+size+'" role="img" aria-label="'+label+'">';
-  items.forEach((it,k)=>{const r=c-stroke/2-2-k*(stroke+gap),C=2*Math.PI*r,v=Math.max(0,Math.min(1,it.v));
-    h+='<circle cx="'+c+'" cy="'+c+'" r="'+r.toFixed(1)+'" fill="none" stroke="'+it.t+'" stroke-width="'+stroke+'"/>';
-    if(v>0.001)h+='<circle class="rg" cx="'+c+'" cy="'+c+'" r="'+r.toFixed(1)+'" fill="none" stroke="'+it.c+'" stroke-width="'+stroke+'" stroke-linecap="round" stroke-dasharray="'+(C*v).toFixed(1)+' '+C.toFixed(1)+'" transform="rotate(-90 '+c+' '+c+')"/>';});
-  return h+'</svg>';
+const SOFT='#A9ACF2',SOFT2='#8E92F0',TRACK='#ECEDFB';
+const PROG_LAST={};
+function ring1(size,stroke,frac,key,col,label,extra){
+  const c=size/2,r=c-stroke/2-1,C=2*Math.PI*r;
+  return '<svg class="rings" viewBox="0 0 '+size+' '+size+'" width="'+size+'" height="'+size+'" role="img" aria-label="'+label+'"><circle cx="'+c+'" cy="'+c+'" r="'+r.toFixed(1)+'" fill="none" stroke="'+TRACK+'" stroke-width="'+stroke+'"/><circle class="rg" data-k="'+key+'" data-f="'+frac.toFixed(3)+'" data-c="'+C.toFixed(2)+'" cx="'+c+'" cy="'+c+'" r="'+r.toFixed(1)+'" fill="none" stroke="'+col+'" stroke-width="'+stroke+'" stroke-linecap="round" stroke-dasharray="0 '+C.toFixed(2)+'" transform="rotate(-90 '+c+' '+c+')"/>'+(extra||'')+'</svg>';
 }
-const RING_COL={pe:['#E08A5A','#FBE6D6'],gr:['#4FB06F','#E3F3E7'],ye:['#E9C03A','#FCF3D0'],pi:['#E5809A','#FAE3E8'],la:['#5558BD','#E3E4F8'],bl:['#4A9BE0','#DDEEFB']};
+function animateProgress(){
+  const ease='cubic-bezier(.22,1,.36,1)';
+  document.querySelectorAll('.rg').forEach(el=>{
+    const k=el.dataset.k,f=+el.dataset.f,C=+el.dataset.c,from=PROG_LAST[k]||0;
+    el.style.transition='none';el.setAttribute('stroke-dasharray',(C*from).toFixed(2)+' '+C);
+    el.setAttribute('stroke-linecap',(f<0.01&&from<0.01)?'butt':'round');
+    void el.getBoundingClientRect();
+    el.style.transition='stroke-dasharray .95s '+ease;el.setAttribute('stroke-dasharray',(C*f).toFixed(2)+' '+C);
+    PROG_LAST[k]=f;
+  });
+  document.querySelectorAll('.cf').forEach(el=>{
+    const k=el.dataset.k,f=+el.dataset.f,from=PROG_LAST[k]||0;
+    el.style.transition='none';el.style.transform='scaleY('+from+')';
+    void el.getBoundingClientRect();
+    el.style.transition='transform .95s '+ease;el.style.transform='scaleY('+f+')';
+    PROG_LAST[k]=f;
+  });
+}
+const streakDays=()=>{let t=todayIdx();if(t<0)return 0;let i=Math.min(t,N-1),c=0;if(score(i)<3)i--;for(;i>=0&&score(i)>=3;i--)c++;return c;};
 function viewToday(){
   const t=todayIdx(),i=sel,ok=i<=t,s=score(i),x=xp(),l=level(x);
   const nextX=LEVELS[l+1]?LEVELS[l+1][0]:null;
@@ -665,10 +724,12 @@ function viewToday(){
   const msg=['La journée commence ici.','C’est lancé.','Ça prend forme.','À mi-chemin.','Belle lancée.','Plus qu’une case.','Journée parfaite.'][s];
   const dayPill=t<0?'Départ le 16 novembre':(t>=N?'Challenge terminé':'Jour '+(Math.min(t,N-1)+1)+' sur '+N);
   let h=banner(dayPill,'<span class="l">Opération</span><br>Lock-in','6 semaines, 6 règles : commencer 2027 à notre prime.','la3');
-  h+='<section class="block"><div class="card"><div class="daynav"><button class="circ" data-act="day" data-d="-1" aria-label="Jour précédent"'+(i<=0?' disabled':'')+'>'+ic('chevL')+'</button><div class="lbl">'+(i===t?'<span class="pill red">Aujourd’hui</span>':'<span class="pill">Jour '+(i+1)+'</span>')+'<b>'+fmt(i)+'</b></div><button class="circ" data-act="day" data-d="1" aria-label="Jour suivant"'+(i>=N-1?' disabled':'')+'>'+ic('chevR')+'</button></div>';
-  const wk=Math.floor(i/7),wd=range(7).map(k=>wk*7+k).filter(x=>x<N&&x<=Math.max(t,i));
-  const ritems=HAB.map(b=>({v:range(7).filter(k=>has(wk*7+k,b.id)).length/7,c:RING_COL[b.fam][0],t:RING_COL[b.fam][1]}));
-  h+='<div class="score rscore"><div class="rwrap">'+rings(172,13,4,ritems,'Habitudes de la semaine, un anneau par habitude')+'</div><div class="rtxt"><b>'+s+' / 6</b><span class="rmsg">'+msg+'</span><span class="rsub">Semaine '+(wk+1)+' : un anneau par habitude</span></div></div></div></section>';
+  const wk=Math.floor(i/7),rest=6-s,stk=streakDays();
+  const msg2=s===6?'Journée parfaite. Bravo.':(s===0?'Une première case pour lancer la journée.':'Encore '+rest+(rest>1?' cases':' case')+' pour une journée parfaite.');
+  const DL=['L','M','M','J','V','S','D'];
+  h+='<section class="block"><div class="card prog"><div class="ptop"><div class="pl">'+(i===t?'<span class="pill red">Aujourd’hui</span>':'<span class="pill">Jour '+(i+1)+'</span>')+'<span class="pdate">'+fmt(i)+'</span></div><span class="pstreak">'+ic('flame',18)+'<b>'+stk+'</b> '+(stk>1?'jours':'jour')+' d’affilée</span></div>';
+  h+='<div class="pmain"><div class="pring'+(s===6?' done':'')+'">'+ring1(96,11,s/6,'day'+i,s===6?SOFT2:SOFT,'Cases du jour : '+s+' sur 6')+'<span class="pnum"><b>'+s+'</b><i>/ 6</i></span></div><div class="ptxt"><span class="pmsg">'+msg2+'</span><span class="phint">'+(stk>0?'Garde le fil : 3 cases suffisent pour valider un jour.':'3 cases suffisent pour valider un jour et lancer une série.')+'</span></div></div>';
+  h+='<div class="pweek"><button class="wnav" data-act="day" data-d="-7" aria-label="Semaine précédente"'+(wk<=0?' disabled':'')+'>'+ic('chevL',20)+'</button>'+range(7).map(k=>{const di=wk*7+k;if(di>=N)return '<span></span>';const sc=score(di);return '<button class="pday'+(di===i?' sel':'')+(di===t?' now':'')+(di>t?' fut':'')+'" data-act="seld" data-i="'+di+'" aria-label="'+fmt(di)+', '+sc+' cases sur 6"><span class="dl">'+DL[k]+'</span>'+ring1(40,5,sc/6,'w'+di,SOFT,'',`<text x="20" y="24.5" text-anchor="middle" font-size="13" font-weight="700" fill="#2D2756">${dateOf(di).getUTCDate()}</text>`)+'</button>';}).join('')+'<button class="wnav" data-act="day" data-d="7" aria-label="Semaine suivante"'+(wk>=5?' disabled':'')+'>'+ic('chevR',20)+'</button></div></div></section>';
   h+='<section class="block"><div class="sec-title"><h3>Mes <span class="k">cases</span> du jour</h3></div><div class="tiles">';
   HAB.forEach((b,k)=>{const on=has(i,b.id);h+='<button class="tile ccard '+b.tone+(on?' on':'')+'" data-act="tick" data-h="'+b.id+'" aria-pressed="'+on+'"><span class="top"><span class="ico">'+ic(b.icon)+'</span><span class="chk">'+ic('check',16)+'</span></span><span class="tt">'+(b.k===1?'<b>'+b.t1+'</b><span class="l">'+b.t2+'</span>':'<span class="l">'+b.t1+'</span><b>'+b.t2+'</b>')+(b.sub?'<span class="sub">'+b.sub+'</span>':'')+'</span></button>';});
   const w=Math.floor(i/7),rc=renfoWeek(w),ron=has(i,'renfo');
@@ -685,7 +746,8 @@ function viewSuivi(){
   const active=range(N).filter(i=>D(i).length>0).length;
   const weeksOk=range(6).filter(w=>renfoWeek(w)>=3).length;
   let h=banner('Mon suivi','<span class="l">Mes</span><br>progrès','Chaque case compte. Regarde le chemin parcouru.','la2');
-  h+='<section class="block"><div class="card ringwrap">'+rings(176,11,3,range(6).map(w=>({v:range(7).reduce((a,k)=>a+score(w*7+k),0)/42,c:['#2D2756','#3A3156','#5558BD','#6B6FD6','#8E92F0','#B9BCF0'][w],t:'#EEEFFC'})),'Six anneaux, un par semaine')+'<div class="stats-mini"><div><b>'+el+' / '+N+'</b><span>jours écoulés, un anneau par semaine</span></div><div><b>'+perfect+'</b><span>journées parfaites</span></div><div><b>'+weeksOk+' / 6</b><span>semaines à 3 séances</span></div></div></div></section>';
+  const stk=streakDays(),curW=Math.max(0,Math.min(Math.floor(t/7),5));
+  h+='<section class="block"><div class="card sumcard"><div class="sumtop"><div class="sbig"><b>'+el+'</b><span>/ '+N+' jours</span></div><div class="schips"><span><b>'+stk+'</b>série</span><span><b>'+perfect+'</b>parfaites</span><span><b>'+weeksOk+'/6</b>renfo</span></div></div><div class="caps">'+range(6).map(w=>{const f=range(7).reduce((a,k)=>a+score(w*7+k),0)/42;return '<div class="cap'+(w===curW&&t>=0?' now':'')+'"><div class="cb"><i class="cf" data-k="cap'+w+'" data-f="'+f.toFixed(3)+'"></i></div><span>S'+(w+1)+'</span></div>';}).join('')+'</div></div></section>';
   h+='<section class="block"><div class="sec-title"><h3>Mes <span class="k">6 semaines</span></h3></div><div class="card"><div class="cal"><span></span>'+['L','M','M','J','V','S','D'].map(d=>'<span class="dow">'+d+'</span>').join('')+'<span class="dow">Renfo</span>';
   for(let w=0;w<6;w++){
     h+='<span class="wk">S'+(w+1)+'</span>';
@@ -740,6 +802,7 @@ function render(){
   document.getElementById('tabs').innerHTML=TABS.map(t=>'<button class="'+(t[0]===tab?'on':'')+'" data-act="tab" data-v="'+t[0]+'" aria-current="'+(t[0]===tab)+'">'+ic(t[2],26)+t[1]+'</button>').join('');
   document.title='Lock-in pastel';
   window.scrollTo(0,y);
+  animateProgress();
 }
 function go(t){tab=t;try{history.replaceState(null,'','#'+t);}catch(e){try{location.hash=t;}catch(e2){}}window.scrollTo(0,0);render();}
 
@@ -749,6 +812,7 @@ document.addEventListener('click',function(e){
   const a=el.dataset.act;
   if(a==='tab'){go(el.dataset.v);return;}
   if(a==='day'){sel=Math.max(0,Math.min(N-1,sel+Number(el.dataset.d)));render();return;}
+  if(a==='seld'){sel=Number(el.dataset.i);render();return;}
   if(a==='goto'){sel=Number(el.dataset.i);go('aujourdhui');return;}
   if(a==='tick'){
     const t=todayIdx();if(sel>t){toast('Ce jour n’est pas encore arrivé');return;}
