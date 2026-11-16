@@ -801,6 +801,22 @@ nav.tabs button.bn .i{animation:tabhop .7s var(--ease)}
 .plin::placeholder{color:#B0ABD4}
 .plin:focus{outline:none}
 .plin::-webkit-outer-spin-button,.plin::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+#gain{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;background:rgba(45,39,86,.6);padding:20px}
+#gain.show{display:flex}
+.goalrow{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid #ECEDFB;font-size:13px;font-weight:700;color:#2D2756}.goalrow .stp{display:flex;align-items:center;gap:10px}.goalrow .stp b{min-width:48px;text-align:center;font-size:16px}.goalrow .stp button{width:36px;height:36px;border-radius:12px;border:0;background:#EEF0FD;color:#5558BD;font-size:20px;font-weight:700}
+.gcard{width:100%;max-width:360px;background:#fff;border-radius:28px;padding:26px 22px;text-align:center;color:#2D2756;box-shadow:0 20px 50px rgba(45,39,86,.35)}
+.gtour{margin:0;font-size:13px;font-weight:700;color:#6B65A0}.gpos{margin:6px 0 4px;font-size:26px}
+.gtime{font-size:76px;line-height:1.05;font-weight:800;font-variant-numeric:tabular-nums;color:#5558BD;margin:6px 0 14px}
+.gbar{position:relative;height:12px;border-radius:6px;background:#ECEDFB;overflow:hidden}.gbar i{display:block;height:100%;width:0;background:#5558BD;border-radius:6px}.gbar u{position:absolute;left:66.6%;top:0;bottom:0;width:3px;background:#fff}
+.gbl{position:relative;height:16px;font-size:11px;font-weight:700;color:#6B65A0;margin:5px 0 0}.gbl span{position:absolute}.gbl span:nth-child(1){left:0}.gbl span:nth-child(2){left:66.6%;transform:translateX(-50%)}.gbl span:nth-child(3){right:0}
+.gmsg{margin:14px 0 16px;font-size:15px;font-weight:700;min-height:22px}
+.gbtn{display:block;width:100%;padding:16px;border:0;border-radius:18px;background:#5558BD;color:#fff;font:700 17px inherit;cursor:pointer}
+.gstop{display:block;width:100%;margin-top:10px;padding:12px;border:0;background:transparent;color:#6B65A0;font:600 15px inherit;cursor:pointer}
+.defbox{display:flex;flex-direction:column;gap:2px;border-radius:18px;padding:16px;margin-top:12px;color:#2D2756;background:#EEF0FD}
+.defbox.good{background:#5558BD;color:#fff}.defbox.surplus{background:#F6F7FE}
+.defbox .dk{font-size:13px;font-weight:700;color:#6B65A0}.defbox b{font-size:32px;line-height:1.1}.defbox b small{font-size:14px}.defbox .dd{font-size:12px;line-height:1.35;color:#4B4570}
+.defbox.good .dk,.defbox.good .dd{color:#E1E3FA}.defbox.good b{font-size:42px}
+.plv{font-size:15px;color:#2D2756;white-space:nowrap}
 .holdb{margin-top:2px;padding:12px 16px;font-size:15px}
 </style>
 </head>
@@ -1337,6 +1353,32 @@ function restStart(sec,lab){
   };
   tick();restI=setInterval(tick,200);
 }
+/* ---------- chrono du circuit gainage : plein écran, centré ---------- */
+const GPOS=['Face','Côté gauche','Côté droit'];let GN=null,GI=null;
+const gfmt=ms=>{const q=Math.max(0,Math.floor(ms/1000));return Math.floor(q/60)+':'+String(q%60).padStart(2,'0');};
+function gainOpen(){
+  let g=document.getElementById('gain');if(!g){g=document.createElement('div');g.id='gain';g.setAttribute('role','dialog');g.setAttribute('aria-label','Chrono gainage');document.body.appendChild(g);}
+  GN={r:0,p:0,t0:Date.now()+3000};g.className='show';gainDraw();clearInterval(GI);GI=setInterval(gainTick,100);gainTick();
+}
+function gainDraw(){
+  const g=document.getElementById('gain');if(!g||!GN)return;
+  g.innerHTML='<div class="gcard"><p class="gtour">Tour '+(GN.r+1)+' / 3</p><h3 class="gpos">'+GPOS[GN.p]+'</h3><div class="gtime" id="gtime">3</div><div class="gbar"><i id="gfill"></i><u></u></div><div class="gbl"><span>0</span><span>30 s</span><span>45 s</span></div><p class="gmsg" id="gmsg">Prépare-toi</p><button class="gbtn" data-act="gnext">Position suivante</button><button class="gstop" data-act="gstop">Arrêter</button></div>';
+}
+function gainTick(){
+  if(!GN)return;const now=Date.now(),el=document.getElementById('gtime');if(!el)return;
+  const d=now-GN.t0,msg=document.getElementById('gmsg'),fill=document.getElementById('gfill');
+  if(d<0){el.textContent=Math.ceil(-d/1000);msg.textContent='Prépare-toi';fill.style.width='0%';return;}
+  el.textContent=gfmt(d);fill.style.width=Math.min(100,d/45000*100)+'%';
+  if(d<30000)msg.textContent='Tiens bon, minimum 30 s';
+  else if(d<45000){msg.textContent='Minimum atteint, vise 45 s';if(!GN.v30){GN.v30=1;try{navigator.vibrate&&navigator.vibrate(120);}catch(e){}}}
+  else{msg.textContent='Objectif 45 s atteint';if(!GN.v45){GN.v45=1;try{navigator.vibrate&&navigator.vibrate([120,80,120]);}catch(e){}}}
+}
+function gainNext(){
+  if(!GN)return;
+  if(GN.p<2){GN.p++;}else if(GN.r<2){GN.r++;GN.p=0;}else{gainClose();toast('Circuit terminé, bravo');return;}
+  GN.t0=Date.now()+3000;GN.v30=0;GN.v45=0;gainDraw();gainTick();
+}
+function gainClose(){clearInterval(GI);GN=null;const g=document.getElementById('gain');if(g)g.className='';}
 function restStop(){clearInterval(restI);const b=document.getElementById('rest');if(b)b.className='';}
 let lastTab=null,lastTabX=null,animMode=null;
 function enterFx(mode){
@@ -1389,7 +1431,9 @@ const nfmt=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
 const dshort=i=>{const d=dateOf(i);return DOW[d.getUTCDay()]+' '+d.getUTCDate()+' '+MONTHS[d.getUTCMonth()];};
 function nextWeigh(i){for(let j=Math.max(0,i);j<N;j++)if(j===0||dateOf(j).getUTCDay()===0)return j;return -1;}
 function wAt(i){for(let j=Math.min(i,N-1);j>=0;j--)if(S.wt[j]!=null)return S.wt[j];for(let j=i+1;j<N;j++)if(S.wt[j]!=null)return S.wt[j];return S.prof.w!=null?S.prof.w:null;}
-function bmrAt(i){const p=S.prof,w=wAt(i);if(!p.h||!w)return null;return Math.round(10*w+6.25*p.h-5*(p.age||30)+((p.sex==='m')?5:-161));}
+const HEIGHT=167,AGE=30;
+function bmrAt(i){const w=wAt(i);if(!w)return null;return Math.round(10*w+6.25*HEIGHT-5*AGE-161);}
+const GOAL=()=>S.prof.goal!=null?S.prof.goal:500;
 function balAt(i){const m=S.cal[i],a=S.dep[i],b=bmrAt(i);if(m==null||a==null||b==null)return null;return {bmr:b,tot:b+a,def:b+a-m};}
 function bilanCard(i,ok){
   const kc=S.cal[i],wv=S.wt[i],weigh=(i===0||dateOf(i).getUTCDay()===0),dis=ok?'':' disabled';
@@ -1397,39 +1441,49 @@ function bilanCard(i,ok){
   h+='<label class="brow"><span class="bico">'+ic('apple',26)+'</span><span class="blab"><b>Calories du jour</b><small>Le total de ce que tu as mangé</small></span><span class="bin"><input class="bnum" type="number" inputmode="numeric" min="0" step="10" data-bk="cal" data-i="'+i+'" value="'+(kc!=null?kc:'')+'" placeholder="0" aria-label="Calories du jour"'+dis+'><small>kcal</small></span></label>';
   const dp=S.dep[i],ac=S.act[i];
   h+='<label class="brow"><span class="bico">'+ic('flame',26)+'</span><span class="blab"><b>Dépense du jour</b><small>'+(ac&&(ac.p||ac.m)?'Santé : '+(ac.p?nfmt(ac.p)+' pas':'')+(ac.p&&ac.m?' · ':'')+(ac.m?ac.m+' min d’exercice':''):'Se remplit seule depuis Santé (Raccourci)')+'</small></span><span class="bin"><input class="bnum" type="number" inputmode="numeric" min="0" step="10" data-bk="dep" data-i="'+i+'" value="'+(dp!=null?dp:'')+'" placeholder="0" aria-label="Dépense du jour"'+dis+'><small>kcal</small></span></label>';
-  const bl=balAt(i),pf=S.prof,needp=!pf.h||wAt(i)==null;
-  if(bl)h+='<div class="defbox '+(bl.def>=0?'deficit':'surplus')+'"><span class="dk">'+(bl.def>=0?'Déficit calorique':'Surplus calorique')+'</span><b>'+nfmt(Math.abs(bl.def))+' <small>kcal</small></b><span class="dd">Dépense totale '+nfmt(bl.tot)+' (métabolisme de base '+nfmt(bl.bmr)+' + active '+nfmt(dp)+') − mangé '+nfmt(kc)+'</span></div>';
-  else if(dp!=null&&kc!=null&&needp)h+='<p class="bnote">'+ic('target',18)+'<span>Renseigne ta taille ci-dessous pour calculer ton déficit.</span></p>';
-  h+='<details class="prof"'+(needp?' open':'')+'><summary>Réglages du calcul<small>'+(bmrAt(i)?'métabolisme de base : '+nfmt(bmrAt(i))+' kcal':'à compléter')+'</small></summary><div class="prow"><label>Taille<span class="bin"><input class="bnum" type="number" inputmode="numeric" min="100" max="230" data-pf="h" value="'+(pf.h||'')+'" placeholder="165"><small>cm</small></span></label>'+(S.wt[0]==null&&!Object.keys(S.wt).length?'<label>Poids<span class="bin"><input class="bnum" type="number" inputmode="decimal" step="0.1" data-pf="w" value="'+(pf.w!=null?pf.w:'')+'" placeholder="60"><small>kg</small></span></label>':'')+'<label>Sexe<span class="bin"><select class="bnum" data-pf="sex"><option value="f"'+(pf.sex!=='m'?' selected':'')+'>Femme</option><option value="m"'+(pf.sex==='m'?' selected':'')+'>Homme</option></select></span></label></div><p class="bnote">Calcul : formule de Mifflin-St Jeor (âge '+(pf.age||30)+' ans, poids = dernière pesée). Le métabolisme de base est ce que ton corps brûle au repos. Estimation, pas une mesure.</p></details>';
+  const bl=balAt(i),pf=S.prof,needw=wAt(i)==null,goal=GOAL();
+  if(bl){const ok=bl.def>=goal;h+='<div class="defbox '+(ok?'good':(bl.def>=0?'deficit':'surplus'))+'"><span class="dk">'+(bl.def>=0?'Déficit calorique':'Surplus calorique')+(ok?' · objectif atteint':'')+'</span><b>'+(bl.def>=0?'':'−')+nfmt(Math.abs(bl.def))+' <small>kcal</small></b><span class="dd">Objectif '+nfmt(goal)+' kcal · dépense totale '+nfmt(bl.tot)+' − mangé '+nfmt(kc)+'</span></div>';}
+  else if(needw)h+='<label class="brow"><span class="blab"><b>Poids pour le calcul</b><small>Une fois, jusqu’à ta première pesée</small></span><span class="bin"><input class="bnum" type="number" inputmode="decimal" step="0.1" data-pf="w" value="'+(pf.w!=null?pf.w:'')+'" placeholder="60"><small>kg</small></span></label>';
   if(weigh)h+='<label class="brow"><span class="bico">'+ic('graph',26)+'</span><span class="blab"><b>'+(i===0?'Poids de départ':'Poids de la semaine')+'</b><small>'+(i===0?'Pour mesurer ton évolution':'Pesée du dimanche, à jeun si possible')+'</small></span><span class="bin"><input class="bnum" type="number" inputmode="decimal" min="0" step="0.1" data-bk="wt" data-i="'+i+'" value="'+(wv!=null?wv:'')+'" placeholder="0,0" aria-label="Poids en kilos"'+dis+'><small>kg</small></span></label>';
   else{const nx=nextWeigh(i);if(nx>=0)h+='<p class="bnote">'+ic('clock',18)+'<span>Prochaine pesée : '+dshort(nx)+'</span></p>';}
   return h+'</div></section>';
 }
 function plBox(k,si,w){
   const rw=(l,v)=>'<div class="lrow"><span class="lab">'+l+'</span><b class="plv">'+v+'</b></div>';
-  return '<div class="loadbox">'+rw('Par position (face, gauche, droite)','30 s à 45 s')+rw('Par tour','1 min 30 à 2 min 15')+rw('Total, 3 tours','4 min 30 à 6 min 45')+'</div>';
+  return '<div class="loadbox">'+rw('Par position (face, gauche, droite)','30 s à 45 s')+rw('Par tour','1 min 30 à 2 min 15')+rw('Total, 3 tours','4 min 30 à 6 min 45')+'<button class="btn soft holdb" data-act="gain">'+ic('stopwatch',20)+'Lancer le circuit chronométré</button></div>';
+}
+function lineChart(o){
+  const idx=range(N).filter(i=>o.vals[i]!=null),vs=idx.map(i=>o.vals[i]);
+  let lo=Math.min(...vs),hi=Math.max(...vs);
+  if(o.ref!=null){lo=Math.min(lo,o.ref);hi=Math.max(hi,o.ref);}
+  if(o.zero){lo=Math.min(lo,0);hi=Math.max(hi,0);}
+  const pad=Math.max((hi-lo)*.18,o.minPad||20),y0=lo-pad,y1=hi+pad;
+  const X=i=>40+i/(N-1)*288,Y=v=>12+(1-(v-y0)/(y1-y0))*92,fm=o.fmt||nfmt;
+  let g='',ticks=[y1-pad*.5,(y0+y1)/2,y0+pad*.5];
+  ticks.forEach(v=>{g+='<line x1="40" y1="'+Y(v).toFixed(1)+'" x2="328" y2="'+Y(v).toFixed(1)+'" stroke="#EEEFFB" stroke-width="1"/><text x="34" y="'+(Y(v)+3.5).toFixed(1)+'" text-anchor="end" font-size="9.5" font-weight="600" fill="#6B65A0">'+fm(v)+'</text>';});
+  if(o.zero)g+='<line x1="40" y1="'+Y(0).toFixed(1)+'" x2="328" y2="'+Y(0).toFixed(1)+'" stroke="#B9BCF6" stroke-width="1.5"/>';
+  if(o.ref!=null)g+='<line x1="40" y1="'+Y(o.ref).toFixed(1)+'" x2="328" y2="'+Y(o.ref).toFixed(1)+'" stroke="#5558BD" stroke-width="1.5" opacity=".55"/><text x="328" y="'+(Y(o.ref)-5).toFixed(1)+'" text-anchor="end" font-size="10" font-weight="700" fill="#5558BD">'+esc(o.refLab||'')+'</text>';
+  let pts=idx.map(i=>X(i).toFixed(1)+','+Y(o.vals[i]).toFixed(1)).join(' '),dots='';
+  idx.forEach(i=>{const v=o.vals[i],hit=o.hit?o.hit(v):true;dots+='<g data-act="goto" data-i="'+i+'" style="cursor:pointer"><circle cx="'+X(i).toFixed(1)+'" cy="'+Y(v).toFixed(1)+'" r="13" fill="transparent"/><circle cx="'+X(i).toFixed(1)+'" cy="'+Y(v).toFixed(1)+'" r="4" fill="'+(hit?'#5558BD':'#C9CCF8')+'" stroke="#fff" stroke-width="2"><title>'+esc(dshort(i))+' : '+fm(v)+(o.unit||'')+'</title></circle></g>';});
+  let wl='';for(let w=0;w<6;w++)wl+='<text x="'+X(w*7+3).toFixed(1)+'" y="126" text-anchor="middle" font-size="10" font-weight="700" fill="#6B65A0">S'+(w+1)+'</text>';
+  return '<svg class="chart" viewBox="0 0 336 132" role="img" aria-label="'+esc(o.label)+'">'+g+(idx.length>1?'<polyline points="'+pts+'" fill="none" stroke="#8E92F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>':'')+dots+wl+'</svg>';
 }
 function calSection(){
   const t=todayIdx(),idx=range(N).filter(i=>S.cal[i]!=null);
   let h='<section class="block"><div class="sec-title"><h3>Mes <span class="k">calories</span></h3></div>';
-  if(!idx.length)return h+'<div class="card empty-ch"><span class="gico">'+ic('apple',24)+'</span><p>Note tes calories chaque soir dans « Aujourd’hui » : ta moyenne et ton évolution apparaissent ici.</p></div></section>';
+  if(!idx.length)return h+'<div class="card empty-ch"><span class="gico">'+ic('apple',24)+'</span><p>Note tes calories chaque soir dans « Aujourd’hui » : ta courbe apparaît ici.</p></div></section>';
   const vals=idx.map(i=>S.cal[i]),avg=vals.reduce((a,b)=>a+b,0)/vals.length;
   const l7=idx.filter(i=>i<=t&&i>t-7).map(i=>S.cal[i]),a7=l7.length?l7.reduce((a,b)=>a+b,0)/l7.length:null;
-  const top=Math.ceil(Math.max(2000,...vals)*1.1/500)*500,H=96,sw=336/N,bw=5;
-  let bars='',lab='';
-  idx.forEach(i=>{const v=S.cal[i],hh=Math.max(3,v/top*H),x=i*sw+(sw-bw)/2;bars+='<g data-act="goto" data-i="'+i+'" style="cursor:pointer"><rect x="'+(i*sw).toFixed(1)+'" y="2" width="'+sw.toFixed(1)+'" height="104" fill="transparent"/><rect x="'+x.toFixed(1)+'" y="'+(104-hh).toFixed(1)+'" width="'+bw+'" height="'+hh.toFixed(1)+'" rx="2.5" fill="'+(i===t?'#5558BD':'#B9BCF6')+'"><title>'+esc(dshort(i))+' : '+nfmt(v)+' kcal</title></rect></g>';});
-  for(let w=0;w<6;w++)lab+='<text x="'+(w*7*sw+2).toFixed(1)+'" y="123" font-size="10" font-weight="700" fill="#6B65A0">S'+(w+1)+'</text>';
-  const ya=(104-avg/top*H).toFixed(1);
-  h+='<div class="card"><div class="schips cst"><span><b>'+(a7!=null?nfmt(a7):'–')+'</b>moy. 7 jours</span><span><b>'+nfmt(avg)+'</b>moy. totale</span><span><b>'+idx.length+'</b>jours notés</span></div><svg class="chart" viewBox="0 0 336 128" role="img" aria-label="Calories par jour"><line x1="0" y1="104.5" x2="336" y2="104.5" stroke="#E1E3FA" stroke-width="1"/><line x1="0" y1="'+ya+'" x2="336" y2="'+ya+'" stroke="#8E92F0" stroke-width="1.5"/>'+bars+lab+'</svg><p class="ckey"><i></i>Moyenne : '+nfmt(avg)+' kcal par jour · touche une barre pour modifier le jour</p></div></section>';
-  return h;
+  return h+'<div class="card"><div class="schips cst"><span><b>'+(a7!=null?nfmt(a7):'–')+'</b>moy. 7 jours</span><span><b>'+nfmt(avg)+'</b>moy. totale</span><span><b>'+idx.length+'</b>jours notés</span></div>'+lineChart({vals:S.cal,label:'Calories par jour',unit:' kcal',minPad:100,ref:Math.round(avg),refLab:'Moyenne '+nfmt(avg)})+'<p class="ckey">Touche un point pour modifier le jour.</p></div></section>';
 }
 function balSection(){
-  if(!range(N).some(i=>S.dep[i]!=null))return '';
-  const di=range(N).filter(i=>S.dep[i]!=null),ad=di.reduce((x,i)=>x+S.dep[i],0)/di.length;
-  const bi=range(N).filter(i=>balAt(i)),tot=bi.reduce((x,i)=>x+balAt(i).def,0),ab=bi.length?tot/bi.length:null;
+  const bi=range(N).filter(i=>balAt(i));
+  let h='<section class="block"><div class="sec-title"><h3>Mon <span class="k">déficit</span></h3></div>';
+  if(!bi.length)return h+'<div class="card empty-ch"><span class="gico">'+ic('flame',24)+'</span><p>Note tes calories et ta dépense dans « Aujourd’hui » : ta courbe de déficit apparaît ici.</p></div></section>';
+  const goal=GOAL(),vals={};bi.forEach(i=>vals[i]=balAt(i).def);
+  const tot=bi.reduce((x,i)=>x+vals[i],0),ab=tot/bi.length,hit=bi.filter(i=>vals[i]>=goal).length,kg=Math.abs(tot)/7700;
   const steps=range(N).filter(i=>S.act[i]&&S.act[i].p),as=steps.length?steps.reduce((x,i)=>x+S.act[i].p,0)/steps.length:null;
-  const kg=Math.abs(tot)/7700;
-  return '<section class="block"><div class="sec-title"><h3>Mon <span class="k">déficit</span></h3></div><div class="card"><div class="schips cst"><span><b>'+(ab!=null?nfmt(ab):'–')+'</b>déficit moy./jour</span><span><b>'+nfmt(ad)+'</b>dépense active moy.</span><span><b>'+(as!=null?nfmt(as):'–')+'</b>pas moy.</span></div>'+(bi.length?'<p class="ckey"><i></i>'+(tot>=0?'Déficit cumulé : ':'Surplus cumulé : ')+nfmt(Math.abs(tot))+' kcal sur '+bi.length+' jours, soit environ '+fkg(kg)+' kg de graisse (estimation à 7 700 kcal par kg).</p>':'<p class="ckey"><i></i>Renseigne ta taille dans le bilan du soir pour voir ton déficit.</p>')+'</div></section>';
+  return h+'<div class="card"><div class="sumtop"><div class="sbig"><b>'+hit+' / '+bi.length+'</b><span>jours à l’objectif</span></div><div class="schips"><span><b>'+(ab>=0?'':'−')+nfmt(Math.abs(ab))+'</b>déficit moy.</span>'+(as!=null?'<span><b>'+nfmt(as)+'</b>pas moy.</span>':'')+'</div></div>'+lineChart({vals:vals,label:'Déficit calorique par jour',unit:' kcal',zero:true,ref:goal,refLab:'Objectif '+nfmt(goal),hit:v=>v>=goal,minPad:100})+'<p class="ckey">'+(tot>=0?'Déficit cumulé : ':'Surplus cumulé : ')+nfmt(Math.abs(tot))+' kcal, soit environ '+fkg(kg)+' kg de graisse (estimation à 7 700 kcal par kg).</p><div class="goalrow"><span>Objectif de déficit par jour</span><div class="stp"><button data-act="goal" data-d="-50" aria-label="Moins">−</button><b>'+nfmt(goal)+'</b><button data-act="goal" data-d="50" aria-label="Plus">+</button></div></div></div></section>';
 }
 function wtSection(){
   const idx=range(N).filter(i=>S.wt[i]!=null);
@@ -1442,7 +1496,7 @@ function wtSection(){
   let dots='',tl='';
   idx.forEach((i,n)=>{const v=S.wt[i],isEnd=(n===0||n===idx.length-1);dots+='<circle cx="'+X(i).toFixed(1)+'" cy="'+Y(v).toFixed(1)+'" r="4.5" fill="#5558BD" stroke="#fff" stroke-width="2"><title>'+esc(dshort(i))+' : '+wkg(v)+' kg</title></circle>';
     if(isEnd&&(idx.length>1||true))dots+='<text x="'+X(i).toFixed(1)+'" y="'+(Y(v)-10).toFixed(1)+'" text-anchor="'+(n===0&&idx.length>1?'start':(idx.length>1?'end':'middle'))+'" font-size="11" font-weight="700" fill="#2D2756">'+wkg(v)+'</text>';});
-  [[0,'Départ']].concat(range(6).map(w=>[w*7+6,'S'+(w+1)])).forEach(a=>{tl+='<text x="'+X(a[0]).toFixed(1)+'" y="118" text-anchor="'+(a[0]===0?'start':'middle')+'" font-size="10" font-weight="700" fill="#6B65A0">'+a[1]+'</text>';});
+  [].concat(range(6).map(w=>[w*7+6,'S'+(w+1)])).forEach(a=>{tl+='<text x="'+X(a[0]).toFixed(1)+'" y="118" text-anchor="'+(a[0]===0?'start':'middle')+'" font-size="10" font-weight="700" fill="#6B65A0">'+a[1]+'</text>';});
   h+='<div class="card"><div class="sumtop"><div class="sbig"><b>'+wkg(last)+'</b><span>kg</span></div>'+(idx.length>1?'<div class="schips"><span><b>'+(df>0?'+':(df<0?'−':''))+wkg(Math.abs(df))+'</b>depuis le début</span></div>':'')+'</div><svg class="chart" viewBox="0 0 336 124" role="img" aria-label="Poids semaine après semaine"><line x1="0" y1="102.5" x2="336" y2="102.5" stroke="#E1E3FA" stroke-width="1"/>'+(idx.length>1?'<polyline points="'+pts+'" fill="none" stroke="#8E92F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>':'')+dots+tl+'</svg></div></section>';
   return h;
 }
@@ -1515,9 +1569,8 @@ function viewProg(){
     const k='s'+progS+'w'+progW+e[0],v=S.ex[k]||{},pk=progW>0?(S.ex['s'+progS+'w'+(progW-1)+e[0]]||{}).v:'';
     const ld=isLoaded(e),op=ld&&!!LOGOPEN[k],sg=ld?sugg(progS,progW,e):null,hasd=v.kg!=null;
     let adv=null;if(ld&&hasd)adv=advice(e,v.kg,v.rp,v.eff);
-    h+='<div class="ex'+(v.ok?' done':'')+'"><div class="exv"><span class="exn">'+e[0]+'</span>'+figHTML(e[1])+'</div><h4>'+esc(e[1])+'</h4><button class="ok'+(v.ok?' on':'')+'" data-act="exok" data-k="'+k+'" aria-label="Exercice fait" aria-pressed="'+(!!v.ok)+'">'+ic('check',22)+'</button><div class="meta"><span class="mchip">'+ic('repeat',16)+e[2]+'</span>'+(e[3]?'<button class="mchip rest" data-act="rest" data-s="'+restSec(e[3])+'" aria-label="Lancer le chrono de récupération, '+restLbl(e[3])+'">'+ic('stopwatch',16)+'récup '+restLbl(e[3])+'</button>':'')+'</div><div class="acts"><a href="https://www.tiktok.com/search?q='+encodeURIComponent(ttq(e[1]))+'" data-act="tiktok" data-q="'+esc(ttq(e[1]))+'" target="_blank" rel="noopener">'+ic('play',18)+'Tuto</a>'+(ld&&!op?'<button class="ldchip'+(hasd?' set':'')+'" data-act="note" data-k="'+k+'">'+ic(hasd?'dumbbell':(sg?'target':'pen'),18)+(hasd?fkg(v.kg)+' kg'+(v.rp!=null?' × '+v.rp:''):(sg?'Objectif '+fkg(sg.kg)+' kg':'Charge'))+'</button>':'')+'</div>'+(e[1]==='Circuit gainage'?plBox(k,progS,progW):'')+(op?(()=>{const bk=hasd?v.kg:(sg?sg.kg:0),br=v.rp!=null?v.rp:(sg?sg.lo:repRange(e).lo),R=repRange(e),lg=lastLog(progS,progW,e[0]),a2=advice(e,hasd?v.kg:null,hasd?v.rp:null);
+    h+='<div class="ex'+(v.ok?' done':'')+'"><div class="exv"><span class="exn">'+e[0]+'</span>'+figHTML(e[1])+'</div><h4>'+esc(e[1])+'</h4><button class="ok'+(v.ok?' on':'')+'" data-act="exok" data-k="'+k+'" aria-label="Exercice fait" aria-pressed="'+(!!v.ok)+'">'+ic('check',22)+'</button><div class="meta"><span class="mchip">'+ic('repeat',16)+e[2]+'</span>'+(e[3]?'<button class="mchip rest" data-act="rest" data-s="'+restSec(e[3])+'" aria-label="Lancer le chrono de récupération, '+restLbl(e[3])+'">'+ic('stopwatch',16)+'récup '+restLbl(e[3])+'</button>':'')+'</div><div class="acts"><a href="https://www.tiktok.com/search?q='+encodeURIComponent(ttq(e[1]))+'" data-act="tiktok" data-q="'+esc(ttq(e[1]))+'" target="_blank" rel="noopener">'+ic('play',18)+'Tutoriel</a>'+(ld&&!op?'<button class="ldchip'+(hasd?' set':'')+'" data-act="note" data-k="'+k+'">'+ic(hasd?'dumbbell':(sg?'target':'pen'),18)+(hasd?fkg(v.kg)+' kg'+(v.rp!=null?' × '+v.rp:''):(sg?'Objectif '+fkg(sg.kg)+' kg':'Charge'))+'</button>':'')+'</div>'+(e[1]==='Circuit gainage'?plBox(k,progS,progW):'')+(op?(()=>{const bk=hasd?v.kg:(sg?sg.kg:0),br=v.rp!=null?v.rp:(sg?sg.lo:repRange(e).lo),R=repRange(e),lg=lastLog(progS,progW,e[0]),a2=advice(e,hasd?v.kg:null,hasd?v.rp:null);
       return '<div class="loadbox"><div class="lrow"><span class="lab">'+(isAssist(e)?'Assistance':'Charge')+'</span><div class="stp"><button data-act="kg" data-k="'+k+'" data-b="'+bk+'" data-d="-'+kgStep(bk)+'" aria-label="Moins">−</button><label><input class="kgin" type="number" inputmode="decimal" step="0.5" min="0" data-k="'+k+'" data-f="kg" value="'+(hasd?v.kg:'')+'" placeholder="'+fkg(bk)+'"><small>kg</small></label><button data-act="kg" data-k="'+k+'" data-b="'+bk+'" data-d="'+kgStep(bk)+'" aria-label="Plus">+</button></div></div><div class="lrow"><span class="lab">Reps tenues<small>sur ta série la plus basse</small></span><div class="stp"><button data-act="rp" data-k="'+k+'" data-b="'+br+'" data-d="-1" aria-label="Moins">−</button><label><input class="kgin" type="number" inputmode="numeric" min="0" data-k="'+k+'" data-f="rp" value="'+(v.rp!=null?v.rp:'')+'" placeholder="'+br+'"><small>reps</small></label><button data-act="rp" data-k="'+k+'" data-b="'+br+'" data-d="1" aria-label="Plus">+</button></div></div>'
-      +'<div class="lrow eff"><span class="lab">Ressenti<small>à la fin de ta dernière série</small></span><div class="effc">'+[['facile','Facile'],['juste','Juste'],['fond','À fond']].map(x=>'<button class="chip'+(v.eff===x[0]?' on':'')+'" data-act="eff" data-k="'+k+'" data-v="'+x[0]+'">'+x[1]+'</button>').join('')+'</div></div>'
       +(lg?'<p class="lhist">Dernière fois (S'+(lg.w+1)+') : '+fkg(lg.kg)+' kg'+(lg.rp!=null?' × '+lg.rp:'')+'</p>':'')
       +(a2&&a2.why?'<div class="ladv'+(a2.up?' up':'')+'">'+ic(a2.up?'medal':'target',22)+'<div><b>Prochaine séance : '+fAdv(a2)+'</b><span>'+a2.why+'</span></div></div>':'<div class="ladv">'+ic('target',22)+'<div><b>Objectif : '+R.sets+' séries de '+(R.lo===R.hi?R.lo:R.lo+'-'+R.hi)+' reps</b><span>Quand tu tiens '+R.hi+' reps partout, on ajoute de la charge.</span></div></div>')+'</div>';})():'')+'</div>';
   });
@@ -1568,6 +1621,10 @@ document.addEventListener('click',function(e){
   if(a==='tab'){go(el.dataset.v);return;}
   if(a==='tiktok'){e.preventDefault();toast('Recherche copiée : colle-la dans TikTok si besoin');openTikTok(el.dataset.q,el.href);return;}
   if(a==='pl'){const k=el.dataset.k;S.ex[k]=S.ex[k]||{};const pp=S.ex[k].pl=S.ex[k].pl||{},f=el.dataset.f,cur=pp[f]!=null?pp[f]:Number(el.dataset.b);pp[f]=Math.max(0,cur+Number(el.dataset.d));save();render();return;}
+  if(a==='goal'){S.prof.goal=Math.max(0,GOAL()+Number(el.dataset.d));save();render();return;}
+  if(a==='gain'){gainOpen();return;}
+  if(a==='gnext'){gainNext();return;}
+  if(a==='gstop'){gainClose();return;}
   if(a==='hold'){restStart(Number(el.dataset.s),'Tiens la position');return;}
   if(a==='day'){sel=Math.max(0,Math.min(N-1,sel+Number(el.dataset.d)));animMode='soft';render();return;}
   if(a==='seld'){sel=Number(el.dataset.i);animMode='soft';render();return;}
@@ -1652,7 +1709,7 @@ function importHealth(){
   }catch(e){}
 }
 /* ---------- mise à jour automatique : recharge si une version plus récente est en ligne ---------- */
-var APPVER='17 nov. 02h10';
+var APPVER='17 nov. 03h10';
 function checkUpdate(){
   try{
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{
