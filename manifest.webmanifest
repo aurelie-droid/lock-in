@@ -1,0 +1,24 @@
+{
+ "name": "Op\u00e9ration Lock-in",
+ "short_name": "Lock-in",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait",
+ "background_color": "#FBFAFF",
+ "theme_color": "#3A3156",
+ "lang": "fr",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  }
+ ]
+}
