@@ -734,9 +734,10 @@ nav.tabs button.bn .i{animation:tabhop .7s var(--ease)}
 .kgin:focus{outline:none}
 .stp label small{font-size:12px;color:#6B65A0;font-weight:600}
 .effc{display:flex;gap:6px}.effc .chip{padding:8px 12px;font-size:13px}.lrow.eff{align-items:center}
-.tips,.rule{grid-column:1/-1;margin-top:8px;background:#F6F7FE;border-radius:14px;padding:10px 12px;font-size:13px;color:#2D2756}
-.tips summary,.rule summary{cursor:pointer;font-weight:700;color:#4B44A8;display:flex;gap:8px;align-items:center}
-.tips ul,.rule ul{margin:8px 0 0;padding-left:18px;line-height:1.4}.tips li,.rule li{margin:3px 0}
+.rules{display:flex;flex-direction:column;gap:10px}.rl{display:flex;gap:12px;align-items:flex-start;background:#F2F3FD;border-radius:18px;padding:14px;color:#2D2756}.rl .rn{flex:none;width:34px;height:34px;border-radius:50%;background:#5558BD;color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px}.rl h4{margin:0 0 3px;font-size:15px}.rl p{margin:0 0 8px;font-size:13px;line-height:1.4}.dots{display:flex;gap:4px;align-items:center;flex-wrap:wrap}.dots i{width:14px;height:14px;border-radius:5px;background:#8E92F0}.dots i.res{background:#E7A06F}.dots span{font-size:12px;font-weight:700;margin-left:6px;color:#6B65A0}.vs{display:flex;gap:8px;align-items:center}.vs em{font-style:normal;font-weight:800;color:#6B65A0}
+.tips{grid-column:1/-1;margin-top:8px;background:#F6F7FE;border-radius:14px;padding:10px 12px;font-size:13px;color:#2D2756}
+.tips summary{cursor:pointer;font-weight:700;color:#4B44A8;display:flex;gap:8px;align-items:center}
+.tips ul{margin:8px 0 0;padding-left:18px;line-height:1.4}.tips li{margin:3px 0}
 .ex .exv{width:104px!important;height:104px!important}
 .lhist{margin:0;font-size:12.5px;color:#6B65A0}
 .ladv{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:14px;background:#ECEDFB;color:#2D2756}
@@ -1492,7 +1493,11 @@ function viewProg(){
   const exd=(si,w)=>SESS[si].filter(e=>(S.ex['s'+si+'w'+w+e[0]]||{}).ok).length,st=(n,tot)=>n>=tot?' full':(n>0?' part':'');
   h+='<section class="block stick"><div class="picker"><div class="seg3" role="group" aria-label="Séance">'+range(3).map(k=>{const n=exd(k,progW);return '<button class="chip'+(k===progS?' on':'')+st(n,SESS[k].length)+'" data-act="ps" data-v="'+k+'">'+SNAMES[k]+'</button>';}).join('')+'</div><div class="seg6" role="group" aria-label="Semaine">'+range(6).map(k=>{const n=exd(progS,k);return '<button class="chip'+(k===progW?' on':'')+(k===cur&&t>=0?' now':'')+st(n,ses.length)+'" data-act="pw" data-v="'+k+'" aria-label="Semaine '+(k+1)+'">S'+(k+1)+'</button>';}).join('')+'</div></div></section>';
   h+='<section class="block progress"><div class="ptop"><h3>'+SNAMES[progS]+' <span class="k">semaine '+(progW+1)+'</span></h3><span class="pcount">'+done+' / '+ses.length+'</span></div><div class="bar"><i style="width:'+Math.round(done/ses.length*100)+'%"></i></div></section>';
-  h+='<section class="block"><details class="rule"><summary>'+ic('target',20)+'Règle d’or pour progresser</summary><ul><li>Chaque série finit avec 1 à 2 répétitions en réserve : tu pourrais en faire encore 1 ou 2, pas plus.</li><li>Si à la fin tu n’es pas à fond ou que tu as encore de la marge, ce n’est pas assez lourd : augmente.</li><li>Tu tiens le haut de la fourchette de reps sur toutes les séries : monte la charge de 1 à 2,5 kg.</li><li>Technique d’abord, puis répétitions, puis charge. Descente lente (2-3 s).</li><li>Mange assez de protéines et dors : c’est là que le corps change.</li></ul></details></section>';
+  h+='<section class="block"><div class="sec-title"><h3>Règle <span class="k">d’or</span></h3></div><div class="rules">'
+  +'<div class="rl"><b class="rn">1</b><div><h4>Garde 1 à 2 reps en réserve</h4><p>À la fin de chaque série, tu pourrais en faire encore 1 ou 2, pas plus.</p><div class="dots" aria-hidden="true">'+'<i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="res"></i><i class="res"></i>'+'<span>10 faites + 2 en réserve</span></div></div></div>'
+  +'<div class="rl"><b class="rn">2</b><div><h4>Pas à fond ? C’est trop léger</h4><p>Si tu finis la série facilement, augmente la charge à la prochaine série ou séance.</p><div class="vs"><span class="chip">Facile</span><em>→</em><span class="chip on">Plus lourd</span></div></div></div>'
+  +'<div class="rl"><b class="rn">3</b><div><h4>Haut de la fourchette = on monte</h4><p>Quand tu atteins le maximum de reps sur toutes les séries, ajoute 1 à 2,5 kg.</p><div class="vs"><span class="chip">12 · 12 · 12 reps</span><em>→</em><span class="chip on">+ 2,5 kg</span></div></div></div>'
+  +'</div></section>';
   let last='';
   ses.forEach(e=>{
     const b=e[0][0];
