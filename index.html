@@ -1213,7 +1213,7 @@ function viewProg(){
   h+='</div>';
   const wk=progW,canTick=(wk*7)<=t;
   const full=done===ses.length,tdy=Math.min(Math.max(t,0),N-1),ticked=t>=0&&has(tdy,'renfo');
-  h+='<div class="finish"><button class="fbtn'+(ticked?' ok2':'')+(full&&!ticked?' go':'')+'" data-act="sessdone"'+(t<0?' disabled':'')+'><span class="fic">'+ic(ticked?'check':(full?'medal':'dumbbell'),24)+'</span><span class="ftx"><b>'+(ticked?'Renfo du jour validé':(full?'Séance complète, bravo':'J’ai terminé ma séance'))+'</b><small>'+(ticked?'Il est coché sur ton accueil':(done+' / '+ses.length+' exercices cochés · valider le renfo du jour'))+'</small></span></button></div>';
+  h+='<div class="finish"><button class="fbtn'+(ticked?' ok2':'')+(full&&!ticked?' go':'')+'" data-act="sessdone"'+(t<0?' disabled':'')+'><span class="fic">'+ic(ticked?'check':(full?'medal':'dumbbell'),24)+'</span><span class="ftx"><b>'+(ticked?'Renfo du jour validé':(full?'Séance complète, bravo':'J’ai terminé ma séance'))+'</b><small>'+(ticked?'Touche pour le décocher':(done+' / '+ses.length+' exercices cochés · valider le renfo du jour'))+'</small></span></button></div>';
   return h;
 }
 
@@ -1276,7 +1276,7 @@ document.addEventListener('click',function(e){
   if(a==='sessdone'){
     const t=todayIdx();if(t<0||t>=N+1){toast('Le challenge n’a pas commencé');return;}
     const day=Math.min(t,N-1),p=snap();const arr=S.d[day]?S.d[day].slice():[];
-    if(arr.indexOf('renfo')<0){arr.push('renfo');S.d[day]=arr;save();render();after(p,false);toast('Renfo coché pour aujourd’hui');}else toast('Le renfo est déjà coché aujourd’hui');
+    if(arr.indexOf('renfo')<0){arr.push('renfo');S.d[day]=arr;save();render();after(p,false);toast('Renfo coché pour aujourd’hui');}else{arr.splice(arr.indexOf('renfo'),1);S.d[day]=arr;save();render();toast('Renfo décoché pour aujourd’hui');}
     return;
   }
   if(a==='todo'){const p=snap();S.todo[el.dataset.t]=S.todo[el.dataset.t]?0:1;save();render();const b=document.querySelector('[data-t="'+el.dataset.t+'"]');if(b&&S.todo[el.dataset.t])b.classList.add('pop');after(p,false);return;}
