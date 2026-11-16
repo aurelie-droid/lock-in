@@ -1537,7 +1537,7 @@ function viewTodo(){
 function render(){
   const y=window.scrollY;
   const v={aujourdhui:viewToday,suivi:viewSuivi,programme:viewProg,regles:viewRegles,todo:viewTodo}[tab]();
-  document.getElementById('view').innerHTML=v+'<p class="foot">D’après l’Opération Lock-in de zoeamalys · <a href="'+NOTION_URL+'">page d’origine</a></p>';
+  document.getElementById('view').innerHTML=v+'<p class="foot">D’après l’Opération Lock-in de zoeamalys · <a href="'+NOTION_URL+'">page d’origine</a><br>Version 17 nov. 00h30</p>';
   document.getElementById('tabs').innerHTML='<span class="tabpill"></span>'+TABS.map(t=>'<button class="'+(t[0]===tab?'on':'')+'" data-act="tab" data-v="'+t[0]+'" aria-current="'+(t[0]===tab)+'">'+ic(t[2],26)+t[1]+'</button>').join('');
   document.title='Lock-in pastel';
   window.scrollTo(0,y);
