@@ -767,6 +767,34 @@ nav.tabs button.bn .i{animation:tabhop .7s var(--ease)}
 .closing.goal p{position:relative;color:#D2D4F6;max-width:34ch}
 .ex .exv .eq{position:absolute;left:0;right:0;bottom:3px;text-align:center;font-size:9.5px;font-weight:700;color:#6B65A0;letter-spacing:.01em;pointer-events:none}
 .ex .exv .fig,.ex .exv svg{height:calc(100% - 4px)}
+
+/* ===== bilan du soir, graphiques, circuit de gainage ===== */
+.bilan{padding:6px 14px}
+.brow{display:flex;align-items:center;gap:12px;padding:12px 0}
+.brow+.brow{border-top:1px solid #ECEDFB}
+.bico{flex:none;width:48px;height:48px;border-radius:16px;background:#D2D4F6;color:#6568CF;display:grid;place-items:center}
+.blab{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.2}
+.blab b{font-size:16px;color:#2D2756}
+.blab small{font-size:12.5px;color:#6B65A0;margin-top:2px}
+.bin{display:flex;align-items:baseline;gap:4px;background:#F2F3FD;border-radius:16px;padding:8px 12px;transition:background-color .3s}
+.bin:focus-within{background:#E1E3FA}
+.bnum{width:76px;border:0;background:transparent;text-align:right;font-family:var(--serif);font-weight:600;font-size:24px;color:#2D2756;padding:0;-moz-appearance:textfield;font-variation-settings:'SOFT' 100,'WONK' 1,'opsz' 72}
+.bnum::placeholder{color:#B0ABD4}
+.bnum:focus{outline:none}
+.bnum::-webkit-outer-spin-button,.bnum::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.bin small{font-size:12px;color:#6B65A0;font-weight:600}
+.bnote{display:flex;align-items:center;gap:8px;margin:0;padding:12px 0 8px;font-size:13px;color:#6B65A0;border-top:1px solid #ECEDFB}
+.bnote .i{color:#6568CF}
+.chart{display:block;width:100%;height:auto;margin-top:12px}
+.cst{margin-top:0}
+.cst span{flex:1}
+.ckey{display:flex;align-items:center;gap:8px;margin:6px 0 0;font-size:12.5px;color:#6B65A0}
+.ckey i{display:block;width:18px;height:2px;border-radius:2px;background:#8E92F0}
+.plin{width:46px;border:0;background:transparent;text-align:right;font-family:var(--serif);font-weight:600;font-size:22px;color:#2D2756;padding:0;-moz-appearance:textfield}
+.plin::placeholder{color:#B0ABD4}
+.plin:focus{outline:none}
+.plin::-webkit-outer-spin-button,.plin::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.holdb{margin-top:2px;padding:12px 16px;font-size:15px}
 </style>
 </head>
 <body>
@@ -1017,7 +1045,7 @@ G.FMAP={
 'Relevé de bassin (barre)':'thrust','Squat (machine Smith)':'smith','Presse à cuisses':'lpress','Soulevé de terre jambes tendues':'rdlb','Leg curl assis (machine)':'legcurl',
 'Rameur':'rower','Traction assistée':'pull','Tirage poitrine (poulie)':'pull','Rowing poulie assis, prise en V':'crow','Développé couché (haltères)':'bench','Tirage vers le visage':'face','Élévation latérale (haltères)':'lat','Curl biceps (haltères)':'curl',
 'Développé militaire (haltères)':'press','Extension triceps (haltère)':'skull','Curl biceps (barre EZ)':'curlez','Extension triceps à la corde':'pushdown','Dips triceps (assistés)':'dips',
-'Planche':'plank','Relevé de jambes allongé':'legraise','Crunch vélo':'bike','Touchers de talons':'heel','Crunch inversé':'rcrunch'
+'Circuit gainage':'plank','Relevé de jambes allongé':'legraise','Crunch vélo':'bike','Touchers de talons':'heel','Crunch inversé':'rcrunch'
 };
 })(typeof module!=='undefined'?module.exports:window);
 
@@ -1109,7 +1137,7 @@ const RULES=[
 ];
 
 /* routines Hevy : Legs, Back, Arms (+ finisher abdos à la fin de chaque séance) */
-const FIN=[['F1','Planche','1 série','1 min'],['F2','Relevé de jambes allongé','1 × 20 reps','1 min'],['F3','Crunch vélo','1 × 20 reps','1 min'],['F4','Touchers de talons','1 × 20 reps','1 min'],['F5','Crunch inversé','1 × 20 reps','1 min']];
+const FIN=[['F1','Circuit gainage','3 tours min',''],['F2','Relevé de jambes allongé','1 × 20 reps','1 min'],['F3','Crunch vélo','1 × 20 reps','1 min'],['F4','Touchers de talons','1 × 20 reps','1 min'],['F5','Crunch inversé','1 × 20 reps','1 min']];
 const SESS=[
  [['S1','Relevé de bassin (barre)','3 × 12 reps','1 min 30'],['S2','Squat (machine Smith)','3 × 8-12 reps','2 min'],['S3','Presse à cuisses','3 × 8-12 reps','1 min 30'],['S4','Soulevé de terre jambes tendues','3 × 12 reps','1 min 30'],['S5','Leg curl assis (machine)','3 × 12 reps','1 min']].concat(FIN),
  [['S1','Rameur','1 série',''],['S2','Traction assistée','3 × 10 reps','1 min 30'],['S3','Tirage poitrine (poulie)','3 × 12 reps','1 min 30'],['S4','Rowing poulie assis, prise en V','3 × 12 reps','1 min'],['S5','Développé couché (haltères)','3 × 10-12 reps','1 min 15'],['S6','Tirage vers le visage','2 × 10 reps','45 s'],['S7','Élévation latérale (haltères)','3 × 12 reps','1 min'],['S8','Curl biceps (haltères)','3 × 10-12 reps','45 s']].concat(FIN),
@@ -1151,7 +1179,7 @@ const fAdv=a=>fkg(a.kg)+' kg · '+(a.lo===a.hi?a.lo:a.lo+'-'+a.hi)+' reps';
 
 /* ---------- état ---------- */
 const KEY='lockin-pastel-v1';
-const blank=()=>({d:{},ex:{},todo:{},custom:[],ts:0});
+const blank=()=>({d:{},ex:{},todo:{},custom:[],ts:0,cal:{},wt:{}});
 let S=blank();
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(blank(),JSON.parse(r));}catch(e){}
 const LOGOPEN={};
@@ -1268,18 +1296,18 @@ function animateProgress(){
   });
 }
 let restEnd=0,restTot=0,restI=null;
-function restStart(sec){
+function restStart(sec,lab){
   let b=document.getElementById('rest');
   if(!b){b=document.createElement('div');b.id='rest';b.setAttribute('role','timer');document.body.appendChild(b);b.addEventListener('click',()=>restStop());}
   clearInterval(restI);restTot=sec;restEnd=Date.now()+sec*1000;
   const C=2*Math.PI*17;
-  b.innerHTML='<svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="20" r="17" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="4"/><circle id="rrg" cx="20" cy="20" r="17" fill="none" stroke="#FBE6D6" stroke-width="4" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+' '+C.toFixed(1)+'" transform="rotate(-90 20 20)"/></svg><span><small>Récupération</small><b id="rtx"></b></span><i>Arrêter</i>';
+  b.innerHTML='<svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="20" r="17" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="4"/><circle id="rrg" cx="20" cy="20" r="17" fill="none" stroke="#FBE6D6" stroke-width="4" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+' '+C.toFixed(1)+'" transform="rotate(-90 20 20)"/></svg><span><small>'+(lab||'Récupération')+'</small><b id="rtx"></b></span><i>Arrêter</i>';
   b.className='show';
   const tick=()=>{
     const left=Math.max(0,restEnd-Date.now()),r=document.getElementById('rrg'),tx=document.getElementById('rtx');if(!r||!tx)return;
     r.setAttribute('stroke-dashoffset',(C*(1-left/(restTot*1000))).toFixed(1));
     const q=Math.ceil(left/1000);tx.textContent=Math.floor(q/60)+':'+String(q%60).padStart(2,'0');
-    if(left<=0){clearInterval(restI);b.className='show end';tx.textContent='C’est reparti';try{navigator.vibrate&&navigator.vibrate([180,90,180]);}catch(e){}setTimeout(restStop,2600);}
+    if(left<=0){clearInterval(restI);b.className='show end';tx.textContent=lab?'Terminé':'C’est reparti';try{navigator.vibrate&&navigator.vibrate([180,90,180]);}catch(e){}setTimeout(restStop,2600);}
   };
   tick();restI=setInterval(tick,200);
 }
@@ -1312,6 +1340,75 @@ function tabPill(){
   lastTabX=x;
 }
 const streakDays=()=>{let t=todayIdx();if(t<0)return 0;let i=Math.min(t,N-1),c=0;if(score(i)<3)i--;for(;i>=0&&score(i)>=3;i--)c++;return c;};
+
+/* ---------- TikTok : ouvre l'app avec la recherche du mouvement ---------- */
+const ttq=n=>n.replace(/[()]/g,'').replace(/\s+/g,' ').trim()+' comment bien faire';
+function openTikTok(q,href){
+  const enc=encodeURIComponent(q),ua=navigator.userAgent||'';
+  try{if(navigator.clipboard)navigator.clipboard.writeText(q);}catch(e){}
+  const android=/Android/i.test(ua),ios=/iPhone|iPad|iPod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  if(android){location.href='intent://search?keyword='+enc+'#Intent;scheme=snssdk1233;package=com.zhiliaoapp.musically;S.browser_fallback_url='+encodeURIComponent(href)+';end';return;}
+  if(ios){
+    let left=false;const onv=()=>{if(document.visibilityState==='hidden')left=true;};
+    document.addEventListener('visibilitychange',onv);
+    location.href='snssdk1233://search?keyword='+enc;
+    setTimeout(()=>{document.removeEventListener('visibilitychange',onv);if(!left)window.open(href,'_blank');},1700);
+    return;
+  }
+  window.open(href,'_blank');
+}
+/* ---------- bilan du soir : calories, poids, circuit de gainage ---------- */
+const wkg=n=>(Math.round(n*10)/10).toFixed(1).replace('.',',');
+const nfmt=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+const dshort=i=>{const d=dateOf(i);return DOW[d.getUTCDay()]+' '+d.getUTCDate()+' '+MONTHS[d.getUTCMonth()];};
+function nextWeigh(i){for(let j=Math.max(0,i);j<N;j++)if(j===0||dateOf(j).getUTCDay()===0)return j;return -1;}
+function bilanCard(i,ok){
+  const kc=S.cal[i],wv=S.wt[i],weigh=(i===0||dateOf(i).getUTCDay()===0),dis=ok?'':' disabled';
+  let h='<section class="block"><div class="sec-title"><h3>Bilan <span class="k">du soir</span></h3></div><div class="card bilan">';
+  h+='<label class="brow"><span class="bico">'+ic('apple',26)+'</span><span class="blab"><b>Calories du jour</b><small>Le total de ce que tu as mangé</small></span><span class="bin"><input class="bnum" type="number" inputmode="numeric" min="0" step="10" data-bk="cal" data-i="'+i+'" value="'+(kc!=null?kc:'')+'" placeholder="0" aria-label="Calories du jour"'+dis+'><small>kcal</small></span></label>';
+  if(weigh)h+='<label class="brow"><span class="bico">'+ic('graph',26)+'</span><span class="blab"><b>'+(i===0?'Poids de départ':'Poids de la semaine')+'</b><small>'+(i===0?'Pour mesurer ton évolution':'Pesée du dimanche, à jeun si possible')+'</small></span><span class="bin"><input class="bnum" type="number" inputmode="decimal" min="0" step="0.1" data-bk="wt" data-i="'+i+'" value="'+(wv!=null?wv:'')+'" placeholder="0,0" aria-label="Poids en kilos"'+dis+'><small>kg</small></span></label>';
+  else{const nx=nextWeigh(i);if(nx>=0)h+='<p class="bnote">'+ic('clock',18)+'<span>Prochaine pesée : '+dshort(nx)+'</span></p>';}
+  return h+'</div></section>';
+}
+function plBox(k,si,w){
+  const v=(S.ex[k]||{}).pl||{},g=(f,d)=>v[f]!=null?v[f]:d;
+  const row=(f,lab,d,st,u)=>'<div class="lrow"><span class="lab">'+lab+'</span><div class="stp"><button data-act="pl" data-k="'+k+'" data-f="'+f+'" data-b="'+g(f,d)+'" data-d="-'+st+'" aria-label="Moins">−</button><label><input class="plin" type="number" inputmode="numeric" min="0" data-pk="'+k+'" data-f="'+f+'" value="'+(v[f]!=null?v[f]:'')+'" placeholder="'+d+'"><small>'+u+'</small></label><button data-act="pl" data-k="'+k+'" data-f="'+f+'" data-b="'+g(f,d)+'" data-d="'+st+'" aria-label="Plus">+</button></div></div>';
+  let last=null;for(let x=w-1;x>=0&&!last;x--){const d=(S.ex['s'+si+'w'+x+'F1']||{}).pl;if(d&&(d.f!=null||d.g!=null||d.d!=null))last={w:x,d};}
+  const L=last&&last.d;
+  return '<div class="loadbox">'+row('f','Face',30,5,'s')+row('g','Côté gauche',30,5,'s')+row('d','Côté droit',30,5,'s')+row('r','Tours',3,1,'tours')
+   +'<button class="btn soft holdb" data-act="hold" data-s="30">'+ic('stopwatch',20)+'Lancer un chrono de 30 s</button>'
+   +(L?'<p class="lhist">Dernière fois (S'+(last.w+1)+') : face '+(L.f!=null?L.f:'–')+' s · gauche '+(L.g!=null?L.g:'–')+' s · droite '+(L.d!=null?L.d:'–')+' s'+(L.r!=null?' · '+L.r+' tours':'')+'</p>':'')
+   +'<div class="ladv">'+ic('target',22)+'<div><b>Objectif : 30 s minimum par position, 3 tours</b><span>Enchaîne face, côté gauche, côté droit sans pause. Note ta position la plus courte du dernier tour, puis vise 5 s de plus à la prochaine séance.</span></div></div></div>';
+}
+function calSection(){
+  const t=todayIdx(),idx=range(N).filter(i=>S.cal[i]!=null);
+  let h='<section class="block"><div class="sec-title"><h3>Mes <span class="k">calories</span></h3></div>';
+  if(!idx.length)return h+'<div class="card empty-ch"><span class="gico">'+ic('apple',24)+'</span><p>Note tes calories chaque soir dans « Aujourd’hui » : ta moyenne et ton évolution apparaissent ici.</p></div></section>';
+  const vals=idx.map(i=>S.cal[i]),avg=vals.reduce((a,b)=>a+b,0)/vals.length;
+  const l7=idx.filter(i=>i<=t&&i>t-7).map(i=>S.cal[i]),a7=l7.length?l7.reduce((a,b)=>a+b,0)/l7.length:null;
+  const top=Math.ceil(Math.max(2000,...vals)*1.1/500)*500,H=96,sw=336/N,bw=5;
+  let bars='',lab='';
+  idx.forEach(i=>{const v=S.cal[i],hh=Math.max(3,v/top*H),x=i*sw+(sw-bw)/2;bars+='<g data-act="goto" data-i="'+i+'" style="cursor:pointer"><rect x="'+(i*sw).toFixed(1)+'" y="2" width="'+sw.toFixed(1)+'" height="104" fill="transparent"/><rect x="'+x.toFixed(1)+'" y="'+(104-hh).toFixed(1)+'" width="'+bw+'" height="'+hh.toFixed(1)+'" rx="2.5" fill="'+(i===t?'#5558BD':'#B9BCF6')+'"><title>'+esc(dshort(i))+' : '+nfmt(v)+' kcal</title></rect></g>';});
+  for(let w=0;w<6;w++)lab+='<text x="'+(w*7*sw+2).toFixed(1)+'" y="123" font-size="10" font-weight="700" fill="#6B65A0">S'+(w+1)+'</text>';
+  const ya=(104-avg/top*H).toFixed(1);
+  h+='<div class="card"><div class="schips cst"><span><b>'+(a7!=null?nfmt(a7):'–')+'</b>moy. 7 jours</span><span><b>'+nfmt(avg)+'</b>moy. totale</span><span><b>'+idx.length+'</b>jours notés</span></div><svg class="chart" viewBox="0 0 336 128" role="img" aria-label="Calories par jour"><line x1="0" y1="104.5" x2="336" y2="104.5" stroke="#E1E3FA" stroke-width="1"/><line x1="0" y1="'+ya+'" x2="336" y2="'+ya+'" stroke="#8E92F0" stroke-width="1.5"/>'+bars+lab+'</svg><p class="ckey"><i></i>Moyenne : '+nfmt(avg)+' kcal par jour · touche une barre pour modifier le jour</p></div></section>';
+  return h;
+}
+function wtSection(){
+  const idx=range(N).filter(i=>S.wt[i]!=null);
+  let h='<section class="block"><div class="sec-title"><h3>Mon <span class="k">poids</span></h3></div>';
+  if(!idx.length)return h+'<div class="card empty-ch"><span class="gico">'+ic('graph',24)+'</span><p>Note ton poids le dimanche dans « Aujourd’hui » : ta courbe apparaît ici.</p></div></section>';
+  const vals=idx.map(i=>S.wt[i]),lo=Math.min(...vals),hi=Math.max(...vals),pd=Math.max(.6,(hi-lo)*.3),y0=lo-pd,y1=hi+pd;
+  const X=i=>18+i/(N-1)*300,Y=v=>16+(1-(v-y0)/(y1-y0))*74;
+  const pts=idx.map(i=>X(i).toFixed(1)+','+Y(S.wt[i]).toFixed(1)).join(' ');
+  const first=vals[0],last=vals[vals.length-1],df=last-first;
+  let dots='',tl='';
+  idx.forEach((i,n)=>{const v=S.wt[i],isEnd=(n===0||n===idx.length-1);dots+='<circle cx="'+X(i).toFixed(1)+'" cy="'+Y(v).toFixed(1)+'" r="4.5" fill="#5558BD" stroke="#fff" stroke-width="2"><title>'+esc(dshort(i))+' : '+wkg(v)+' kg</title></circle>';
+    if(isEnd&&(idx.length>1||true))dots+='<text x="'+X(i).toFixed(1)+'" y="'+(Y(v)-10).toFixed(1)+'" text-anchor="'+(n===0&&idx.length>1?'start':(idx.length>1?'end':'middle'))+'" font-size="11" font-weight="700" fill="#2D2756">'+wkg(v)+'</text>';});
+  [[0,'Départ']].concat(range(6).map(w=>[w*7+6,'S'+(w+1)])).forEach(a=>{tl+='<text x="'+X(a[0]).toFixed(1)+'" y="118" text-anchor="'+(a[0]===0?'start':'middle')+'" font-size="10" font-weight="700" fill="#6B65A0">'+a[1]+'</text>';});
+  h+='<div class="card"><div class="sumtop"><div class="sbig"><b>'+wkg(last)+'</b><span>kg</span></div>'+(idx.length>1?'<div class="schips"><span><b>'+(df>0?'+':(df<0?'−':''))+wkg(Math.abs(df))+'</b>depuis le début</span></div>':'')+'</div><svg class="chart" viewBox="0 0 336 124" role="img" aria-label="Poids semaine après semaine"><line x1="0" y1="102.5" x2="336" y2="102.5" stroke="#E1E3FA" stroke-width="1"/>'+(idx.length>1?'<polyline points="'+pts+'" fill="none" stroke="#8E92F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>':'')+dots+tl+'</svg></div></section>';
+  return h;
+}
 function viewToday(){
   const t=todayIdx(),i=sel,ok=i<=t,s=score(i),x=xp(),l=level(x);
   const nextX=LEVELS[l+1]?LEVELS[l+1][0]:null;
@@ -1331,6 +1428,7 @@ function viewToday(){
   h+='</div>';
   if(!ok)h+='<p class="locked-note">Ce jour n’est pas encore arrivé, tu pourras cocher le moment venu.</p>';
   h+='</section>';
+  h+=bilanCard(i,ok);
   return h;
 }
 
@@ -1350,6 +1448,7 @@ function viewSuivi(){
     h+='<span class="rf">'+renfoWeek(w)+'/3</span>';
   }
   h+='</div></div></section>';
+  h+=calSection()+wtSection();
   h+='<p class="foot">'+(syncMode==='cloud'?'Enregistré sur ton compte, tu retrouves tout sur tous tes appareils.':'Enregistré sur cet appareil.')+'</p>';
   const rows=[];
   SESS.forEach((ex,si)=>ex.forEach(e=>{if(!isLoaded(e))return;const arr=range(6).map(w=>{const d=S.ex[exKey(si,w,e[0])];return d&&d.kg!=null?d.kg:null;});if(arr.some(x=>x!=null))rows.push({si,e,arr});}));
@@ -1374,7 +1473,7 @@ function viewProg(){
     const k='s'+progS+'w'+progW+e[0],v=S.ex[k]||{},pk=progW>0?(S.ex['s'+progS+'w'+(progW-1)+e[0]]||{}).v:'';
     const ld=isLoaded(e),op=ld&&!!LOGOPEN[k],sg=ld?sugg(progS,progW,e):null,hasd=v.kg!=null;
     let adv=null;if(ld&&hasd)adv=advice(e,v.kg,v.rp);
-    h+='<div class="ex'+(v.ok?' done':'')+'"><div class="exv"><span class="exn">'+e[0]+'</span>'+figHTML(e[1])+'</div><h4>'+esc(e[1])+'</h4><button class="ok'+(v.ok?' on':'')+'" data-act="exok" data-k="'+k+'" aria-label="Exercice fait" aria-pressed="'+(!!v.ok)+'">'+ic('check',22)+'</button><div class="meta"><span class="mchip">'+ic('repeat',16)+e[2]+'</span>'+(e[3]?'<button class="mchip rest" data-act="rest" data-s="'+restSec(e[3])+'" aria-label="Lancer le chrono de récupération, '+restLbl(e[3])+'">'+ic('stopwatch',16)+'récup '+restLbl(e[3])+'</button>':'')+'</div><div class="acts"><a href="https://www.tiktok.com/search?q='+encodeURIComponent(e[1].replace(/[()]/g,'')+' exercice')+'" target="_blank" rel="noopener">'+ic('play',18)+'Tuto TikTok</a>'+(ld&&!op?'<button class="ldchip'+(hasd?' set':'')+'" data-act="note" data-k="'+k+'">'+ic(hasd?'dumbbell':(sg?'target':'pen'),18)+(hasd?fkg(v.kg)+' kg'+(v.rp!=null?' × '+v.rp:''):(sg?'Objectif '+fkg(sg.kg)+' kg':'Charge'))+'</button>':'')+'</div>'+(op?(()=>{const bk=hasd?v.kg:(sg?sg.kg:0),br=v.rp!=null?v.rp:(sg?sg.lo:repRange(e).lo),R=repRange(e),lg=lastLog(progS,progW,e[0]),a2=advice(e,hasd?v.kg:null,hasd?v.rp:null);
+    h+='<div class="ex'+(v.ok?' done':'')+'"><div class="exv"><span class="exn">'+e[0]+'</span>'+figHTML(e[1])+'</div><h4>'+esc(e[1])+'</h4><button class="ok'+(v.ok?' on':'')+'" data-act="exok" data-k="'+k+'" aria-label="Exercice fait" aria-pressed="'+(!!v.ok)+'">'+ic('check',22)+'</button><div class="meta"><span class="mchip">'+ic('repeat',16)+e[2]+'</span>'+(e[3]?'<button class="mchip rest" data-act="rest" data-s="'+restSec(e[3])+'" aria-label="Lancer le chrono de récupération, '+restLbl(e[3])+'">'+ic('stopwatch',16)+'récup '+restLbl(e[3])+'</button>':'')+'</div><div class="acts"><a href="https://www.tiktok.com/search?q='+encodeURIComponent(ttq(e[1]))+'" data-act="tiktok" data-q="'+esc(ttq(e[1]))+'" target="_blank" rel="noopener">'+ic('play',18)+'Tuto TikTok</a>'+(ld&&!op?'<button class="ldchip'+(hasd?' set':'')+'" data-act="note" data-k="'+k+'">'+ic(hasd?'dumbbell':(sg?'target':'pen'),18)+(hasd?fkg(v.kg)+' kg'+(v.rp!=null?' × '+v.rp:''):(sg?'Objectif '+fkg(sg.kg)+' kg':'Charge'))+'</button>':'')+'</div>'+(e[1]==='Circuit gainage'?plBox(k,progS,progW):'')+(op?(()=>{const bk=hasd?v.kg:(sg?sg.kg:0),br=v.rp!=null?v.rp:(sg?sg.lo:repRange(e).lo),R=repRange(e),lg=lastLog(progS,progW,e[0]),a2=advice(e,hasd?v.kg:null,hasd?v.rp:null);
       return '<div class="loadbox"><div class="lrow"><span class="lab">'+(isAssist(e)?'Assistance':'Charge')+'</span><div class="stp"><button data-act="kg" data-k="'+k+'" data-b="'+bk+'" data-d="-'+kgStep(bk)+'" aria-label="Moins">−</button><label><input class="kgin" type="number" inputmode="decimal" step="0.5" min="0" data-k="'+k+'" data-f="kg" value="'+(hasd?v.kg:'')+'" placeholder="'+fkg(bk)+'"><small>kg</small></label><button data-act="kg" data-k="'+k+'" data-b="'+bk+'" data-d="'+kgStep(bk)+'" aria-label="Plus">+</button></div></div><div class="lrow"><span class="lab">Reps tenues<small>sur ta série la plus basse</small></span><div class="stp"><button data-act="rp" data-k="'+k+'" data-b="'+br+'" data-d="-1" aria-label="Moins">−</button><label><input class="kgin" type="number" inputmode="numeric" min="0" data-k="'+k+'" data-f="rp" value="'+(v.rp!=null?v.rp:'')+'" placeholder="'+br+'"><small>reps</small></label><button data-act="rp" data-k="'+k+'" data-b="'+br+'" data-d="1" aria-label="Plus">+</button></div></div>'
       +(lg?'<p class="lhist">Dernière fois (S'+(lg.w+1)+') : '+fkg(lg.kg)+' kg'+(lg.rp!=null?' × '+lg.rp:'')+'</p>':'')
       +(a2&&a2.why?'<div class="ladv'+(a2.up?' up':'')+'">'+ic(a2.up?'medal':'target',22)+'<div><b>Prochaine séance : '+fAdv(a2)+'</b><span>'+a2.why+'</span></div></div>':'<div class="ladv">'+ic('target',22)+'<div><b>Objectif : '+R.sets+' séries de '+(R.lo===R.hi?R.lo:R.lo+'-'+R.hi)+' reps</b><span>Quand tu tiens '+R.hi+' reps partout, on ajoute de la charge.</span></div></div>')+'</div>';})():'')+'</div>';
@@ -1424,6 +1523,9 @@ document.addEventListener('click',function(e){
   const el=e.target.closest('[data-act]');if(!el)return;
   const a=el.dataset.act;
   if(a==='tab'){go(el.dataset.v);return;}
+  if(a==='tiktok'){e.preventDefault();toast('Recherche copiée : colle-la dans TikTok si besoin');openTikTok(el.dataset.q,el.href);return;}
+  if(a==='pl'){const k=el.dataset.k;S.ex[k]=S.ex[k]||{};const pp=S.ex[k].pl=S.ex[k].pl||{},f=el.dataset.f,cur=pp[f]!=null?pp[f]:Number(el.dataset.b);pp[f]=Math.max(0,cur+Number(el.dataset.d));save();render();return;}
+  if(a==='hold'){restStart(Number(el.dataset.s),'Tiens la position');return;}
   if(a==='day'){sel=Math.max(0,Math.min(N-1,sel+Number(el.dataset.d)));animMode='soft';render();return;}
   if(a==='seld'){sel=Number(el.dataset.i);animMode='soft';render();return;}
   if(a==='goto'){sel=Number(el.dataset.i);go('aujourdhui');return;}
@@ -1463,6 +1565,14 @@ document.addEventListener('change',function(e){
 document.addEventListener('input',function(e){
   const k=e.target&&e.target.dataset&&e.target.dataset.ex;if(!k)return;
   S.ex[k]=S.ex[k]||{};S.ex[k].v=e.target.value;save();
+});
+document.addEventListener('change',function(e){
+  const t=e.target;if(!t.dataset)return;
+  if(t.dataset.bk){const key=t.dataset.bk==='cal'?'cal':'wt',i=Number(t.dataset.i),v=parseFloat(String(t.value).replace(',','.'));
+    if(t.value===''||isNaN(v)){delete S[key][i];}else S[key][i]=key==='cal'?Math.round(v):Math.round(v*10)/10;
+    save();render();toast(t.value===''?'Valeur effacée':(key==='cal'?'Calories enregistrées':'Poids enregistré'));return;}
+  if(t.dataset.pk){const k=t.dataset.pk;S.ex[k]=S.ex[k]||{};const pp=S.ex[k].pl=S.ex[k].pl||{};
+    if(t.value===''){delete pp[t.dataset.f];}else pp[t.dataset.f]=Math.max(0,parseFloat(String(t.value).replace(',','.'))||0);save();render();}
 });
 document.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.id==='newtodo'){e.preventDefault();document.querySelector('[data-act="cadd"]').click();}});
 document.addEventListener('click',function(e){
