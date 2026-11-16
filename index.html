@@ -179,6 +179,8 @@ section.block{margin-top:20px}
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 18px;border-radius:99px;background:var(--red);color:var(--pale);font-weight:700;font-size:16px;margin-top:14px}
 .btn.soft{background:var(--rose-50);color:var(--ink)}
 .btn:disabled{opacity:.5;cursor:default}
+.rule{background:#F2F3FD;border-radius:18px;padding:12px 14px;color:#2D2756}.rule summary{cursor:pointer;display:flex;align-items:center;gap:10px;list-style:none}.rule summary::-webkit-details-marker{display:none}.rule summary b{font-size:16px}.rule summary small{margin-left:auto;font-size:12px;color:#6B65A0}.rsi{flex:none;width:34px;height:34px;border-radius:50%;background:#5558BD;color:#fff;display:flex;align-items:center;justify-content:center}.rule .rules{margin-top:12px}.rule .rl{background:#FFFFFF}
+.plv{font-size:15px;color:#2D2756;white-space:nowrap}
 .tips{margin:10px 0 0;padding-left:20px;font-size:15px}
 .tips li{margin-bottom:4px}
 
@@ -734,7 +736,7 @@ nav.tabs button.bn .i{animation:tabhop .7s var(--ease)}
 .kgin:focus{outline:none}
 .stp label small{font-size:12px;color:#6B65A0;font-weight:600}
 .effc{display:flex;gap:6px}.effc .chip{padding:8px 12px;font-size:13px}.lrow.eff{align-items:center}
-.rules{display:flex;flex-direction:column;gap:10px}.rl{display:flex;gap:12px;align-items:flex-start;background:#F2F3FD;border-radius:18px;padding:14px;color:#2D2756}.rl .rn{flex:none;width:34px;height:34px;border-radius:50%;background:#5558BD;color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px}.rl h4{margin:0 0 3px;font-size:15px}.rl p{margin:0 0 8px;font-size:13px;line-height:1.4}.dots{display:flex;gap:4px;align-items:center;flex-wrap:wrap}.dots i{width:14px;height:14px;border-radius:5px;background:#8E92F0}.dots i.res{background:#E7A06F}.dots span{font-size:12px;font-weight:700;margin-left:6px;color:#6B65A0}.vs{display:flex;gap:8px;align-items:center}.vs em{font-style:normal;font-weight:800;color:#6B65A0}
+.rules{display:flex;flex-direction:column;gap:10px}.rl{display:flex;gap:12px;align-items:flex-start;background:#F2F3FD;border-radius:18px;padding:14px;color:#2D2756}.rl .rn{flex:none;width:34px;height:34px;border-radius:50%;background:#5558BD;color:#fff;display:flex;align-items:center;justify-content:center}.rl h4{margin:0 0 3px;font-size:15px}.rl p{margin:0 0 8px;font-size:13px;line-height:1.4}.dots{display:flex;gap:4px;align-items:center;flex-wrap:wrap}.dots i{width:14px;height:14px;border-radius:5px;background:#8E92F0}.dots i.res{background:#E7A06F}.dots span{font-size:12px;font-weight:700;margin-left:6px;color:#6B65A0}.vs{display:flex;gap:8px;align-items:center}.vs em{font-style:normal;font-weight:800;color:#6B65A0}
 .tips{grid-column:1/-1;margin-top:8px;background:#F6F7FE;border-radius:14px;padding:10px 12px;font-size:13px;color:#2D2756}
 .tips summary{cursor:pointer;font-weight:700;color:#4B44A8;display:flex;gap:8px;align-items:center}
 .tips ul{margin:8px 0 0;padding-left:18px;line-height:1.4}.tips li{margin:3px 0}
@@ -812,8 +814,8 @@ nav.tabs button.bn .i{animation:tabhop .7s var(--ease)}
 /* mannequin v3 : angles interpolés image par image, plusieurs poses clés, matériel dessiné sur mesure */
 (function(G){
 const R=d=>d*Math.PI/180,LT=19,LS=19,LU=14,LF=13,LTO=24;
-const K={skinN:'#F2BC9B',skinF:'#DE9A74',top:'#5558BD',topF:'#4A4DA8',short:'#3A3156',shortF:'#2D2756',shoeN:'#F3B98F',shoeF:'#E7A06F',hair:'#5A2E16',
- frame:'#D3D5F4',frame2:'#B9BCF0',pad:'#8E92F0',dark:'#3A3156',hot:'#F28B50',floor:'#E4E5F9',steel:'#9A9DD8',plate:'#3A3156'};
+const K={skinN:'#F2BC9B',skinF:'#DE9A74',top:'#5558BD',topF:'#4A4DA8',short:'#8E92F0',shortF:'#7377DD',shoeN:'#F3B98F',shoeF:'#E7A06F',hair:'#7A4A33',
+ frame:'#D3D5F4',frame2:'#B9BCF0',pad:'#8E92F0',dark:'#6B65A0',hot:'#F28B50',floor:'#E4E5F9',steel:'#9A9DD8',plate:'#5558BD'};
 const f1=n=>Math.round(n*10)/10;
 const FD=p=>{const a=p.a||[0,0],da=p.da===undefined?6:p.da,l=p.l||[0,0],dl=p.dl===undefined?8:p.dl;
  return {t:p.t||0,nh:p.nh||0,a:a.slice(),a2:(p.a2||[a[0]+da,a[1]+da]).slice(),l:l.slice(),l2:(p.l2||[l[0]-dl,l[1]-dl]).slice(),ft:p.ft||0,ft2:p.ft2===undefined?(p.ft||0):p.ft2,up:p.up||0};};
@@ -882,11 +884,11 @@ function svg(def,mode){
     g+='<path d="M'+f1(P.hip[0])+' '+f1(P.hip[1])+'L'+f1(P.sh[0])+' '+f1(P.sh[1])+'"/><path d="M'+f1(P.sh[0])+' '+f1(P.sh[1])+'L'+f1(P.en[0])+' '+f1(P.en[1])+'L'+f1(P.hn[0])+' '+f1(P.hn[1])+'"/>';
     g+='<path d="M'+f1(P.hip[0])+' '+f1(P.hip[1])+'L'+f1(P.kn[0])+' '+f1(P.kn[1])+'L'+f1(P.an[0])+' '+f1(P.an[1])+'L'+f1(P.tn[0])+' '+f1(P.tn[1])+'"/><circle cx="'+f1(P.head[0])+'" cy="'+f1(P.head[1])+'" r="4.6" stroke-width="2"/></g>';return g;};
   if(!def.noghost&&(m==='anim'||m==='A'))o+=gh(B);
-  const seg=(k1,k2,w1,w2,fill,fr,extra)=>path(P=>cap(P[k1],lerp(P[k1],P[k2],fr||1),w1*W,w2*W),fill,extra);
+  const WK=.66,seg=(k1,k2,w1,w2,fill,fr,extra)=>path(P=>cap(P[k1],lerp(P[k1],P[k2],fr||1),w1*W*WK,w2*W*WK),fill,extra);
   // arrière : jambe et bras éloignés
   o+=seg('hip','kf',10.2,7.2,K.skinF)+seg('kf','af',7,4.6,K.skinF)+seg('af','tf',4.6,3.6,K.shoeF);
   o+=seg('hip','kf',11,9,K.shortF,.5);
-  o+=seg('sh','ef',5.4,4.4,K.skinF)+seg('ef','hf',4.4,3.4,K.skinF)+circ(P=>P.hf,2.3*W,K.skinF);
+  o+=seg('sh','ef',5.4,4.4,K.skinF)+seg('ef','hf',4.4,3.4,K.skinF)+circ(P=>P.hf,1.7*W,K.skinF);
   if(def.mid)o+=def.mid(C);
   o+=seg('hip','sh',10,11.6,K.top);
   o+=seg('hip','sh',10.4,10.2,K.short,.3);
@@ -894,11 +896,11 @@ function svg(def,mode){
   o+=seg('hip','kn',11.4,9.4,K.short,.5);
   const hdv=P=>({u:[Math.sin(R(P.hd)),-Math.cos(R(P.hd))],f:[Math.cos(R(P.hd)),Math.sin(R(P.hd))]});
   o+=seg('sh','head',4.2,4,K.skinN,.7);
-  o+=circ(P=>{const v=hdv(P);return [P.head[0]-v.f[0]*5.4*W,P.head[1]-v.f[1]*5.4*W+2*W];},2.6*W,K.hair);
-  o+=circ(P=>P.head,5.2*W,K.hair);
-  o+=circ(P=>{const v=hdv(P);return [P.head[0]+v.f[0]*1.1*W-v.u[0]*.4*W,P.head[1]+v.f[1]*1.1*W-v.u[1]*.4*W];},4.3*W,K.skinN);
-  o+=seg('sh','en',5.8,4.6,K.skinN)+seg('en','hn',4.6,3.6,K.skinN)+circ(P=>P.hn,2.5*W,K.skinN);
-  if(def.mus){
+  o+=circ(P=>{const v=hdv(P);return [P.head[0]-v.f[0]*5.4*W,P.head[1]-v.f[1]*5.4*W+2*W];},2.1*W,K.hair);
+  o+=circ(P=>P.head,4.3*W,K.hair);
+  o+=circ(P=>{const v=hdv(P);return [P.head[0]+v.f[0]*1.1*W-v.u[0]*.4*W,P.head[1]+v.f[1]*1.1*W-v.u[1]*.4*W];},3.5*W,K.skinN);
+  o+=seg('sh','en',5.8,4.6,K.skinN)+seg('en','hn',4.6,3.6,K.skinN)+circ(P=>P.hn,1.8*W,K.skinN);
+  if(false&&def.mus){
     const mp=P=>{const a=P[def.mus[0]],b=P[def.mus[1]||def.mus[0]];return lerp(a,b,def.mus[2]===undefined?.5:def.mus[2]);};
     const rr=(def.mr||6.5)*W;
     o+=circ(mp,rr,K.hot,' opacity=".38"')+circ(mp,rr*.55,K.hot,' opacity=".55"');
@@ -936,7 +938,7 @@ G.FIG={svg,fk,build};
 })(typeof module!=='undefined'?module.exports:window);
 (function(){
 const D={};
-const KK={frame:'#D3D5F4',frame2:'#B9BCF0',pad:'#8E92F0',dark:'#3A3156',steel:'#9A9DD8',plate:'#3A3156',hot:'#F28B50'};
+const KK={frame:'#D3D5F4',frame2:'#B9BCF0',pad:'#8E92F0',dark:'#6B65A0',steel:'#9A9DD8',plate:'#5558BD',hot:'#F28B50'};
 const plateF=(C,fn,r)=>C.circ(fn,r*C.s,KK.plate)+C.circ(fn,r*.34*C.s,KK.frame);
 // ---------- JAMBES ----------
 D.thrust={anc:'foot',dur:3.4,
@@ -987,7 +989,7 @@ D.rower={anc:'foot',dur:3.4,
    +C.rectA(P=>[P.hip[0]-6*s,P.hip[1]+4.5*s,13*s,3.2*s],KK.pad,1.5)
    +C.line(P=>[[fx+3*s,gy-12*s],[P.hn[0],P.hn[1]]],KK.dark,1.1);}};
 // ---------- HAUT DU CORPS ----------
-const db=(C,r)=>C.circ(P=>P.hn,(r||4)*C.s,KK.plate);
+const db=(C,r)=>C.circ(P=>P.hn,(r||4)*.62*C.s,KK.plate);
 const bar=C=>C.line(P=>[[P.hn[0]-1*C.s,P.hn[1]-9*C.s],[P.hn[0]-1*C.s,P.hn[1]+9*C.s]],KK.steel,1.8*C.s,' stroke-linecap="round"');
 const stand=(o)=>Object.assign({anc:'foot',dur:3.2,mus:['sh','en',.5,5.5],mr:6,mv:'hn'},o);
 const cableTo=(C,x,y)=>C.line(P=>[[x(C),y(C)],P.hn],KK.dark,1.1);
@@ -1026,7 +1028,6 @@ D.legraise={anc:'hip',dur:3.4,K:[{t:-90,a:[88,88],l:[178,178]},{t:-90,a:[88,88],
 D.bike={anc:'hip',dur:2.8,K:[{t:-62,a:[150,150],l:[105,30]},{t:-62,a:[150,150],l:[50,50]}],mus:['hip','sh',.5,7],mr:7,mv:'kn'};
 D.heel={anc:'hip',dur:2.8,K:[{t:-62,a:[100,100],l:[55,5]},{t:-52,a:[100,100],l:[55,5]}],mus:['hip','sh',.5,7],mr:7,mv:'hip'};
 D.rcrunch={anc:'hip',dur:3.2,K:[{t:-90,a:[88,88],l:[100,10]},{t:-86,a:[88,88],l:[150,60]}],mus:['hip','kn',.5,7],mr:7,mv:'kn'};
-
 
 const FMAP={
 'Relevé de bassin (barre)':'thrust','Hip thrust bonus fessiers (barre)':'thrust','Squat (machine Smith)':'smith','Presse à cuisses':'lpress','Soulevé de terre jambes tendues':'rdlb','Leg curl assis (machine)':'legcurl',
@@ -1125,7 +1126,7 @@ const RULES=[
 ];
 
 /* routines Hevy : Legs, Back, Arms (+ finisher abdos à la fin de chaque séance) */
-const FIN=[['F1','Circuit gainage','3 tours min',''],['F2','Relevé de jambes allongé','1 × 20 reps','1 min'],['F3','Crunch vélo','1 × 20 reps','1 min'],['F4','Touchers de talons','1 × 20 reps','1 min'],['F5','Crunch inversé','1 × 20 reps','1 min']];
+const FIN=[['F1','Circuit gainage','3 tours',''],['F2','Relevé de jambes allongé','1 × 20 reps','1 min'],['F3','Crunch vélo','1 × 20 reps','1 min'],['F4','Touchers de talons','1 × 20 reps','1 min'],['F5','Crunch inversé','1 × 20 reps','1 min']];
 const SESS=[
  [['S1','Relevé de bassin (barre)','3 × 12 reps','1 min 30'],['S2','Squat (machine Smith)','3 × 8-12 reps','2 min'],['S3','Presse à cuisses','3 × 8-12 reps','1 min 30'],['S4','Soulevé de terre jambes tendues','3 × 12 reps','1 min 30'],['S5','Leg curl assis (machine)','3 × 12 reps','1 min']].concat(FIN),
  [['S1','Rameur','1 série',''],['S2','Traction assistée','3 × 10 reps','1 min 30'],['S3','Tirage poitrine (poulie)','3 × 12 reps','1 min 30'],['S4','Rowing poulie assis, prise en V','3 × 12 reps','1 min'],['S5','Développé couché (haltères)','3 × 10-12 reps','1 min 15'],['S6','Tirage vers le visage','2 × 10 reps','45 s'],['S7','Élévation latérale (haltères)','3 × 12 reps','1 min'],['S8','Curl biceps (haltères)','3 × 10-12 reps','45 s']].concat(FIN),
@@ -1383,21 +1384,15 @@ function bilanCard(i,ok){
   let h='<section class="block"><div class="sec-title"><h3>Bilan <span class="k">du soir</span></h3></div><div class="card bilan">';
   h+='<label class="brow"><span class="bico">'+ic('apple',26)+'</span><span class="blab"><b>Calories du jour</b><small>Le total de ce que tu as mangé</small></span><span class="bin"><input class="bnum" type="number" inputmode="numeric" min="0" step="10" data-bk="cal" data-i="'+i+'" value="'+(kc!=null?kc:'')+'" placeholder="0" aria-label="Calories du jour"'+dis+'><small>kcal</small></span></label>';
   const dp=S.dep[i],ac=S.act[i];
-  h+='<label class="brow"><span class="bico">'+ic('flame',26)+'</span><span class="blab"><b>Dépense du jour</b><small>'+(ac&&(ac.p||ac.m)?'Santé : '+(ac.p?nfmt(ac.p)+' pas':'')+(ac.p&&ac.m?' · ':'')+(ac.m?ac.m+' min d’exercice':''):'Calories brûlées (active) ou import Santé')+'</small></span><span class="bin"><input class="bnum" type="number" inputmode="numeric" min="0" step="10" data-bk="dep" data-i="'+i+'" value="'+(dp!=null?dp:'')+'" placeholder="0" aria-label="Dépense du jour"'+dis+'><small>kcal</small></span></label>';
+  h+='<label class="brow"><span class="bico">'+ic('flame',26)+'</span><span class="blab"><b>Dépense du jour</b><small>'+(ac&&(ac.p||ac.m)?'Santé : '+(ac.p?nfmt(ac.p)+' pas':'')+(ac.p&&ac.m?' · ':'')+(ac.m?ac.m+' min d’exercice':''):'Se remplit seule depuis Santé (Raccourci)')+'</small></span><span class="bin"><input class="bnum" type="number" inputmode="numeric" min="0" step="10" data-bk="dep" data-i="'+i+'" value="'+(dp!=null?dp:'')+'" placeholder="0" aria-label="Dépense du jour"'+dis+'><small>kcal</small></span></label>';
   if(dp!=null&&kc!=null)h+='<p class="bnote">'+ic('target',18)+'<span>Bilan du jour : '+(kc-dp>0?'+':'')+nfmt(kc-dp)+' kcal (mangé − dépensé)</span></p>';
   if(weigh)h+='<label class="brow"><span class="bico">'+ic('graph',26)+'</span><span class="blab"><b>'+(i===0?'Poids de départ':'Poids de la semaine')+'</b><small>'+(i===0?'Pour mesurer ton évolution':'Pesée du dimanche, à jeun si possible')+'</small></span><span class="bin"><input class="bnum" type="number" inputmode="decimal" min="0" step="0.1" data-bk="wt" data-i="'+i+'" value="'+(wv!=null?wv:'')+'" placeholder="0,0" aria-label="Poids en kilos"'+dis+'><small>kg</small></span></label>';
   else{const nx=nextWeigh(i);if(nx>=0)h+='<p class="bnote">'+ic('clock',18)+'<span>Prochaine pesée : '+dshort(nx)+'</span></p>';}
   return h+'</div></section>';
 }
 function plBox(k,si,w){
-  const v=(S.ex[k]||{}).pl||{},g=(f,d)=>v[f]!=null?v[f]:d;
-  const row=(f,lab,d,st,u)=>'<div class="lrow"><span class="lab">'+lab+'</span><div class="stp"><button data-act="pl" data-k="'+k+'" data-f="'+f+'" data-b="'+g(f,d)+'" data-d="-'+st+'" aria-label="Moins">−</button><label><input class="plin" type="number" inputmode="numeric" min="0" data-pk="'+k+'" data-f="'+f+'" value="'+(v[f]!=null?v[f]:'')+'" placeholder="'+d+'"><small>'+u+'</small></label><button data-act="pl" data-k="'+k+'" data-f="'+f+'" data-b="'+g(f,d)+'" data-d="'+st+'" aria-label="Plus">+</button></div></div>';
-  let last=null;for(let x=w-1;x>=0&&!last;x--){const d=(S.ex['s'+si+'w'+x+'F1']||{}).pl;if(d&&(d.f!=null||d.g!=null||d.d!=null))last={w:x,d};}
-  const L=last&&last.d;
-  return '<div class="loadbox">'+row('f','Face',30,5,'s')+row('g','Côté gauche',30,5,'s')+row('d','Côté droit',30,5,'s')+row('r','Tours',3,1,'tours')
-   +'<button class="btn soft holdb" data-act="hold" data-s="30">'+ic('stopwatch',20)+'Lancer un chrono de 30 s</button>'
-   +(L?'<p class="lhist">Dernière fois (S'+(last.w+1)+') : face '+(L.f!=null?L.f:'–')+' s · gauche '+(L.g!=null?L.g:'–')+' s · droite '+(L.d!=null?L.d:'–')+' s'+(L.r!=null?' · '+L.r+' tours':'')+'</p>':'')
-   +'<div class="ladv">'+ic('target',22)+'<div><b>Objectif : 30 s minimum par position, 3 tours</b><span>Enchaîne face, côté gauche, côté droit sans pause. Note ta position la plus courte du dernier tour, puis vise 5 s de plus à la prochaine séance.</span></div></div></div>';
+  const rw=(l,v)=>'<div class="lrow"><span class="lab">'+l+'</span><b class="plv">'+v+'</b></div>';
+  return '<div class="loadbox">'+rw('Par position (face, gauche, droite)','30 s à 45 s')+rw('Par tour','1 min 30 à 2 min 15')+rw('Total, 3 tours','4 min 30 à 6 min 45')+'</div>';
 }
 function calSection(){
   const t=todayIdx(),idx=range(N).filter(i=>S.cal[i]!=null);
@@ -1493,11 +1488,11 @@ function viewProg(){
   const exd=(si,w)=>SESS[si].filter(e=>(S.ex['s'+si+'w'+w+e[0]]||{}).ok).length,st=(n,tot)=>n>=tot?' full':(n>0?' part':'');
   h+='<section class="block stick"><div class="picker"><div class="seg3" role="group" aria-label="Séance">'+range(3).map(k=>{const n=exd(k,progW);return '<button class="chip'+(k===progS?' on':'')+st(n,SESS[k].length)+'" data-act="ps" data-v="'+k+'">'+SNAMES[k]+'</button>';}).join('')+'</div><div class="seg6" role="group" aria-label="Semaine">'+range(6).map(k=>{const n=exd(progS,k);return '<button class="chip'+(k===progW?' on':'')+(k===cur&&t>=0?' now':'')+st(n,ses.length)+'" data-act="pw" data-v="'+k+'" aria-label="Semaine '+(k+1)+'">S'+(k+1)+'</button>';}).join('')+'</div></div></section>';
   h+='<section class="block progress"><div class="ptop"><h3>'+SNAMES[progS]+' <span class="k">semaine '+(progW+1)+'</span></h3><span class="pcount">'+done+' / '+ses.length+'</span></div><div class="bar"><i style="width:'+Math.round(done/ses.length*100)+'%"></i></div></section>';
-  h+='<section class="block"><div class="sec-title"><h3>Règle <span class="k">d’or</span></h3></div><div class="rules">'
-  +'<div class="rl"><b class="rn">1</b><div><h4>Garde 1 à 2 reps en réserve</h4><p>À la fin de chaque série, tu pourrais en faire encore 1 ou 2, pas plus.</p><div class="dots" aria-hidden="true">'+'<i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="res"></i><i class="res"></i>'+'<span>10 faites + 2 en réserve</span></div></div></div>'
-  +'<div class="rl"><b class="rn">2</b><div><h4>Pas à fond ? C’est trop léger</h4><p>Si tu finis la série facilement, augmente la charge à la prochaine série ou séance.</p><div class="vs"><span class="chip">Facile</span><em>→</em><span class="chip on">Plus lourd</span></div></div></div>'
-  +'<div class="rl"><b class="rn">3</b><div><h4>Haut de la fourchette = on monte</h4><p>Quand tu atteins le maximum de reps sur toutes les séries, ajoute 1 à 2,5 kg.</p><div class="vs"><span class="chip">12 · 12 · 12 reps</span><em>→</em><span class="chip on">+ 2,5 kg</span></div></div></div>'
-  +'</div></section>';
+  h+='<section class="block"><details class="rule"><summary><span class="rsi">'+ic('medal',22)+'</span><b>Règle d’or</b><small>3 règles pour progresser</small></summary><div class="rules">'
+  +'<div class="rl"><span class="rn">'+ic('target',22)+'</span><div><h4>Garde 1 à 2 reps en réserve</h4><p>À la fin de chaque série, tu pourrais en faire encore 1 ou 2, pas plus.</p><div class="dots" aria-hidden="true">'+'<i></i>'.repeat(10)+'<i class="res"></i><i class="res"></i><span>10 faites + 2 en réserve</span></div></div></div>'
+  +'<div class="rl"><span class="rn">'+ic('dumbbell',22)+'</span><div><h4>Pas à fond ? C’est trop léger</h4><p>Si tu finis la série facilement, augmente la charge à la prochaine série ou séance.</p><div class="vs"><span class="chip">Facile</span><em>→</em><span class="chip on">Plus lourd</span></div></div></div>'
+  +'<div class="rl"><span class="rn">'+ic('graph',22)+'</span><div><h4>Haut de la fourchette = on monte</h4><p>Quand tu atteins le maximum de reps sur toutes les séries, ajoute 1 à 2,5 kg.</p><div class="vs"><span class="chip">12 · 12 · 12 reps</span><em>→</em><span class="chip on">+ 2,5 kg</span></div></div></div>'
+  +'</div></details></section>';
   let last='';
   ses.forEach(e=>{
     const b=e[0][0];
@@ -1505,11 +1500,11 @@ function viewProg(){
     const k='s'+progS+'w'+progW+e[0],v=S.ex[k]||{},pk=progW>0?(S.ex['s'+progS+'w'+(progW-1)+e[0]]||{}).v:'';
     const ld=isLoaded(e),op=ld&&!!LOGOPEN[k],sg=ld?sugg(progS,progW,e):null,hasd=v.kg!=null;
     let adv=null;if(ld&&hasd)adv=advice(e,v.kg,v.rp,v.eff);
-    h+='<div class="ex'+(v.ok?' done':'')+'"><div class="exv"><span class="exn">'+e[0]+'</span>'+figHTML(e[1])+'</div><h4>'+esc(e[1])+'</h4><button class="ok'+(v.ok?' on':'')+'" data-act="exok" data-k="'+k+'" aria-label="Exercice fait" aria-pressed="'+(!!v.ok)+'">'+ic('check',22)+'</button><div class="meta"><span class="mchip">'+ic('repeat',16)+e[2]+'</span>'+(e[3]?'<button class="mchip rest" data-act="rest" data-s="'+restSec(e[3])+'" aria-label="Lancer le chrono de récupération, '+restLbl(e[3])+'">'+ic('stopwatch',16)+'récup '+restLbl(e[3])+'</button>':'')+'</div><div class="acts"><a href="https://www.tiktok.com/search?q='+encodeURIComponent(ttq(e[1]))+'" data-act="tiktok" data-q="'+esc(ttq(e[1]))+'" target="_blank" rel="noopener">'+ic('play',18)+'Tuto TikTok</a>'+(ld&&!op?'<button class="ldchip'+(hasd?' set':'')+'" data-act="note" data-k="'+k+'">'+ic(hasd?'dumbbell':(sg?'target':'pen'),18)+(hasd?fkg(v.kg)+' kg'+(v.rp!=null?' × '+v.rp:''):(sg?'Objectif '+fkg(sg.kg)+' kg':'Charge'))+'</button>':'')+'</div>'+(e[1]==='Circuit gainage'?plBox(k,progS,progW):'')+(op?(()=>{const bk=hasd?v.kg:(sg?sg.kg:0),br=v.rp!=null?v.rp:(sg?sg.lo:repRange(e).lo),R=repRange(e),lg=lastLog(progS,progW,e[0]),a2=advice(e,hasd?v.kg:null,hasd?v.rp:null);
+    h+='<div class="ex'+(v.ok?' done':'')+'"><div class="exv"><span class="exn">'+e[0]+'</span>'+figHTML(e[1])+'</div><h4>'+esc(e[1])+'</h4><button class="ok'+(v.ok?' on':'')+'" data-act="exok" data-k="'+k+'" aria-label="Exercice fait" aria-pressed="'+(!!v.ok)+'">'+ic('check',22)+'</button><div class="meta"><span class="mchip">'+ic('repeat',16)+e[2]+'</span>'+(e[3]?'<button class="mchip rest" data-act="rest" data-s="'+restSec(e[3])+'" aria-label="Lancer le chrono de récupération, '+restLbl(e[3])+'">'+ic('stopwatch',16)+'récup '+restLbl(e[3])+'</button>':'')+'</div><div class="acts"><a href="https://www.tiktok.com/search?q='+encodeURIComponent(ttq(e[1]))+'" data-act="tiktok" data-q="'+esc(ttq(e[1]))+'" target="_blank" rel="noopener">'+ic('play',18)+'Tuto</a>'+(ld&&!op?'<button class="ldchip'+(hasd?' set':'')+'" data-act="note" data-k="'+k+'">'+ic(hasd?'dumbbell':(sg?'target':'pen'),18)+(hasd?fkg(v.kg)+' kg'+(v.rp!=null?' × '+v.rp:''):(sg?'Objectif '+fkg(sg.kg)+' kg':'Charge'))+'</button>':'')+'</div>'+(e[1]==='Circuit gainage'?plBox(k,progS,progW):'')+(op?(()=>{const bk=hasd?v.kg:(sg?sg.kg:0),br=v.rp!=null?v.rp:(sg?sg.lo:repRange(e).lo),R=repRange(e),lg=lastLog(progS,progW,e[0]),a2=advice(e,hasd?v.kg:null,hasd?v.rp:null);
       return '<div class="loadbox"><div class="lrow"><span class="lab">'+(isAssist(e)?'Assistance':'Charge')+'</span><div class="stp"><button data-act="kg" data-k="'+k+'" data-b="'+bk+'" data-d="-'+kgStep(bk)+'" aria-label="Moins">−</button><label><input class="kgin" type="number" inputmode="decimal" step="0.5" min="0" data-k="'+k+'" data-f="kg" value="'+(hasd?v.kg:'')+'" placeholder="'+fkg(bk)+'"><small>kg</small></label><button data-act="kg" data-k="'+k+'" data-b="'+bk+'" data-d="'+kgStep(bk)+'" aria-label="Plus">+</button></div></div><div class="lrow"><span class="lab">Reps tenues<small>sur ta série la plus basse</small></span><div class="stp"><button data-act="rp" data-k="'+k+'" data-b="'+br+'" data-d="-1" aria-label="Moins">−</button><label><input class="kgin" type="number" inputmode="numeric" min="0" data-k="'+k+'" data-f="rp" value="'+(v.rp!=null?v.rp:'')+'" placeholder="'+br+'"><small>reps</small></label><button data-act="rp" data-k="'+k+'" data-b="'+br+'" data-d="1" aria-label="Plus">+</button></div></div>'
       +'<div class="lrow eff"><span class="lab">Ressenti<small>à la fin de ta dernière série</small></span><div class="effc">'+[['facile','Facile'],['juste','Juste'],['fond','À fond']].map(x=>'<button class="chip'+(v.eff===x[0]?' on':'')+'" data-act="eff" data-k="'+k+'" data-v="'+x[0]+'">'+x[1]+'</button>').join('')+'</div></div>'
       +(lg?'<p class="lhist">Dernière fois (S'+(lg.w+1)+') : '+fkg(lg.kg)+' kg'+(lg.rp!=null?' × '+lg.rp:'')+'</p>':'')
-      +(a2&&a2.why?'<div class="ladv'+(a2.up?' up':'')+'">'+ic(a2.up?'medal':'target',22)+'<div><b>Prochaine séance : '+fAdv(a2)+'</b><span>'+a2.why+'</span></div></div>':'<div class="ladv">'+ic('target',22)+'<div><b>Objectif : '+R.sets+' séries de '+(R.lo===R.hi?R.lo:R.lo+'-'+R.hi)+' reps</b><span>Quand tu tiens '+R.hi+' reps partout, on ajoute de la charge.</span></div></div>')+'</div>';})():'')+tipsHTML(e[1])+'</div>';
+      +(a2&&a2.why?'<div class="ladv'+(a2.up?' up':'')+'">'+ic(a2.up?'medal':'target',22)+'<div><b>Prochaine séance : '+fAdv(a2)+'</b><span>'+a2.why+'</span></div></div>':'<div class="ladv">'+ic('target',22)+'<div><b>Objectif : '+R.sets+' séries de '+(R.lo===R.hi?R.lo:R.lo+'-'+R.hi)+' reps</b><span>Quand tu tiens '+R.hi+' reps partout, on ajoute de la charge.</span></div></div>')+'</div>';})():'')+'</div>';
   });
   h+='</div>';
   const wk=progW,canTick=(wk*7)<=t;
@@ -1537,7 +1532,7 @@ function viewTodo(){
 function render(){
   const y=window.scrollY;
   const v={aujourdhui:viewToday,suivi:viewSuivi,programme:viewProg,regles:viewRegles,todo:viewTodo}[tab]();
-  document.getElementById('view').innerHTML=v+'<p class="foot">D’après l’Opération Lock-in de zoeamalys · <a href="'+NOTION_URL+'">page d’origine</a><br>Version 17 nov. 00h30</p>';
+  document.getElementById('view').innerHTML=v+'<p class="foot">D’après l’Opération Lock-in de zoeamalys · <a href="'+NOTION_URL+'">page d’origine</a><br>Version 17 nov. 01h00</p>';
   document.getElementById('tabs').innerHTML='<span class="tabpill"></span>'+TABS.map(t=>'<button class="'+(t[0]===tab?'on':'')+'" data-act="tab" data-v="'+t[0]+'" aria-current="'+(t[0]===tab)+'">'+ic(t[2],26)+t[1]+'</button>').join('');
   document.title='Lock-in pastel';
   window.scrollTo(0,y);
