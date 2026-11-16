@@ -1194,7 +1194,7 @@ const fAdv=a=>fkg(a.kg)+' kg · '+(a.lo===a.hi?a.lo:a.lo+'-'+a.hi)+' reps';
 
 /* ---------- état ---------- */
 const KEY='lockin-pastel-v1';
-const blank=()=>({d:{},ex:{},todo:{},custom:[],ts:0,cal:{},wt:{}});
+const blank=()=>({d:{},ex:{},todo:{},custom:[],ts:0,cal:{},wt:{},dep:{},act:{}});
 let S=blank();
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(blank(),JSON.parse(r));}catch(e){}
 const LOGOPEN={};
@@ -1381,6 +1381,9 @@ function bilanCard(i,ok){
   const kc=S.cal[i],wv=S.wt[i],weigh=(i===0||dateOf(i).getUTCDay()===0),dis=ok?'':' disabled';
   let h='<section class="block"><div class="sec-title"><h3>Bilan <span class="k">du soir</span></h3></div><div class="card bilan">';
   h+='<label class="brow"><span class="bico">'+ic('apple',26)+'</span><span class="blab"><b>Calories du jour</b><small>Le total de ce que tu as mangé</small></span><span class="bin"><input class="bnum" type="number" inputmode="numeric" min="0" step="10" data-bk="cal" data-i="'+i+'" value="'+(kc!=null?kc:'')+'" placeholder="0" aria-label="Calories du jour"'+dis+'><small>kcal</small></span></label>';
+  const dp=S.dep[i],ac=S.act[i];
+  h+='<label class="brow"><span class="bico">'+ic('flame',26)+'</span><span class="blab"><b>Dépense du jour</b><small>'+(ac&&(ac.p||ac.m)?'Santé : '+(ac.p?nfmt(ac.p)+' pas':'')+(ac.p&&ac.m?' · ':'')+(ac.m?ac.m+' min d’exercice':''):'Calories brûlées (active) ou import Santé')+'</small></span><span class="bin"><input class="bnum" type="number" inputmode="numeric" min="0" step="10" data-bk="dep" data-i="'+i+'" value="'+(dp!=null?dp:'')+'" placeholder="0" aria-label="Dépense du jour"'+dis+'><small>kcal</small></span></label>';
+  if(dp!=null&&kc!=null)h+='<p class="bnote">'+ic('target',18)+'<span>Bilan du jour : '+(kc-dp>0?'+':'')+nfmt(kc-dp)+' kcal (mangé − dépensé)</span></p>';
   if(weigh)h+='<label class="brow"><span class="bico">'+ic('graph',26)+'</span><span class="blab"><b>'+(i===0?'Poids de départ':'Poids de la semaine')+'</b><small>'+(i===0?'Pour mesurer ton évolution':'Pesée du dimanche, à jeun si possible')+'</small></span><span class="bin"><input class="bnum" type="number" inputmode="decimal" min="0" step="0.1" data-bk="wt" data-i="'+i+'" value="'+(wv!=null?wv:'')+'" placeholder="0,0" aria-label="Poids en kilos"'+dis+'><small>kg</small></span></label>';
   else{const nx=nextWeigh(i);if(nx>=0)h+='<p class="bnote">'+ic('clock',18)+'<span>Prochaine pesée : '+dshort(nx)+'</span></p>';}
   return h+'</div></section>';
@@ -1408,6 +1411,14 @@ function calSection(){
   const ya=(104-avg/top*H).toFixed(1);
   h+='<div class="card"><div class="schips cst"><span><b>'+(a7!=null?nfmt(a7):'–')+'</b>moy. 7 jours</span><span><b>'+nfmt(avg)+'</b>moy. totale</span><span><b>'+idx.length+'</b>jours notés</span></div><svg class="chart" viewBox="0 0 336 128" role="img" aria-label="Calories par jour"><line x1="0" y1="104.5" x2="336" y2="104.5" stroke="#E1E3FA" stroke-width="1"/><line x1="0" y1="'+ya+'" x2="336" y2="'+ya+'" stroke="#8E92F0" stroke-width="1.5"/>'+bars+lab+'</svg><p class="ckey"><i></i>Moyenne : '+nfmt(avg)+' kcal par jour · touche une barre pour modifier le jour</p></div></section>';
   return h;
+}
+function balSection(){
+  const idx=range(N).filter(i=>S.cal[i]!=null&&S.dep[i]!=null);
+  if(!range(N).some(i=>S.dep[i]!=null))return '';
+  const di=range(N).filter(i=>S.dep[i]!=null),ad=di.reduce((a,i)=>a+S.dep[i],0)/di.length;
+  const ab=idx.length?idx.reduce((a,i)=>a+S.cal[i]-S.dep[i],0)/idx.length:null;
+  const steps=range(N).filter(i=>S.act[i]&&S.act[i].p),as=steps.length?steps.reduce((a,i)=>a+S.act[i].p,0)/steps.length:null;
+  return '<section class="block"><div class="sec-title"><h3>Mes <span class="k">dépenses</span></h3></div><div class="card"><div class="schips cst"><span><b>'+nfmt(ad)+'</b>dépense moy.</span><span><b>'+(ab!=null?(ab>0?'+':'')+nfmt(ab):'–')+'</b>bilan moy.</span><span><b>'+(as!=null?nfmt(as):'–')+'</b>pas moy.</span></div><p class="ckey"><i></i>Bilan = calories mangées − calories dépensées, sur les jours où tu as noté les deux.</p></div></section>';
 }
 function wtSection(){
   const idx=range(N).filter(i=>S.wt[i]!=null);
@@ -1463,7 +1474,7 @@ function viewSuivi(){
     h+='<span class="rf">'+renfoWeek(w)+'/3</span>';
   }
   h+='</div></div></section>';
-  h+=calSection()+wtSection();
+  h+=calSection()+balSection()+wtSection();
   h+='<p class="foot">'+(syncMode==='cloud'?'Enregistré sur ton compte, tu retrouves tout sur tous tes appareils.':'Enregistré sur cet appareil.')+'</p>';
   const rows=[];
   SESS.forEach((ex,si)=>ex.forEach(e=>{if(!isLoaded(e))return;const arr=range(6).map(w=>{const d=S.ex[exKey(si,w,e[0])];return d&&d.kg!=null?d.kg:null;});if(arr.some(x=>x!=null))rows.push({si,e,arr});}));
@@ -1586,9 +1597,9 @@ document.addEventListener('input',function(e){
 });
 document.addEventListener('change',function(e){
   const t=e.target;if(!t.dataset)return;
-  if(t.dataset.bk){const key=t.dataset.bk==='cal'?'cal':'wt',i=Number(t.dataset.i),v=parseFloat(String(t.value).replace(',','.'));
-    if(t.value===''||isNaN(v)){delete S[key][i];}else S[key][i]=key==='cal'?Math.round(v):Math.round(v*10)/10;
-    save();render();toast(t.value===''?'Valeur effacée':(key==='cal'?'Calories enregistrées':'Poids enregistré'));return;}
+  if(t.dataset.bk){const key=t.dataset.bk==='cal'?'cal':(t.dataset.bk==='dep'?'dep':'wt'),i=Number(t.dataset.i),v=parseFloat(String(t.value).replace(',','.'));
+    if(t.value===''||isNaN(v)){delete S[key][i];}else S[key][i]=key!=='wt'?Math.round(v):Math.round(v*10)/10;
+    save();render();toast(t.value===''?'Valeur effacée':(key==='cal'?'Calories enregistrées':(key==='dep'?'Dépense enregistrée':'Poids enregistré')));return;}
   if(t.dataset.pk){const k=t.dataset.pk;S.ex[k]=S.ex[k]||{};const pp=S.ex[k].pl=S.ex[k].pl||{};
     if(t.value===''){delete pp[t.dataset.f];}else pp[t.dataset.f]=Math.max(0,parseFloat(String(t.value).replace(',','.'))||0);save();render();}
 });
@@ -1611,10 +1622,24 @@ document.addEventListener('click',function(e){
 });
 window.addEventListener('hashchange',function(){const h=location.hash.replace('#','');if(TABS.some(t=>t[0]===h)&&h!==tab){tab=h;render();}});
 
+/* ---------- import depuis l'app Santé (Raccourci iPhone) : ?dep=520&pas=8400&min=45&d=2026-11-17 ---------- */
+function importHealth(){
+  try{
+    const q=new URLSearchParams(location.search);if(!q.has('dep')&&!q.has('pas')&&!q.has('min'))return;
+    let i=todayIdx();const dd=q.get('d');if(dd&&/^\d{4}-\d{2}-\d{2}$/.test(dd)){const p=dd.split('-').map(Number);i=Math.round((Date.UTC(p[0],p[1]-1,p[2])-START)/864e5);}
+    const num=k=>{const v=parseFloat(String(q.get(k)).replace(',','.'));return isNaN(v)?null:Math.round(v);};
+    if(i>=0&&i<N){const dep=num('dep'),pas=num('pas'),mn=num('min');
+      if(dep!=null)S.dep[i]=dep;
+      if(pas!=null||mn!=null){S.act[i]=Object.assign(S.act[i]||{},pas!=null?{p:pas}:{},mn!=null?{m:mn}:{});}
+      save();setTimeout(()=>toast('Données Santé importées'),400);}
+    history.replaceState(null,'',location.pathname+location.hash);
+  }catch(e){}
+}
 /* ---------- démarrage ---------- */
 (function(){
   const t=todayIdx();sel=Math.max(0,Math.min(t,N-1));progW=Math.max(0,Math.min(Math.floor(t/7),5));
   const h=location.hash.replace('#','');if(TABS.some(x=>x[0]===h))tab=h;
+  importHealth();
   render();initRemote();
 })();
 })();
