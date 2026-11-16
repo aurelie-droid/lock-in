@@ -549,6 +549,54 @@ nav.tabs button .i{width:26px;height:26px}
 .vid a{display:grid;place-items:center;width:40px;height:40px;border-radius:14px;background:rgba(255,255,255,.7);color:#C9784A;text-decoration:none;padding:0}
 .tg h3{display:flex;align-items:center;gap:10px;line-height:1.15}
 .gico{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:14px;background:#D2D4F6;color:#6568CF}
+/* ===== animations ===== */
+:root{--ease:cubic-bezier(.22,1,.36,1);--spring:cubic-bezier(.34,1.56,.64,1)}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes blurin{from{opacity:0;transform:translateY(16px);filter:blur(8px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes cellin{from{opacity:0;transform:scale(.55)}to{opacity:1;transform:none}}
+@keyframes iconin{from{opacity:0;transform:translate(40px,26px) rotate(-14deg) scale(.82)}to{opacity:1;transform:none}}
+@keyframes floaty{from{transform:translateY(0) rotate(0)}to{transform:translateY(-7px) rotate(2.5deg)}}
+@keyframes bandin{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0)}}
+@keyframes flick{0%,100%{transform:scale(1) rotate(0)}30%{transform:scale(1.12) rotate(-5deg)}60%{transform:scale(.96) rotate(3deg)}}
+@keyframes halo{from{opacity:.55;transform:scale(.9)}to{opacity:0;transform:scale(1.5)}}
+@keyframes tabhop{0%{transform:translateY(0)}35%{transform:translateY(-6px) scale(1.12)}100%{transform:none}}
+@keyframes chkin{from{transform:scale(0) rotate(-40deg)}to{transform:none}}
+@keyframes tipin{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:none}}
+.rv{animation:rise .85s var(--ease) backwards;animation-delay:var(--d,0ms)}
+.rc{animation:cellin .6s var(--spring) backwards;animation-delay:var(--d,0ms)}
+#view.enter .banner{animation:bandin .9s var(--ease) backwards}
+#view.enter .banner .pill{animation:blurin .8s var(--ease) .12s backwards}
+#view.enter .banner h2{animation:blurin .95s var(--ease) .2s backwards}
+#view.enter .banner p{animation:blurin .9s var(--ease) .32s backwards}
+.banner .bgico svg{animation:floaty 9s ease-in-out infinite alternate}
+#view.enter .banner .bgico svg{animation:iconin 1.2s var(--ease) .1s backwards,floaty 9s ease-in-out 1.3s infinite alternate}
+.pstreak .i{animation:flick 3.4s ease-in-out infinite;transform-origin:50% 90%}
+.pring.done:after{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid #A9ACF2;animation:halo 1.1s var(--ease) both;pointer-events:none}
+.tile.pop,.todo.pop,.ex .pop{animation:pop .55s var(--spring)}
+@keyframes pop{0%{transform:scale(.93)}55%{transform:scale(1.035)}100%{transform:scale(1)}}
+.tile.pop .chk svg,.todo.pop .box svg{animation:chkin .55s var(--spring) .05s backwards}
+.tile.pop .ico{animation:tabhop .6s var(--ease)}
+.tile,.pday,.cell,.todo,.rrow>summary,.wnav,.btn,nav.tabs button{transition:transform .35s var(--spring),background-color .3s,color .3s}
+.tile:active,.pday:active,.cell:active,.todo:active,.wnav:active{transform:scale(.95)}
+.rrow>summary:active{transform:scale(.985)}
+nav.tabs .in{position:relative}
+.tabpill{position:absolute;left:0;top:0;bottom:0;border-radius:18px;background:#D2D4F6;will-change:transform;pointer-events:none}
+nav.tabs button{position:relative;z-index:1}
+nav.tabs button.on{background:transparent!important}
+nav.tabs button:active{transform:scale(.92)}
+nav.tabs button.bn .i{animation:tabhop .7s var(--ease)}
+.rrow .rch{transition:transform .45s var(--ease)}
+.rrow.shut .rch{transform:rotate(0)!important}
+.rrow[open] .tips li{animation:tipin .6s var(--ease) backwards}
+.rrow[open] .tips li:nth-child(2){animation-delay:.07s}
+.rrow[open] .tips li:nth-child(3){animation-delay:.14s}
+.rrow[open] .tips li:nth-child(4){animation-delay:.21s}
+.rrow[open] .tips li:nth-child(5){animation-delay:.28s}
+.rrow.shut .tips li{animation:none}
+.tile.on{transition:background-color .45s var(--ease),color .3s}
+.pday .rings,.pring .rings{transition:transform .5s var(--spring)}
+.pday:active .rings{transform:scale(.88)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -740,23 +788,62 @@ function ring1(size,stroke,frac,key,col,label,extra){
   const c=size/2,r=c-stroke/2-1,C=2*Math.PI*r;
   return '<svg class="rings" viewBox="0 0 '+size+' '+size+'" width="'+size+'" height="'+size+'" role="img" aria-label="'+label+'"><circle cx="'+c+'" cy="'+c+'" r="'+r.toFixed(1)+'" fill="none" stroke="'+TRACK+'" stroke-width="'+stroke+'"/><circle class="rg" data-k="'+key+'" data-f="'+frac.toFixed(3)+'" data-c="'+C.toFixed(2)+'" cx="'+c+'" cy="'+c+'" r="'+r.toFixed(1)+'" fill="none" stroke="'+col+'" stroke-width="'+stroke+'" stroke-linecap="round" stroke-dasharray="0 '+C.toFixed(2)+'" transform="rotate(-90 '+c+' '+c+')"/>'+(extra||'')+'</svg>';
 }
+const EASE='cubic-bezier(.22,1,.36,1)';
 function animateProgress(){
-  const ease='cubic-bezier(.22,1,.36,1)';
   document.querySelectorAll('.rg').forEach(el=>{
     const k=el.dataset.k,f=+el.dataset.f,C=+el.dataset.c,from=PROG_LAST[k]||0;
     el.style.transition='none';el.setAttribute('stroke-dasharray',(C*from).toFixed(2)+' '+C);
     el.setAttribute('stroke-linecap',(f<0.01&&from<0.01)?'butt':'round');
     void el.getBoundingClientRect();
-    el.style.transition='stroke-dasharray .95s '+ease;el.setAttribute('stroke-dasharray',(C*f).toFixed(2)+' '+C);
+    el.style.transition='stroke-dasharray 1.1s '+EASE;el.setAttribute('stroke-dasharray',(C*f).toFixed(2)+' '+C);
     PROG_LAST[k]=f;
   });
   document.querySelectorAll('.cf').forEach(el=>{
     const k=el.dataset.k,f=+el.dataset.f,from=PROG_LAST[k]||0;
     el.style.transition='none';el.style.transform='scaleY('+from+')';
     void el.getBoundingClientRect();
-    el.style.transition='transform .95s '+ease;el.style.transform='scaleY('+f+')';
+    el.style.transition='transform 1.1s '+EASE+' '+(+el.dataset.dl||0)+'ms';el.style.transform='scaleY('+f+')';
     PROG_LAST[k]=f;
   });
+  document.querySelectorAll('.bar>i').forEach((el,n)=>{
+    const k='bar'+tab+n,f=parseFloat(el.style.width)||0,from=PROG_LAST[k]||0;
+    el.style.transition='none';el.style.width=from+'%';
+    void el.getBoundingClientRect();
+    el.style.transition='width 1s '+EASE;el.style.width=f+'%';PROG_LAST[k]=f;
+  });
+  document.querySelectorAll('.cnt').forEach(el=>{
+    const k=el.dataset.k,to=+el.dataset.v,from=PROG_LAST[k]||0;PROG_LAST[k]=to;
+    if(from===to){el.textContent=to;return;}
+    const t0=performance.now(),D=900;el.textContent=from;
+    (function st(t){const q=Math.min(1,(t-t0)/D),e=1-Math.pow(1-q,4);el.textContent=Math.round(from+(to-from)*e);if(q<1)requestAnimationFrame(st);})(t0);
+  });
+}
+let lastTab=null,lastTabX=null,animMode=null;
+function enterFx(mode){
+  const v=document.getElementById('view');
+  if(mode==='page'){
+    v.classList.remove('enter');void v.offsetWidth;v.classList.add('enter');
+    clearTimeout(enterFx.t);enterFx.t=setTimeout(()=>v.classList.remove('enter'),1800);
+  }
+  const sel=mode==='page'?'.prog,.sumcard,.sec-title,.tile,.rrow,.closing,.tg h3,.todo,.cap,.ex,.progress,.block>.card,.seg,.foot':'.tile';
+  let n=0;
+  v.querySelectorAll(sel).forEach(el=>{
+    if(el.closest('.banner'))return;
+    el.classList.add('rv');el.style.setProperty('--d',((mode==='page'?160:0)+Math.min(n,14)*(mode==='page'?55:40))+'ms');n++;
+  });
+  v.querySelectorAll('.cell').forEach((el,k)=>{el.classList.add('rc');el.style.setProperty('--d',(mode==='page'?260:0)+k*12+'ms');});
+}
+function tabPill(){
+  const box=document.getElementById('tabs'),pill=box.querySelector('.tabpill'),on=box.querySelector('button.on');
+  if(!pill||!on)return;
+  const x=on.offsetLeft,w=on.offsetWidth;
+  pill.style.width=w+'px';
+  if(lastTabX===null){pill.style.transform='translateX('+x+'px)';}
+  else{
+    pill.style.transition='none';pill.style.transform='translateX('+lastTabX+'px)';void pill.offsetWidth;
+    pill.style.transition='transform .6s '+EASE;pill.style.transform='translateX('+x+'px)';
+  }
+  lastTabX=x;
 }
 const streakDays=()=>{let t=todayIdx();if(t<0)return 0;let i=Math.min(t,N-1),c=0;if(score(i)<3)i--;for(;i>=0&&score(i)>=3;i--)c++;return c;};
 function viewToday(){
@@ -770,7 +857,7 @@ function viewToday(){
   const msg2=s===6?'Journée parfaite. Bravo.':(s===0?'Une première case pour lancer la journée.':'Encore '+rest+(rest>1?' cases':' case')+' pour une journée parfaite.');
   const DL=['L','M','M','J','V','S','D'];
   h+='<section class="block"><div class="card prog"><div class="ptop"><div class="pl">'+(i===t?'<span class="pill red">Aujourd’hui</span>':'<span class="pill">Jour '+(i+1)+'</span>')+'<span class="pdate">'+fmt(i)+'</span></div><span class="pstreak">'+ic('flame',18)+'<b>'+stk+'</b> '+(stk>1?'jours':'jour')+' d’affilée</span></div>';
-  h+='<div class="pmain"><div class="pring'+(s===6?' done':'')+'">'+ring1(96,11,s/6,'day'+i,s===6?SOFT2:SOFT,'Cases du jour : '+s+' sur 6')+'<span class="pnum"><b>'+s+'</b><i>/ 6</i></span></div><div class="ptxt"><span class="pmsg">'+msg2+'</span><span class="phint">'+(stk>0?'Garde le fil : 3 cases suffisent pour valider un jour.':'3 cases suffisent pour valider un jour et lancer une série.')+'</span></div></div>';
+  h+='<div class="pmain"><div class="pring'+(s===6?' done':'')+'">'+ring1(96,11,s/6,'day'+i,s===6?SOFT2:SOFT,'Cases du jour : '+s+' sur 6')+'<span class="pnum"><b class="cnt" data-k="n'+i+'" data-v="'+s+'">'+s+'</b><i>/ 6</i></span></div><div class="ptxt"><span class="pmsg">'+msg2+'</span><span class="phint">'+(stk>0?'Garde le fil : 3 cases suffisent pour valider un jour.':'3 cases suffisent pour valider un jour et lancer une série.')+'</span></div></div>';
   h+='<div class="pweek"><button class="wnav" data-act="day" data-d="-7" aria-label="Semaine précédente"'+(wk<=0?' disabled':'')+'>'+ic('chevL',20)+'</button>'+range(7).map(k=>{const di=wk*7+k;if(di>=N)return '<span></span>';const sc=score(di);return '<button class="pday'+(di===i?' sel':'')+(di===t?' now':'')+(di>t?' fut':'')+'" data-act="seld" data-i="'+di+'" aria-label="'+fmt(di)+', '+sc+' cases sur 6"><span class="dl">'+DL[k]+'</span>'+ring1(40,5,sc/6,'w'+di,SOFT,'',`<text x="20" y="24.5" text-anchor="middle" font-size="13" font-weight="700" fill="#2D2756">${dateOf(di).getUTCDate()}</text>`)+'</button>';}).join('')+'<button class="wnav" data-act="day" data-d="7" aria-label="Semaine suivante"'+(wk>=5?' disabled':'')+'>'+ic('chevR',20)+'</button></div></div></section>';
   h+='<section class="block"><div class="sec-title"><h3>Mes <span class="k">cases</span> du jour</h3></div><div class="tiles">';
   HAB.forEach((b,k)=>{const on=has(i,b.id);h+='<button class="tile ccard '+b.tone+(on?' on':'')+'" data-act="tick" data-h="'+b.id+'" aria-pressed="'+on+'"><span class="top"><span class="ico">'+ic(b.icon)+'</span><span class="chk">'+ic('check',16)+'</span></span><span class="tt">'+(b.k===1?'<b>'+b.t1+'</b><span class="l">'+b.t2+'</span>':'<span class="l">'+b.t1+'</span><b>'+b.t2+'</b>')+(b.sub?'<span class="sub">'+b.sub+'</span>':'')+'</span></button>';});
@@ -789,7 +876,7 @@ function viewSuivi(){
   const weeksOk=range(6).filter(w=>renfoWeek(w)>=3).length;
   let h=banner('Mon suivi','<span class="l">Mes</span><br>progrès','Chaque case compte. Regarde le chemin parcouru.','la2');
   const stk=streakDays(),curW=Math.max(0,Math.min(Math.floor(t/7),5));
-  h+='<section class="block"><div class="card sumcard"><div class="sumtop"><div class="sbig"><b>'+el+'</b><span>/ '+N+' jours</span></div><div class="schips"><span><b>'+stk+'</b>série</span><span><b>'+perfect+'</b>parfaites</span><span><b>'+weeksOk+'/6</b>renfo</span></div></div><div class="caps">'+range(6).map(w=>{const f=range(7).reduce((a,k)=>a+score(w*7+k),0)/42;return '<div class="cap'+(w===curW&&t>=0?' now':'')+'"><div class="cb"><i class="cf" data-k="cap'+w+'" data-f="'+f.toFixed(3)+'"></i></div><span>S'+(w+1)+'</span></div>';}).join('')+'</div></div></section>';
+  h+='<section class="block"><div class="card sumcard"><div class="sumtop"><div class="sbig"><b class="cnt" data-k="el" data-v="'+el+'">'+el+'</b><span>/ '+N+' jours</span></div><div class="schips"><span><b>'+stk+'</b>série</span><span><b>'+perfect+'</b>parfaites</span><span><b>'+weeksOk+'/6</b>renfo</span></div></div><div class="caps">'+range(6).map(w=>{const f=range(7).reduce((a,k)=>a+score(w*7+k),0)/42;return '<div class="cap'+(w===curW&&t>=0?' now':'')+'"><div class="cb"><i class="cf" data-dl="'+(w*70)+'" data-k="cap'+w+'" data-f="'+f.toFixed(3)+'"></i></div><span>S'+(w+1)+'</span></div>';}).join('')+'</div></div></section>';
   h+='<section class="block"><div class="sec-title"><h3>Mes <span class="k">6 semaines</span></h3></div><div class="card"><div class="cal"><span></span>'+['L','M','M','J','V','S','D'].map(d=>'<span class="dow">'+d+'</span>').join('')+'<span class="dow">Renfo</span>';
   for(let w=0;w<6;w++){
     h+='<span class="wk">S'+(w+1)+'</span>';
@@ -841,9 +928,15 @@ function render(){
   const y=window.scrollY;
   const v={aujourdhui:viewToday,suivi:viewSuivi,programme:viewProg,regles:viewRegles,todo:viewTodo}[tab]();
   document.getElementById('view').innerHTML=v+'<p class="foot">D’après l’Opération Lock-in de zoeamalys · <a href="'+NOTION_URL+'">page d’origine</a></p>';
-  document.getElementById('tabs').innerHTML=TABS.map(t=>'<button class="'+(t[0]===tab?'on':'')+'" data-act="tab" data-v="'+t[0]+'" aria-current="'+(t[0]===tab)+'">'+ic(t[2],26)+t[1]+'</button>').join('');
+  document.getElementById('tabs').innerHTML='<span class="tabpill"></span>'+TABS.map(t=>'<button class="'+(t[0]===tab?'on':'')+'" data-act="tab" data-v="'+t[0]+'" aria-current="'+(t[0]===tab)+'">'+ic(t[2],26)+t[1]+'</button>').join('');
   document.title='Lock-in pastel';
   window.scrollTo(0,y);
+  const mode=tab!==lastTab?'page':animMode;animMode=null;
+  if(mode==='page')for(const k in PROG_LAST)delete PROG_LAST[k];
+  if(mode)enterFx(mode);
+  tabPill();
+  if(tab!==lastTab&&lastTab!==null){const b=document.querySelector('#tabs button.on');if(b)b.classList.add('bn');}
+  lastTab=tab;
   animateProgress();
 }
 function go(t){tab=t;try{history.replaceState(null,'','#'+t);}catch(e){try{location.hash=t;}catch(e2){}}window.scrollTo(0,0);render();}
@@ -853,8 +946,8 @@ document.addEventListener('click',function(e){
   const el=e.target.closest('[data-act]');if(!el)return;
   const a=el.dataset.act;
   if(a==='tab'){go(el.dataset.v);return;}
-  if(a==='day'){sel=Math.max(0,Math.min(N-1,sel+Number(el.dataset.d)));render();return;}
-  if(a==='seld'){sel=Number(el.dataset.i);render();return;}
+  if(a==='day'){sel=Math.max(0,Math.min(N-1,sel+Number(el.dataset.d)));animMode='soft';render();return;}
+  if(a==='seld'){sel=Number(el.dataset.i);animMode='soft';render();return;}
   if(a==='goto'){sel=Number(el.dataset.i);go('aujourdhui');return;}
   if(a==='tick'){
     const t=todayIdx();if(sel>t){toast('Ce jour n’est pas encore arrivé');return;}
@@ -867,14 +960,14 @@ document.addEventListener('click',function(e){
   if(a==='rule'){const v=Number(el.dataset.i);ruleSel=(ruleSel===v?-1:v);render();return;}
   if(a==='ps'){progS=Number(el.dataset.v);render();return;}
   if(a==='pw'){progW=Number(el.dataset.v);render();return;}
-  if(a==='exok'){const k=el.dataset.k;S.ex[k]=S.ex[k]||{};S.ex[k].ok=S.ex[k].ok?0:1;save();render();return;}
+  if(a==='exok'){const k=el.dataset.k;S.ex[k]=S.ex[k]||{};S.ex[k].ok=S.ex[k].ok?0:1;save();render();const b=document.querySelector('[data-act="exok"][data-k="'+k+'"]');if(b&&S.ex[k].ok)b.classList.add('pop');return;}
   if(a==='sessdone'){
     const t=todayIdx();if(t<0||t>=N+1){toast('Le challenge n’a pas commencé');return;}
     const day=Math.min(t,N-1),p=snap();const arr=S.d[day]?S.d[day].slice():[];
     if(arr.indexOf('renfo')<0){arr.push('renfo');S.d[day]=arr;save();after(p,false);toast('Renfo coché pour aujourd’hui');}else toast('Le renfo est déjà coché aujourd’hui');
     return;
   }
-  if(a==='todo'){const p=snap();S.todo[el.dataset.t]=S.todo[el.dataset.t]?0:1;save();render();after(p,false);return;}
+  if(a==='todo'){const p=snap();S.todo[el.dataset.t]=S.todo[el.dataset.t]?0:1;save();render();const b=document.querySelector('[data-t="'+el.dataset.t+'"]');if(b&&S.todo[el.dataset.t])b.classList.add('pop');after(p,false);return;}
   if(a==='ctoggle'){const c=S.custom.find(x=>x.id===el.dataset.id);if(c){c.ok=c.ok?0:1;save();render();}return;}
   if(a==='cdel'){S.custom=S.custom.filter(x=>x.id!==el.dataset.id);save();render();return;}
   if(a==='cadd'){const inp=document.getElementById('newtodo');const v=inp.value.trim();if(!v)return;S.custom.push({id:'c'+Date.now(),t:v,ok:0});save();render();return;}
@@ -884,6 +977,22 @@ document.addEventListener('input',function(e){
   S.ex[k]=S.ex[k]||{};S.ex[k].v=e.target.value;save();
 });
 document.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.id==='newtodo'){e.preventDefault();document.querySelector('[data-act="cadd"]').click();}});
+document.addEventListener('click',function(e){
+  const sm=e.target.closest('.rrow>summary');if(!sm)return;
+  e.preventDefault();
+  const d=sm.parentElement,b=d.querySelector('.rbody');if(!b||d.dataset.busy)return;
+  d.dataset.busy=1;b.style.overflow='hidden';
+  const done=()=>{b.style.overflow='';delete d.dataset.busy;};
+  if(d.open){
+    d.classList.add('shut');const h=b.offsetHeight;
+    const a=b.animate([{height:h+'px',opacity:1},{height:'0px',opacity:0}],{duration:420,easing:EASE});
+    a.onfinish=()=>{d.open=false;d.classList.remove('shut');done();};
+  }else{
+    d.open=true;const h=b.offsetHeight;
+    const a=b.animate([{height:'0px',opacity:0},{height:h+'px',opacity:1}],{duration:560,easing:EASE});
+    a.onfinish=done;
+  }
+});
 window.addEventListener('hashchange',function(){const h=location.hash.replace('#','');if(TABS.some(t=>t[0]===h)&&h!==tab){tab=h;render();}});
 
 /* ---------- démarrage ---------- */
