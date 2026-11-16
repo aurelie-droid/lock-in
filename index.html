@@ -1532,7 +1532,7 @@ function viewTodo(){
 function render(){
   const y=window.scrollY;
   const v={aujourdhui:viewToday,suivi:viewSuivi,programme:viewProg,regles:viewRegles,todo:viewTodo}[tab]();
-  document.getElementById('view').innerHTML=v+'<p class="foot">D’après l’Opération Lock-in de zoeamalys · <a href="'+NOTION_URL+'">page d’origine</a><br>Version 17 nov. 01h00</p>';
+  document.getElementById('view').innerHTML=v+'<p class="foot">D’après l’Opération Lock-in de zoeamalys · <a href="'+NOTION_URL+'">page d’origine</a><br>Version '+APPVER+'</p>';
   document.getElementById('tabs').innerHTML='<span class="tabpill"></span>'+TABS.map(t=>'<button class="'+(t[0]===tab?'on':'')+'" data-act="tab" data-v="'+t[0]+'" aria-current="'+(t[0]===tab)+'">'+ic(t[2],26)+t[1]+'</button>').join('');
   document.title='Lock-in pastel';
   window.scrollTo(0,y);
@@ -1635,12 +1635,22 @@ function importHealth(){
     history.replaceState(null,'',location.pathname+location.hash);
   }catch(e){}
 }
+/* ---------- mise à jour automatique : recharge si une version plus récente est en ligne ---------- */
+var APPVER='17 nov. 01h20';
+function checkUpdate(){
+  try{
+    fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{
+      const m=/var APPVER='([^']+)'/.exec(t);
+      if(m&&m[1]!==APPVER&&!sessionStorage.getItem('lockin-reload-'+m[1])){sessionStorage.setItem('lockin-reload-'+m[1],'1');location.reload();}
+    }).catch(()=>{});
+  }catch(e){}
+}
 /* ---------- démarrage ---------- */
 (function(){
   const t=todayIdx();sel=Math.max(0,Math.min(t,N-1));progW=Math.max(0,Math.min(Math.floor(t/7),5));
   const h=location.hash.replace('#','');if(TABS.some(x=>x[0]===h))tab=h;
   importHealth();
-  render();initRemote();
+  render();initRemote();checkUpdate();
 })();
 })();
 </script>
