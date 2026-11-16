@@ -477,6 +477,15 @@ nav.tabs button .i{width:26px;height:26px}
 .hero .pill.pale{background:rgba(255,255,255,.14);color:#ECEBFA}
 .view>.block:first-of-type,#view>section.block:first-of-type{margin-top:26px}
 .banner{padding-top:calc(34px + env(safe-area-inset-top))}
+.rrow{background:var(--c-bg);color:var(--c-fg)}
+.rrow summary{grid-template-columns:52px 1fr 24px;gap:14px;padding:14px 16px 14px 14px}
+.rrow .rico{width:52px;height:52px;border-radius:18px;background:var(--c-tile);color:var(--c-ic);display:grid;place-items:center}
+.rrow .rico svg{width:32px;height:32px}
+.rrow .rch{color:var(--c-fg)}
+.rrow h3{color:var(--c-fg)}
+.rrow .tips li{background:rgba(255,255,255,.6);color:var(--c-fg)}
+.rbody{padding:0 16px 18px 80px}
+.rrow[open] summary{padding-bottom:10px}
 </style>
 </head>
 <body>
@@ -691,7 +700,7 @@ function viewProg(){
 
 function viewRegles(){
   let h=banner('Les 6 règles','<span class="l">Mes</span><br>engagements','Pas besoin d’être parfaite, l’important est de rester régulière.','la2');
-  h+='<section class="block rlist">'+RULES.map((r,k)=>'<details class="rrow"><summary><span class="rdot '+['pe1','pe1','gr1','ye1','pi1','la1'][k]+'"></span><h3>'+RULE_H[k]+'</h3><span class="rch">'+ic('chevR',20)+'</span></summary><div class="rbody"><p>'+r.p+'</p><ul class="tips">'+r.tips.map((x,j)=>'<li><b>'+RULE_T[k][j]+'</b><span>'+x+'</span></li>').join('')+'</ul></div></details>').join('')+'</section>';
+  h+='<section class="block rlist">'+RULES.map((r,k)=>'<details class="rrow '+['pe1','pe1','gr1','ye1','pi1','la1'][k]+'"><summary><span class="rico">'+ic(r.icon)+'</span><h3>'+RULE_H[k]+'</h3><span class="rch">'+ic('chevR',20)+'</span></summary><div class="rbody"><p>'+r.p+'</p><ul class="tips">'+r.tips.map((x,j)=>'<li><b>'+RULE_T[k][j]+'</b><span>'+x+'</span></li>').join('')+'</ul></div></details>').join('')+'</section>';
   h+='<div class="closing"><h3>Le but du <span class="k">27 décembre</span></h3><p>Terminer en étant fière du temps qu’on s’est accordé et des habitudes construites. Il y aura des jours plus faciles que d’autres, et c’est normal. On cherche la régularité et la progression, pas la perfection.</p></div>';
   return h;
 }
