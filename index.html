@@ -1242,7 +1242,7 @@ const SESS=[
  [['S1','Rameur','1 série',''],['S2','Traction assistée','3 × 10 reps','1 min 30'],['S3','Tirage poitrine (poulie)','3 × 12 reps','1 min 30'],['S4','Rowing poulie assis, prise en V','3 × 12 reps','1 min'],['S5','Développé couché (haltères)','3 × 10-12 reps','1 min 15'],['S6','Tirage vers le visage','2 × 10 reps','45 s'],['S7','Élévation latérale (haltères)','3 × 12 reps','1 min'],['S8','Curl biceps (haltères)','3 × 10-12 reps','45 s']].concat(FIN),
  [['S1','Développé militaire (haltères)','3 × 12-15 reps','1 min'],['S2','Élévation latérale (haltères)','3 × 10-12 reps','1 min'],['S3','Extension triceps (haltère)','3 × 12 reps','1 min'],['S4','Curl biceps (barre EZ)','3 × 10-12 reps','1 min'],['S5','Extension triceps à la corde','3 × 9-12 reps','1 min'],['S6','Dips triceps (assistés)','3 × 10 reps','55 s'],['S7','Hip thrust bonus fessiers (barre)','2 × 10-12 reps','1 min 30']].concat(FIN)
 ];
-const SEMO=['🍑','🚣','💪'];
+const SEMO=['🍑','🏋️','💪'];
 const SNAMES=['Legs','Back','Arms'];
 const BLOCKS={S:'Exercices',F:'Finisher abdos'};
 
@@ -1795,7 +1795,7 @@ function importHealth(){
   }catch(e){}
 }
 /* ---------- mise à jour automatique : recharge si une version plus récente est en ligne ---------- */
-var APPVER='17 nov. 04h40';
+var APPVER='17 nov. 04h50';
 function checkUpdate(){
   try{
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{
