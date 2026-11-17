@@ -805,6 +805,7 @@ nav.tabs button.bn .i{animation:tabhop .7s var(--ease)}
 #gain.show{display:flex}
 .goalrow{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid #ECEDFB;font-size:13px;font-weight:700;color:#2D2756}.goalrow .stp{display:flex;align-items:center;gap:10px}.goalrow .stp b{min-width:48px;text-align:center;font-size:16px}.goalrow .stp button{width:36px;height:36px;border-radius:12px;border:0;background:#EEF0FD;color:#5558BD;font-size:20px;font-weight:700}
 .seg3 .chip{display:flex;align-items:center;justify-content:center;gap:7px}.seg3 .chip .i{flex:none}.ptop h3{display:flex;align-items:center;gap:8px}.ptop h3 .i{color:#5558BD}
+.em{font-size:18px;line-height:1}.ptop h3 .em{font-size:22px;margin-right:2px}
 .gcard{width:100%;max-width:360px;background:#fff;border-radius:28px;padding:26px 22px;text-align:center;color:#2D2756;box-shadow:0 20px 50px rgba(45,39,86,.35)}
 .gtour{margin:0;font-size:13px;font-weight:700;color:#6B65A0}.gpos{margin:6px 0 4px;font-size:26px}
 .gtime{font-size:76px;line-height:1.05;font-weight:800;font-variant-numeric:tabular-nums;color:#5558BD;margin:6px 0 14px}
@@ -1241,6 +1242,7 @@ const SESS=[
  [['S1','Rameur','1 série',''],['S2','Traction assistée','3 × 10 reps','1 min 30'],['S3','Tirage poitrine (poulie)','3 × 12 reps','1 min 30'],['S4','Rowing poulie assis, prise en V','3 × 12 reps','1 min'],['S5','Développé couché (haltères)','3 × 10-12 reps','1 min 15'],['S6','Tirage vers le visage','2 × 10 reps','45 s'],['S7','Élévation latérale (haltères)','3 × 12 reps','1 min'],['S8','Curl biceps (haltères)','3 × 10-12 reps','45 s']].concat(FIN),
  [['S1','Développé militaire (haltères)','3 × 12-15 reps','1 min'],['S2','Élévation latérale (haltères)','3 × 10-12 reps','1 min'],['S3','Extension triceps (haltère)','3 × 12 reps','1 min'],['S4','Curl biceps (barre EZ)','3 × 10-12 reps','1 min'],['S5','Extension triceps à la corde','3 × 9-12 reps','1 min'],['S6','Dips triceps (assistés)','3 × 10 reps','55 s'],['S7','Hip thrust bonus fessiers (barre)','2 × 10-12 reps','1 min 30']].concat(FIN)
 ];
+const SEMO=['🍑','🚣','💪'];
 const SNAMES=['Legs','Back','Arms'];
 const BLOCKS={S:'Exercices',F:'Finisher abdos'};
 
@@ -1639,8 +1641,8 @@ function viewProg(){
   const ses=SESS[progS];const done=ses.filter(e=>(S.ex['s'+progS+'w'+progW+e[0]]||{}).ok).length;
   let h=banner('3 séances par semaine','<span class="l">Mon</span><br>programme','Jambes, dos et bras, avec un finisher abdos à la fin de chaque séance.','la2');
   const exd=(si,w)=>SESS[si].filter(e=>(S.ex['s'+si+'w'+w+e[0]]||{}).ok).length,st=(n,tot)=>n>=tot?' full':(n>0?' part':'');
-  h+='<section class="block stick"><div class="picker"><div class="seg3" role="group" aria-label="Séance">'+range(3).map(k=>{const n=exd(k,progW);return '<button class="chip'+(k===progS?' on':'')+st(n,SESS[k].length)+'" data-act="ps" data-v="'+k+'">'+ic(['wind','bars','dumbbell'][k],18)+SNAMES[k]+'</button>';}).join('')+'</div><div class="seg6" role="group" aria-label="Semaine">'+range(6).map(k=>{const n=exd(progS,k);return '<button class="chip'+(k===progW?' on':'')+(k===cur&&t>=0?' now':'')+st(n,ses.length)+'" data-act="pw" data-v="'+k+'" aria-label="Semaine '+(k+1)+'">S'+(k+1)+'</button>';}).join('')+'</div></div></section>';
-  h+='<section class="block progress"><div class="ptop"><h3>'+ic(['wind','bars','dumbbell'][progS],22)+' '+SNAMES[progS]+' <span class="k">semaine '+(progW+1)+'</span></h3><span class="pcount">'+done+' / '+ses.length+'</span></div><div class="bar"><i style="width:'+Math.round(done/ses.length*100)+'%"></i></div></section>';
+  h+='<section class="block stick"><div class="picker"><div class="seg3" role="group" aria-label="Séance">'+range(3).map(k=>{const n=exd(k,progW);return '<button class="chip'+(k===progS?' on':'')+st(n,SESS[k].length)+'" data-act="ps" data-v="'+k+'">'+'<span class="em" aria-hidden="true">'+SEMO[k]+'</span>'+SNAMES[k]+'</button>';}).join('')+'</div><div class="seg6" role="group" aria-label="Semaine">'+range(6).map(k=>{const n=exd(progS,k);return '<button class="chip'+(k===progW?' on':'')+(k===cur&&t>=0?' now':'')+st(n,ses.length)+'" data-act="pw" data-v="'+k+'" aria-label="Semaine '+(k+1)+'">S'+(k+1)+'</button>';}).join('')+'</div></div></section>';
+  h+='<section class="block progress"><div class="ptop"><h3>'+'<span class="em" aria-hidden="true">'+SEMO[progS]+'</span>'+SNAMES[progS]+' <span class="k">semaine '+(progW+1)+'</span></h3><span class="pcount">'+done+' / '+ses.length+'</span></div><div class="bar"><i style="width:'+Math.round(done/ses.length*100)+'%"></i></div></section>';
   h+='<section class="block"><details class="rule"><summary><span class="rsi">'+ic('medal',22)+'</span><span class="rtx"><b>Règle d’or</b><small>3 règles pour progresser · touche pour ouvrir</small></span></summary><div class="rules">'
   +'<div class="rl"><span class="rn">'+ic('target',22)+'</span><div><h4>Garde 1 à 2 reps en réserve</h4><p>À la fin de chaque série, tu pourrais en faire encore 1 ou 2, pas plus.</p><div class="dots" aria-hidden="true">'+'<i></i>'.repeat(10)+'<i class="res"></i><i class="res"></i><span>10 faites + 2 en réserve</span></div></div></div>'
   +'<div class="rl"><span class="rn">'+ic('dumbbell',22)+'</span><div><h4>Pas à fond ? C’est trop léger</h4><p>Si tu finis la série facilement, augmente la charge à la prochaine série ou séance.</p><div class="vs"><span class="chip">Facile</span><em>→</em><span class="chip on">Plus lourd</span></div></div></div>'
@@ -1793,7 +1795,7 @@ function importHealth(){
   }catch(e){}
 }
 /* ---------- mise à jour automatique : recharge si une version plus récente est en ligne ---------- */
-var APPVER='17 nov. 04h30';
+var APPVER='17 nov. 04h40';
 function checkUpdate(){
   try{
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{
