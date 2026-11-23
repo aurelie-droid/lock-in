@@ -854,6 +854,10 @@ nav.tabs button.bn .i{animation:tabhop .7s var(--ease)}
 .hve b{font-size:14px}
 .hve span{font-size:12.5px;color:#6B65A0}
 .hvdel{justify-self:start;font-size:12.5px;font-weight:600;color:#6B65A0;padding:6px 2px;text-decoration:underline}
+.hvmap{display:grid;gap:4px;padding:2px 0 2px 36px}
+.hvmap span{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;color:#2D2756}
+.hvmap b{font-weight:600}
+.hvmap small{font-size:12px;color:#6B65A0}
 </style>
 </head>
 <body>
@@ -1389,7 +1393,7 @@ const unlocked=()=>BADGES.filter(b=>b.f()).map(b=>b.id);
 
 
 /* ---------- import des séances Hevy (texte partagé) ---------- */
-let HVPREV=null,HVRENFO=true;
+let HVPREV=null,HVRENFO=true,HVLINK=true;
 function hvMonth(w){w=w.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\./g,'');if(w.indexOf('juin')===0)return 5;if(w.indexOf('juil')===0)return 6;const m={jan:0,fev:1,mar:2,avr:3,mai:4,aou:7,sep:8,oct:9,nov:10,dec:11}[w.slice(0,3)];return m===undefined?-1:m;}
 function parseHevy(txt){
   const lines=String(txt||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
@@ -1414,6 +1418,24 @@ function parseHevy(txt){
   o.ex=o.ex.filter(e=>e.s.length);
   return o.iso&&o.ex.length?o:null;
 }
+
+function nrm(x){const stop=['a','la','le','les','de','du','des','en','au','aux','et','x'];return String(x).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[()\-–,.'’]/g,' ').split(/\s+/).filter(w=>w&&stop.indexOf(w)<0).map(w=>w.replace(/s$/,''));}
+const hvSi=t=>['legs','back','arms'].findIndex(n=>(t||'').toLowerCase().indexOf(n)>-1);
+function hvMatch(name,sis){
+  const a=nrm(name);
+  if(a.join(' ')==='planche'){for(const si of sis){const e=SESS[si].find(x=>x[0]==='F1');if(e)return {si,e};}}
+  let best=null,bs=0;sis.forEach(si=>SESS[si].forEach(e=>{const b=nrm(e[1]),it=a.filter(w=>b.indexOf(w)>-1).length,sc=it/Math.max(a.length,b.length);if(sc>bs){bs=sc;best={si,e};}}));return bs>=0.6?best:null;}
+function hvLink(o,force){
+  const i=hvDay(o.iso);if(!(i>=0&&i<N))return null;
+  let si=force!=null?force:hvSi(o.t),fin=false;
+  if(si<0){const day=o.iso.slice(0,10),k=Object.keys(S.hv||{}).find(k=>hvSi(S.hv[k].t)>=0&&S.hv[k].iso.slice(0,10)===day);if(k===undefined)return null;si=hvSi(S.hv[k].t);fin=true;}
+  const w=Math.min(5,Math.floor(i/7)),items=[],miss=[];
+  o.ex.forEach(x=>{const m=hvMatch(x.n,[si]);if(!m){miss.push(x.n);return;}
+    const ld=isLoaded(m.e),kgs=x.s.map(t=>t.kg).filter(v=>v!=null&&v>0),mx=kgs.length?Math.max(...kgs):null,rs=x.s.filter(t=>t.r!=null&&(mx==null||t.kg===mx)).map(t=>t.r);
+    items.push({id:m.e[0],name:m.e[1],kg:ld?mx:null,rp:ld&&rs.length?Math.min(...rs):null});});
+  return items.length?{si,w,items,miss,fin}:null;
+}
+function hvApply(l){l.items.forEach(t=>{const kk=exKey(l.si,l.w,t.id);S.ex[kk]=Object.assign(S.ex[kk]||{},{ok:1});if(t.kg!=null){S.ex[kk].kg=t.kg;if(t.rp!=null)S.ex[kk].rp=t.rp;}});}
 function hvDay(iso){const y=+iso.slice(0,4),m=+iso.slice(5,7)-1,d=+iso.slice(8,10);return Math.round((Date.UTC(y,m,d)-START)/864e5);}
 function hvSet(x){const p=[];if(x.kg!=null)p.push(fkg(x.kg)+' kg');if(x.r!=null)p.push((x.kg!=null?'× ':'')+x.r+(x.kg!=null?'':' reps'));if(x.d!=null){const m=Math.floor(x.d/60),s=x.d%60;p.push((m?m+' min ':'')+(s||!m?s+' s':'')); }if(x.km!=null)p.push(fkg(x.km)+' km');return p.join(' ')||x.raw||'—';}
 const hvKey=o=>o.url?o.url.replace(/\/+$/,'').split('/').pop():o.iso;
@@ -1424,7 +1446,7 @@ function hvSection(){
   if(HVPREV){const i=hvDay(HVPREV.iso),inR=i>=0&&i<N,ns=HVPREV.ex.reduce((a,e)=>a+e.s.length,0);
     h+='<div class="hvprev"><b>'+esc(HVPREV.t||'Séance')+'</b><span>'+hvDateLabel(HVPREV.iso)+' · '+HVPREV.ex.length+' exercice'+(HVPREV.ex.length>1?'s':'')+', '+ns+' série'+(ns>1?'s':'')+'</span>'
       +(inR?'<button class="hvchk'+(HVRENFO?' on':'')+'" data-act="hv-toggle" aria-pressed="'+HVRENFO+'"><span class="box">'+ic('check',16)+'</span>Compter comme renfo du '+fmt(i)+'</button>':'<span class="muted">Cette date est hors du défi : elle sera seulement ajoutée à l’historique.</span>')
-      +'<div class="dtbtns"><button class="dtb main" data-act="hv-save">'+ic('check',22)+'Importer cette séance</button><button class="dtb" data-act="hv-cancel">'+ic('x',22)+'Annuler</button></div></div>';}
+      +(HVPREV.link?'<button class="hvchk'+(HVLINK?' on':'')+'" data-act="hv-linktg" aria-pressed="'+HVLINK+'"><span class="box">'+ic('check',16)+'</span>Relier à ton programme : '+SNAMES[HVPREV.link.si]+', semaine '+(HVPREV.link.w+1)+' '+(HVPREV.link.fin?'(finisher abdos)':'(charges mises à jour)')+'</button><div class="hvmap">'+HVPREV.link.items.map(t=>'<span><b>'+esc(t.name)+'</b>'+(t.kg!=null?fkg(t.kg)+' kg'+(t.rp!=null?' × '+t.rp:''):'fait')+'</span>').join('')+(HVPREV.link.miss.length?'<small>Non reliés : '+HVPREV.link.miss.map(esc).join(', ')+'</small>':'')+'</div>':'')+'<div class="dtbtns"><button class="dtb main" data-act="hv-save">'+ic('check',22)+'Importer cette séance</button><button class="dtb" data-act="hv-cancel">'+ic('x',22)+'Annuler</button></div></div>';}
   else h+='<button class="dtb main" data-act="hv-read">'+ic('dumbbell',22)+'Lire la séance</button>';
   h+='</div>';
   if(list.length)h+='<div class="hvlist">'+list.map(([k,v])=>'<details class="hvrow"><summary><span class="hvd"><b>'+esc(v.t||'Séance')+'</b><small>'+hvDateLabel(v.iso)+'</small></span><span class="hvn">'+v.ex.length+' exo'+(v.ex.length>1?'s':'')+'</span><span class="rch">'+ic('chevR',18)+'</span></summary><div class="hvb">'+v.ex.map(e=>'<div class="hve"><b>'+esc(e.n)+'</b><span>'+e.s.map(hvSet).join(' · ')+'</span></div>').join('')+'<button class="hvdel" data-act="hv-del" data-k="'+esc(k)+'">Supprimer cette séance</button></div></details>').join('')+'</div>';
@@ -1816,11 +1838,14 @@ document.addEventListener('click',function(e){
   if(a==='bk-copy'){const txt=backupJSON();(navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(txt).then(()=>toast('Sauvegarde copiée, colle-la dans Notes ou un mail')):Promise.reject()).catch(()=>toast('Copie impossible, utilise le téléchargement'));return;}
   if(a==='bk-paste'){(navigator.clipboard&&navigator.clipboard.readText?navigator.clipboard.readText().then(restoreFrom):Promise.reject()).catch(()=>toast('Lecture du presse-papiers impossible'));return;}
   if(a==='bk-auto'){const r=localStorage.getItem(el.dataset.k);if(r)restoreFrom(r);return;}
-  if(a==='hv-read'){const t=document.getElementById('hvtxt'),o=parseHevy(t?t.value:'');if(!o){toast('Je ne reconnais pas ce texte');return;}HVPREV=o;HVRENFO=true;render();return;}
+  if(a==='hv-read'){const t=document.getElementById('hvtxt'),o=parseHevy(t?t.value:'');if(!o){toast('Je ne reconnais pas ce texte');return;}o.link=hvLink(o);HVPREV=o;HVRENFO=true;HVLINK=true;render();return;}
+  if(a==='hv-linktg'){HVLINK=!HVLINK;render();return;}
   if(a==='hv-toggle'){HVRENFO=!HVRENFO;render();return;}
   if(a==='hv-cancel'){HVPREV=null;render();return;}
   if(a==='hv-save'&&HVPREV){const o=HVPREV,k=hvKey(o);S.hv=S.hv||{};S.hv[k]={t:o.t,iso:o.iso,ex:o.ex,url:o.url};const i=hvDay(o.iso);
     if(HVRENFO&&i>=0&&i<N){const arr=S.d[i]?S.d[i].slice():[];if(arr.indexOf('renfo')<0){arr.push('renfo');S.d[i]=arr;}}
+    if(HVLINK&&o.link)hvApply(o.link);
+    if(HVLINK&&hvSi(o.t)>=0){Object.keys(S.hv).forEach(k2=>{const v=S.hv[k2];if(k2!==k&&hvSi(v.t)<0&&v.iso.slice(0,10)===o.iso.slice(0,10)){const l2=hvLink(v,hvSi(o.t));if(l2)hvApply(l2);}});}
     HVPREV=null;save();render();toast('Séance importée');return;}
   if(a==='hv-del'){if(S.hv&&S.hv[el.dataset.k]&&confirm('Supprimer cette séance de l’historique ?')){delete S.hv[el.dataset.k];save();render();}return;}
   if(a==='tab'){go(el.dataset.v);return;}
@@ -1914,7 +1939,7 @@ function importHealth(){
   }catch(e){}
 }
 /* ---------- mise à jour automatique : recharge si une version plus récente est en ligne ---------- */
-var APPVER='23 nov. 11h10';
+var APPVER='23 nov. 11h40';
 function checkUpdate(){
   try{
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{
