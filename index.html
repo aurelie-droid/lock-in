@@ -859,6 +859,7 @@ nav.tabs button.bn .i{animation:tabhop .7s var(--ease)}
 .hvmap b{font-weight:600}
 .hvmap small{font-size:12px;color:#6B65A0}
 .ssub{margin:-6px 0 12px;font-size:12.5px;font-weight:600;color:#6B65A0}.mchip.plan{background:#fff;color:#2D2756;box-shadow:inset 0 0 0 1.5px #D2D4F6}.mchip.plan .i{color:#8E92DA}.enote{grid-column:2;margin:2px 0 0;font-size:12.5px;line-height:1.35;color:#6B65A0}.exph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#B9BCEB}
+.kexp{margin:12px 0 0;font-size:12.5px;line-height:1.4;color:#5B5585}.kleg{display:flex;flex-wrap:wrap;gap:6px 14px;margin:8px 0 0;font-size:12px;color:#5B5585;font-weight:600}.kleg span:before{content:'';display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:#5558BD}.kleg .low:before{background:#B9BCF6}.kleg .neg:before{background:#E3A3B5}.krows{display:flex;flex-direction:column;gap:6px;margin-top:16px}.krows h4{margin:0 0 4px;font-size:14px;color:#2D2756}.krow{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;border:0;font-family:inherit;padding:10px 12px;border-radius:14px;background:#F6F7FE;color:#2D2756;cursor:pointer}.krow .kd b{display:block;font-size:14px}.krow .kd small{font-size:12px;color:#6B65A0}.krow .kv{text-align:right;flex:none}.krow .kv b{display:block;font-family:var(--serif);font-size:20px;line-height:1.1}.krow .kv small{font-size:11.5px;color:#6B65A0}.krow .kv.ok b{color:#5558BD}.krow .kv.neg b{color:#B04B6B}
 </style>
 </head>
 <body>
@@ -1383,7 +1384,9 @@ function fmt(i){const d=dateOf(i);return DOW[d.getUTCDay()]+' '+d.getUTCDate()+'
 function todayIdx(){const n=new Date();return Math.round((Date.UTC(n.getFullYear(),n.getMonth(),n.getDate())-START)/864e5);}
 const D=i=>S.d[i]||[];
 const has=(i,h)=>D(i).indexOf(h)>-1;
-const score=i=>HAB.filter(h=>has(i,h.id)).length;
+const FULL=6,TOT=7;/* 6 habitudes + le renfo = 7 cases ; 6 cases suffisent pour fermer l'anneau */
+const hab=i=>HAB.filter(h=>has(i,h.id)).length;
+const score=i=>hab(i)+(has(i,'renfo')?1:0);
 const renfoWeek=w=>range(7).filter(k=>has(w*7+k,'renfo')).length;
 function runs(h){
   const t=todayIdx();let total=0,best=0,run=0;
@@ -1393,11 +1396,11 @@ function runs(h){
   return{total:total,cur:cur,best:best};
 }
 const todoDone=()=>TODO_G.reduce((a,g)=>a+g.items.filter(it=>S.todo[it[0]]).length,0);
-function xp(){let x=0;for(let i=0;i<N;i++){const s=score(i);x+=s*10;if(has(i,'renfo'))x+=25;if(s===6)x+=30;}return x+todoDone()*15;}
+function xp(){let x=0;for(let i=0;i<N;i++){const s=hab(i);x+=s*10;if(has(i,'renfo'))x+=25;if(score(i)>=FULL)x+=30;}return x+todoDone()*15;}
 function level(x){let l=0;for(let k=0;k<LEVELS.length;k++)if(x>=LEVELS[k][0])l=k;return l;}
 const BADGES=[
   {id:'first',t:'pi2',n:'Premier pas',d:'Cocher une première case',ic:'check',f:()=>range(N).some(i=>D(i).length>0)},
-  {id:'perfect',t:'pe3',n:'Journée parfaite',d:'Les 6 cases le même jour',ic:'flame',f:()=>range(N).some(i=>score(i)===6)},
+  {id:'perfect',t:'pe3',n:'Journée parfaite',d:'6 cases sur 7 le même jour',ic:'flame',f:()=>range(N).some(i=>score(i)>=FULL)},
   {id:'s3',t:'ye2',n:'Série de 3',d:'3 jours d’affilée sur une habitude',ic:'pulse',f:()=>HAB.some(h=>runs(h.id).best>=3)},
   {id:'s7',t:'gr3',n:'Semaine de feu',d:'7 jours d’affilée sur une habitude',ic:'flame',f:()=>HAB.some(h=>runs(h.id).best>=7)},
   {id:'trio',t:'pe2',n:'Trio de fer',d:'3 séances de renfo en une semaine',ic:'dumbbell',f:()=>range(6).some(w=>renfoWeek(w)>=3)},
@@ -1679,7 +1682,8 @@ function bilanCard(i,ok){
   const dp=S.dep[i],ac=S.act[i];
   h+='<label class="brow"><span class="bico">'+ic('flame',26)+'</span><span class="blab"><b>Dépense du jour</b><small>'+(ac&&(ac.p||ac.m)?'Santé : '+(ac.p?nfmt(ac.p)+' pas':'')+(ac.p&&ac.m?' · ':'')+(ac.m?ac.m+' min d’exercice':''):'Se remplit seule depuis Santé (Raccourci)')+'</small></span><span class="bin"><input class="bnum" type="number" inputmode="numeric" min="0" step="10" data-bk="dep" data-i="'+i+'" value="'+(dp!=null?dp:'')+'" placeholder="0" aria-label="Dépense du jour"'+dis+'><small>kcal</small></span></label>';
   const bl=balAt(i),pf=S.prof,needw=wAt(i)==null,goal=GOAL();
-  if(bl){const ok=bl.def>=goal;h+='<div class="defbox '+(ok?'good':(bl.def>=0?'deficit':'surplus'))+'"><span class="dk">'+(bl.def>=0?'Déficit calorique':'Surplus calorique')+(ok?' · objectif atteint':'')+'</span><b>'+(bl.def>=0?'':'−')+nfmt(Math.abs(bl.def))+' <small>kcal</small></b><span class="dd">Objectif '+nfmt(goal)+' kcal · dépense totale '+nfmt(bl.tot)+' − mangé '+nfmt(kc)+'</span></div>';}
+  const bb=bmrAt(i),bdp=S.dep[i],hasB=(bb!=null&&bdp!=null),eat=kc!=null?kc:0,tot0=hasB?bb+bdp:0,def0=tot0-eat,rem=def0-goal;
+  if(hasB&&(kc!=null||rem>=0)){const fine=rem>=0;h+='<div class="defbox '+(fine?'good':(def0>=0?'deficit':'surplus'))+'"><span class="dk">'+(fine?(kc==null?'À manger au maximum aujourd’hui':'Il te reste à manger'):'Au-dessus de ton budget de')+'</span><b>'+nfmt(Math.abs(rem))+' <small>kcal</small></b><span class="dd">Pour garder ton déficit de '+nfmt(goal)+' kcal. Déficit du jour : '+(def0<0?'−':'')+nfmt(Math.abs(def0))+' kcal (dépense totale '+nfmt(tot0)+' − mangé '+nfmt(eat)+').</span></div>';}
   else if(needw)h+='<label class="brow"><span class="blab"><b>Poids pour le calcul</b><small>Une fois, jusqu’à ta première pesée</small></span><span class="bin"><input class="bnum" type="number" inputmode="decimal" step="0.1" data-pf="w" value="'+(pf.w!=null?pf.w:'')+'" placeholder="60"><small>kg</small></span></label>';
   if(weigh)h+='<label class="brow"><span class="bico">'+ic('graph',26)+'</span><span class="blab"><b>'+(i===0?'Poids de départ':'Poids de la semaine')+'</b><small>'+(i===0?'Pour mesurer ton évolution':'Pesée du dimanche, à jeun si possible')+'</small></span><span class="bin"><input class="bnum" type="number" inputmode="decimal" min="0" step="0.1" data-bk="wt" data-i="'+i+'" value="'+(wv!=null?wv:'')+'" placeholder="0,0" aria-label="Poids en kilos"'+dis+'><small>kg</small></span></label>';
   else{const nx=nextWeigh(i);if(nx>=0)h+='<p class="bnote">'+ic('clock',18)+'<span>Prochaine pesée : '+dshort(nx)+'</span></p>';}
@@ -1705,22 +1709,40 @@ function lineChart(o){
   let wl='';for(let w=0;w<6;w++)wl+='<text x="'+X(w*7+3).toFixed(1)+'" y="126" text-anchor="middle" font-size="10" font-weight="700" fill="#6B65A0">S'+(w+1)+'</text>';
   return '<svg class="chart" viewBox="0 0 336 132" role="img" aria-label="'+esc(o.label)+'">'+g+(idx.length>1?'<polyline points="'+pts+'" fill="none" stroke="#8E92F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>':'')+dots+wl+'</svg>';
 }
-function calSection(){
-  const t=todayIdx(),idx=range(N).filter(i=>S.cal[i]!=null);
-  let h='<section class="block"><div class="sec-title"><h3>Mes <span class="k">calories</span></h3></div>';
-  if(!idx.length)return h+'<div class="card empty-ch"><span class="gico">'+ic('apple',24)+'</span><p>Note tes calories chaque soir dans « Aujourd’hui » : ta courbe apparaît ici.</p></div></section>';
-  const vals=idx.map(i=>S.cal[i]),avg=vals.reduce((a,b)=>a+b,0)/vals.length;
-  const l7=idx.filter(i=>i<=t&&i>t-7).map(i=>S.cal[i]),a7=l7.length?l7.reduce((a,b)=>a+b,0)/l7.length:null;
-  return h+'<div class="card"><div class="schips cst"><span><b>'+(a7!=null?nfmt(a7):'–')+'</b>moy. 7 jours</span><span><b>'+nfmt(avg)+'</b>moy. totale</span><span><b>'+idx.length+'</b>jours notés</span></div>'+lineChart({vals:S.cal,label:'Calories par jour',unit:' kcal',minPad:100,ref:Math.round(avg),refLab:'Moyenne '+nfmt(avg)})+'<p class="ckey">Touche un point pour modifier le jour.</p></div></section>';
+function barChart(o){
+  const idx=range(N).filter(i=>o.vals[i]!=null);
+  let lo=0,hi=o.ref*1.25;idx.forEach(i=>{lo=Math.min(lo,o.vals[i]);hi=Math.max(hi,o.vals[i]);});if(lo<0)lo*=1.15;hi*=1.08;
+  const x0=44,x1=330,y0=12,y1=104,Y=v=>y0+(1-(v-lo)/(hi-lo))*(y1-y0),sl=(x1-x0)/N,bw=Math.max(3,sl*.6);
+  let g='<line x1="'+x0+'" y1="'+Y(0).toFixed(1)+'" x2="'+x1+'" y2="'+Y(0).toFixed(1)+'" stroke="#B9BCF6" stroke-width="1.5"/><text x="'+(x0-6)+'" y="'+(Y(0)+3.5).toFixed(1)+'" text-anchor="end" font-size="9.5" font-weight="600" fill="#6B65A0">0</text>';
+  g+='<line x1="'+x0+'" y1="'+Y(o.ref).toFixed(1)+'" x2="'+x1+'" y2="'+Y(o.ref).toFixed(1)+'" stroke="#5558BD" stroke-width="1.5" opacity=".6"/><text x="'+(x0-6)+'" y="'+(Y(o.ref)+3.5).toFixed(1)+'" text-anchor="end" font-size="9.5" font-weight="700" fill="#5558BD">'+nfmt(o.ref)+'</text>';
+  idx.forEach(i=>{const v=o.vals[i],x=x0+i*sl+(sl-bw)/2,yv=Y(v),yz=Y(0),top=Math.min(yv,yz),h=Math.max(2,Math.abs(yv-yz)),col=v>=o.ref?'#5558BD':(v>=0?'#B9BCF6':'#E3A3B5');
+    g+='<g data-act="goto" data-i="'+i+'" style="cursor:pointer"><rect x="'+(x0+i*sl).toFixed(1)+'" y="0" width="'+sl.toFixed(1)+'" height="108" fill="transparent"/><rect x="'+x.toFixed(1)+'" y="'+top.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2" fill="'+col+'"><title>'+esc(dshort(i))+' : '+(v<0?'−':'')+nfmt(Math.abs(v))+' kcal</title></rect></g>';});
+  let wl='';for(let w=0;w<6;w++)wl+='<text x="'+(x0+(w*7+3.5)*sl).toFixed(1)+'" y="124" text-anchor="middle" font-size="10" font-weight="700" fill="#6B65A0">S'+(w+1)+'</text>';
+  return '<svg class="chart" viewBox="0 0 336 130" role="img" aria-label="'+esc(o.label)+'">'+g+wl+'</svg>';
 }
-function balSection(){
-  const bi=range(N).filter(i=>balAt(i));
-  let h='<section class="block"><div class="sec-title"><h3>Mon <span class="k">déficit</span></h3></div>';
-  if(!bi.length)return h+'<div class="card empty-ch"><span class="gico">'+ic('flame',24)+'</span><p>Note tes calories et ta dépense dans « Aujourd’hui » : ta courbe de déficit apparaît ici.</p></div></section>';
-  const goal=GOAL(),vals={};bi.forEach(i=>vals[i]=balAt(i).def);
-  const tot=bi.reduce((x,i)=>x+vals[i],0),ab=tot/bi.length,hit=bi.filter(i=>vals[i]>=goal).length,kg=Math.abs(tot)/7700;
-  const steps=range(N).filter(i=>S.act[i]&&S.act[i].p),as=steps.length?steps.reduce((x,i)=>x+S.act[i].p,0)/steps.length:null;
-  return h+'<div class="card"><div class="sumtop"><div class="sbig"><b>'+hit+' / '+bi.length+'</b><span>jours à l’objectif</span></div><div class="schips"><span><b>'+(ab>=0?'':'−')+nfmt(Math.abs(ab))+'</b>déficit moy.</span>'+(as!=null?'<span><b>'+nfmt(as)+'</b>pas moy.</span>':'')+'</div></div>'+lineChart({vals:vals,label:'Déficit calorique par jour',unit:' kcal',zero:true,ref:goal,refLab:'Objectif '+nfmt(goal),hit:v=>v>=goal,minPad:100})+'<p class="ckey">'+(tot>=0?'Déficit cumulé : ':'Surplus cumulé : ')+nfmt(Math.abs(tot))+' kcal, soit environ '+fkg(kg)+' kg de graisse (estimation à 7 700 kcal par kg).</p><div class="goalrow"><span>Objectif de déficit par jour</span><div class="stp"><button data-act="goal" data-d="-50" aria-label="Moins">−</button><b>'+nfmt(goal)+'</b><button data-act="goal" data-d="50" aria-label="Plus">+</button></div></div></div></section>';
+function kcalSection(){
+  const t=todayIdx(),goal=GOAL();
+  let h='<section class="block"><div class="sec-title"><h3>Mes <span class="k">calories</span></h3></div>';
+  const noted=range(N).filter(i=>i<=t&&(S.cal[i]!=null||balAt(i)));
+  if(!noted.length)return h+'<div class="card empty-ch"><span class="gico">'+ic('apple',24)+'</span><p>Note tes calories et ta dépense chaque soir dans « Aujourd’hui » : ton déficit apparaît ici.</p></div></section>';
+  const bi=range(N).filter(i=>balAt(i)),vals={};bi.forEach(i=>vals[i]=balAt(i).def);
+  const tot=bi.reduce((x,i)=>x+vals[i],0),hit=bi.filter(i=>vals[i]>=goal).length,kg=Math.abs(tot)/7700;
+  const ce=range(N).filter(i=>S.cal[i]!=null),avgE=ce.length?ce.reduce((x,i)=>x+S.cal[i],0)/ce.length:null;
+  h+='<div class="card">';
+  if(bi.length){const ab=tot/bi.length;
+    h+='<div class="sumtop"><div class="sbig"><b>'+hit+' / '+bi.length+'</b><span>jours à l’objectif</span></div><div class="schips"><span><b>'+(ab>=0?'':'−')+nfmt(Math.abs(ab))+'</b>déficit moy.</span>'+(avgE!=null?'<span><b>'+nfmt(avgE)+'</b>mangé moy.</span>':'')+'</div></div>'
+      +'<p class="kexp">Chaque barre est un jour : ce que tu as dépensé moins ce que tu as mangé. Plus la barre est haute, plus le déficit est grand.</p>'
+      +barChart({vals:vals,ref:goal,label:'Déficit calorique par jour'})
+      +'<div class="kleg"><span class="ok">Objectif de '+nfmt(goal)+' atteint</span><span class="low">Déficit sous l’objectif</span><span class="neg">Surplus</span></div>';
+  }else h+='<p class="kexp">Pour calculer ton déficit, note aussi ta dépense du jour dans « Aujourd’hui ».</p>';
+  const rows=noted.slice(-7).reverse();
+  h+='<div class="krows"><h4>Les derniers jours</h4>'+rows.map(i=>{const m=S.cal[i],bl=balAt(i);let kv;
+    if(bl){const ok=bl.def>=goal;kv='<span class="kv '+(bl.def<0?'neg':(ok?'ok':'low'))+'"><b>'+(bl.def<0?'−':'')+nfmt(Math.abs(bl.def))+'</b><small>'+(bl.def<0?'surplus':'déficit')+(ok?' · objectif atteint':' · manque '+nfmt(goal-bl.def))+'</small></span>';}
+    else kv='<span class="kv low"><b>–</b><small>'+(S.dep[i]==null?'dépense à noter':'poids à noter')+'</small></span>';
+    return '<button class="krow" data-act="goto" data-i="'+i+'"><span class="kd"><b>'+dshort(i)+'</b><small>'+(m!=null?'Mangé '+nfmt(m):'Mangé : à noter')+(bl?' · Dépense '+nfmt(bl.tot):'')+'</small></span>'+kv+'</button>';}).join('')+'</div>';
+  if(bi.length)h+='<p class="ckey">'+(tot>=0?'Déficit cumulé : ':'Surplus cumulé : ')+nfmt(Math.abs(tot))+' kcal, soit environ '+fkg(kg)+' kg de graisse (estimation à 7 700 kcal par kg).</p>';
+  h+='<div class="goalrow"><span>Objectif de déficit par jour</span><div class="stp"><button data-act="goal" data-d="-50" aria-label="Moins">−</button><b>'+nfmt(goal)+'</b><button data-act="goal" data-d="50" aria-label="Plus">+</button></div></div></div></section>';
+  return h;
 }
 function wtSection(){
   const idx=range(N).filter(i=>S.wt[i]!=null);
@@ -1744,11 +1766,11 @@ function viewToday(){
   const msg=['La journée commence ici.','C’est lancé.','Ça prend forme.','À mi-chemin.','Belle lancée.','Plus qu’une case.','Journée parfaite.'][s];
   const dayPill=t<0?'Départ le 16 novembre':(t>=N?'Challenge terminé':'Jour '+(Math.min(t,N-1)+1)+' sur '+N);
   let h=banner(dayPill,'<span class="l">Opération</span><br>Lock-in','6 semaines, 6 règles : commencer 2027 à notre prime.','la3');
-  const wk=Math.floor(i/7),rest=6-s,stk=streakDays();
-  const msg2=s===6?'Journée parfaite. Bravo.':(s===0?'Une première case pour lancer la journée.':'Encore '+rest+(rest>1?' cases':' case')+' pour une journée parfaite.');
+  const wk=Math.floor(i/7),rest=FULL-s,stk=streakDays();
+  const msg2=s>=TOT?'Les 7 cases, bravo.':(s>=FULL?'Anneau complet. Bravo.':(s===0?'Une première case pour lancer la journée.':'Encore '+rest+(rest>1?' cases':' case')+' pour fermer l’anneau.'));
   const DL=['L','M','M','J','V','S','D'];
-  h+='<section class="block"><div class="card prog"><div class="ptop"><div class="pl">'+(i===t?'<span class="pill red">Aujourd’hui</span>':'<span class="pill">Jour '+(i+1)+' sur '+N+'</span>')+'</div><span class="pstreak">'+ic('flame',18)+'<b>'+stk+'</b> '+(stk>1?'jours':'jour')+' d’affilée</span></div><h2 class="pdate">'+fmt(i)+'</h2><div class="pmain"><div class="pring'+(s===6?' done':'')+'">'+ring1(96,11,s/6,'day'+i,s===6?SOFT2:SOFT,'Cases du jour : '+s+' sur 6')+'<span class="pnum"><b class="cnt" data-k="n'+i+'" data-v="'+s+'">'+s+'</b><i>/ 6</i></span></div><div class="ptxt"><span class="pmsg">'+msg2+'</span><span class="phint">'+(stk>0?'Garde le fil : 3 cases suffisent pour valider un jour.':'3 cases suffisent pour valider un jour et lancer une série.')+'</span></div></div>';
-  h+='<div class="pweek"><button class="wnav" data-act="day" data-d="-7" aria-label="Semaine précédente"'+(wk<=0?' disabled':'')+'>'+ic('chevL',20)+'</button>'+range(7).map(k=>{const di=wk*7+k;if(di>=N)return '<span></span>';const sc=score(di);return '<button class="pday'+(di===i?' sel':'')+(di===t?' now':'')+(di>t?' fut':'')+'" data-act="seld" data-i="'+di+'" aria-label="'+fmt(di)+', '+sc+' cases sur 6"><span class="dl">'+DL[k]+'</span>'+ring1(40,5,sc/6,'w'+di,SOFT,'',`<text x="20" y="24.5" text-anchor="middle" font-size="13" font-weight="700" fill="#2D2756">${dateOf(di).getUTCDate()}</text>`)+'</button>';}).join('')+'<button class="wnav" data-act="day" data-d="7" aria-label="Semaine suivante"'+(wk>=5?' disabled':'')+'>'+ic('chevR',20)+'</button></div></div></section>';
+  h+='<section class="block"><div class="card prog"><div class="ptop"><div class="pl">'+(i===t?'<span class="pill red">Aujourd’hui</span>':'<span class="pill">Jour '+(i+1)+' sur '+N+'</span>')+'</div><span class="pstreak">'+ic('flame',18)+'<b>'+stk+'</b> '+(stk>1?'jours':'jour')+' d’affilée</span></div><h2 class="pdate">'+fmt(i)+'</h2><div class="pmain"><div class="pring'+(s>=FULL?' done':'')+'">'+ring1(96,11,Math.min(1,s/FULL),'day'+i,s>=FULL?SOFT2:SOFT,'Cases du jour : '+s+' sur 7, 6 ferment l’anneau')+'<span class="pnum"><b class="cnt" data-k="n'+i+'" data-v="'+s+'">'+s+'</b><i>/ 7</i></span></div><div class="ptxt"><span class="pmsg">'+msg2+'</span><span class="phint">'+'6 cases sur 7 ferment l’anneau. 3 cases valident le jour.'+'</span></div></div>';
+  h+='<div class="pweek"><button class="wnav" data-act="day" data-d="-7" aria-label="Semaine précédente"'+(wk<=0?' disabled':'')+'>'+ic('chevL',20)+'</button>'+range(7).map(k=>{const di=wk*7+k;if(di>=N)return '<span></span>';const sc=score(di);return '<button class="pday'+(di===i?' sel':'')+(di===t?' now':'')+(di>t?' fut':'')+'" data-act="seld" data-i="'+di+'" aria-label="'+fmt(di)+', '+sc+' cases sur 7"><span class="dl">'+DL[k]+'</span>'+ring1(40,5,Math.min(1,sc/FULL),'w'+di,SOFT,'',`<text x="20" y="24.5" text-anchor="middle" font-size="13" font-weight="700" fill="#2D2756">${dateOf(di).getUTCDate()}</text>`)+'</button>';}).join('')+'<button class="wnav" data-act="day" data-d="7" aria-label="Semaine suivante"'+(wk>=5?' disabled':'')+'>'+ic('chevR',20)+'</button></div></div></section>';
   h+='<section class="block"><div class="sec-title"><h3>Mes <span class="k">cases</span> du jour</h3></div><div class="tiles">';
   HAB.forEach((b,k)=>{const on=has(i,b.id);h+='<button class="tile ccard '+b.tone+(on?' on':'')+'" data-act="tick" data-h="'+b.id+'" aria-pressed="'+on+'"><span class="top"><span class="ico">'+ic(b.icon)+'</span><span class="chk">'+ic('check',16)+'</span></span><span class="tt">'+(b.k===1?'<b>'+b.t1+'</b><span class="l">'+b.t2+'</span>':'<span class="l">'+b.t1+'</span><b>'+b.t2+'</b>')+(b.sub?'<span class="sub">'+b.sub+'</span>':'')+'</span></button>';});
   const w=Math.floor(i/7),rc=renfoWeek(w),ron=has(i,'renfo');
@@ -1762,21 +1784,21 @@ function viewToday(){
 
 function viewSuivi(){
   const t=todayIdx(),el=Math.max(0,Math.min(t+1,N)),R=52,C=2*Math.PI*R;
-  const perfect=range(N).filter(i=>score(i)===6).length;
+  const perfect=range(N).filter(i=>score(i)>=FULL).length;
   const active=range(N).filter(i=>D(i).length>0).length;
   const weeksOk=range(6).filter(w=>renfoWeek(w)>=3).length;
   let h=banner('Mon suivi','<span class="l">Mes</span><br>progrès','Chaque case compte. Regarde le chemin parcouru.','la2');
   const stk=streakDays(),curW=Math.max(0,Math.min(Math.floor(t/7),5));
-  h+='<section class="block"><div class="card sumcard"><div class="sumtop"><div class="sbig"><b class="cnt" data-k="el" data-v="'+el+'">'+el+'</b><span>/ '+N+' jours</span></div><div class="schips"><span><b>'+stk+'</b>série</span><span><b>'+perfect+'</b>parfaites</span><span><b>'+weeksOk+'/6</b>renfo</span></div></div><div class="caps">'+range(6).map(w=>{const f=range(7).reduce((a,k)=>a+score(w*7+k),0)/42;return '<div class="cap'+(w===curW&&t>=0?' now':'')+'"><div class="cb"><i class="cf" data-dl="'+(w*70)+'" data-k="cap'+w+'" data-f="'+f.toFixed(3)+'"></i></div><span>S'+(w+1)+'</span></div>';}).join('')+'</div></div></section>';
+  h+='<section class="block"><div class="card sumcard"><div class="sumtop"><div class="sbig"><b class="cnt" data-k="el" data-v="'+el+'">'+el+'</b><span>/ '+N+' jours</span></div><div class="schips"><span><b>'+stk+'</b>série</span><span><b>'+perfect+'</b>parfaites</span><span><b>'+weeksOk+'/6</b>renfo</span></div></div><div class="caps">'+range(6).map(w=>{const f=range(7).reduce((a,k)=>a+Math.min(FULL,score(w*7+k)),0)/(7*FULL);return '<div class="cap'+(w===curW&&t>=0?' now':'')+'"><div class="cb"><i class="cf" data-dl="'+(w*70)+'" data-k="cap'+w+'" data-f="'+f.toFixed(3)+'"></i></div><span>S'+(w+1)+'</span></div>';}).join('')+'</div></div></section>';
   h+='<section class="block"><div class="sec-title"><h3>Mes <span class="k">6 semaines</span></h3></div><div class="card"><div class="cal"><span></span>'+['L','M','M','J','V','S','D'].map(d=>'<span class="dow">'+d+'</span>').join('')+'<span class="dow">Renfo</span>';
   for(let w=0;w<6;w++){
     h+='<span class="wk">S'+(w+1)+'</span>';
-    for(let k=0;k<7;k++){const i=w*7+k,s=score(i),fut=i>t;const lv=s===0?0:s<=2?1:s<=4?2:s<6?3:4;
-      h+='<button class="cell l'+lv+(fut?' fut':'')+(i===sel?' sel':'')+(has(i,'renfo')?' rn':'')+'" data-act="goto" data-i="'+i+'"'+(fut?' disabled':'')+' aria-label="'+fmt(i)+', '+s+' cases sur 6">'+dateOf(i).getUTCDate()+'</button>';}
+    for(let k=0;k<7;k++){const i=w*7+k,s=score(i),fut=i>t;const lv=s===0?0:s<=2?1:s<=4?2:s<FULL?3:4;
+      h+='<button class="cell l'+lv+(fut?' fut':'')+(i===sel?' sel':'')+(has(i,'renfo')?' rn':'')+'" data-act="goto" data-i="'+i+'"'+(fut?' disabled':'')+' aria-label="'+fmt(i)+', '+s+' cases sur 7">'+dateOf(i).getUTCDate()+'</button>';}
     h+='<span class="rf">'+renfoWeek(w)+'/3</span>';
   }
   h+='</div></div></section>';
-  h+=calSection()+balSection()+wtSection()+dataSection();
+  h+=kcalSection()+wtSection();
   h+='<p class="foot">'+(syncMode==='cloud'?'Enregistré sur ton compte, tu retrouves tout sur tous tes appareils.':'Enregistré sur cet appareil.')+'</p>';
   const rows=[];
   SESS.map((ex,si)=>ex.map(e=>[si,e])).concat([LEGACY]).forEach(L=>L.forEach(q=>{const si=q[0],e=q[1];if(!isLoaded(e))return;const arr=range(6).map(w=>{const d=S.ex[exKey(si,w,e[0])];return d&&d.kg!=null?d.kg:null;});if(arr.some(x=>x!=null))rows.push({si,e,arr});}));
@@ -1823,6 +1845,7 @@ function viewRegles(){
   let h=banner('Les 6 règles','<span class="l">Mes</span><br>engagements','Pas besoin d’être parfaite, l’important est de rester régulière.','la2');
   h+='<section class="block rlist">'+RULES.map((r,k)=>'<details class="rrow '+['pe1','pe1','gr1','ye1','pi1','la1'][k]+'"><summary><span class="rico">'+ic(r.icon)+'</span><h3>'+RULE_H[k]+'</h3><span class="rch">'+ic('chevR',20)+'</span></summary><div class="rbody"><p>'+r.p+'</p><ul class="tips">'+r.tips.map((x,j)=>'<li><span class="tico">'+ic(RULE_I[k][j],22)+'</span><div><b>'+RULE_T[k][j]+'</b><span>'+x+'</span></div></li>').join('')+'</ul></div></details>').join('')+'</section>';
   h+='<div class="closing goal"><span class="gbig" aria-hidden="true">'+ic('flag',170)+'</span><span class="gdate">27.12.2026</span><h3>Le but du <span class="k">27 décembre</span></h3><p>Terminer en étant fière du temps qu’on s’est accordé et des habitudes construites. Il y aura des jours plus faciles que d’autres, et c’est normal. On cherche la régularité et la progression, pas la perfection.</p></div>';
+  h+=dataSection();
   return h;
 }
 
@@ -1887,7 +1910,7 @@ document.addEventListener('click',function(e){
     if(k>-1)arr.splice(k,1);else arr.push(h);
     S.d[sel]=arr;save();render();
     const tile=document.querySelector('[data-h="'+h+'"]');if(tile&&k<0)tile.classList.add('pop');
-    after(p,k<0&&score(sel)===6);return;
+    after(p,k<0&&score(sel)>=FULL);return;
   }
   if(a==='rule'){const v=Number(el.dataset.i);ruleSel=(ruleSel===v?-1:v);render();return;}
   if(a==='kg'||a==='rp'){const k=el.dataset.k;S.ex[k]=S.ex[k]||{};const f=a==='kg'?'kg':'rp',cur=S.ex[k][f]!=null?S.ex[k][f]:Number(el.dataset.b);S.ex[k][f]=Math.max(0,Math.round((cur+Number(el.dataset.d))*10)/10);save();LOGOPEN[k]=1;render();return;}
@@ -1961,7 +1984,7 @@ function importHealth(){
   }catch(e){}
 }
 /* ---------- mise à jour automatique : recharge si une version plus récente est en ligne ---------- */
-var APPVER='23 nov. 13h50';
+var APPVER='23 nov. 14h30';
 function checkUpdate(){
   try{
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{
