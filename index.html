@@ -1589,7 +1589,11 @@ function restStart(sec,lab){
 /* ---------- chrono du circuit gainage : plein écran, centré ---------- */
 const GPOS=['Face','Côté gauche','Côté droit'];let GN=null,GI=null;
 const gfmt=ms=>{const q=Math.max(0,Math.floor(ms/1000));return Math.floor(q/60)+':'+String(q%60).padStart(2,'0');};
-function gainOpen(){
+/* bips : 1 bip à 30 s, 2 bips plus aigus à 45 s (le contexte audio doit être lancé par un toucher) */
+let GAC=null;
+function gaudio(){try{const A=window.AudioContext||window.webkitAudioContext;if(!A)return null;if(!GAC)GAC=new A();if(GAC.state==='suspended')GAC.resume();return GAC;}catch(e){return null;}}
+function gbeep(f,n){const c=gaudio();if(!c)return;try{for(let i=0;i<n;i++){const t=c.currentTime+i*.24,o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(.35,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.2);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+.22);}}catch(e){}}
+function gainOpen(){gaudio();
   let g=document.getElementById('gain');if(!g){g=document.createElement('div');g.id='gain';g.setAttribute('role','dialog');g.setAttribute('aria-label','Chrono gainage');document.body.appendChild(g);}
   GN={r:0,p:0,t0:Date.now()+3000};g.className='show';gainDraw();clearInterval(GI);GI=setInterval(gainTick,100);gainTick();
 }
@@ -1603,11 +1607,11 @@ function gainTick(){
   if(d<0){el.textContent=Math.ceil(-d/1000);msg.textContent='Prépare-toi';fill.style.width='0%';return;}
   el.textContent=gfmt(d);fill.style.width=Math.min(100,d/45000*100)+'%';
   if(d<30000)msg.textContent='Tiens bon, minimum 30 s';
-  else if(d<45000){msg.textContent='Minimum atteint, vise 45 s';if(!GN.v30){GN.v30=1;try{navigator.vibrate&&navigator.vibrate(120);}catch(e){}}}
-  else{msg.textContent='Objectif 45 s atteint';if(!GN.v45){GN.v45=1;try{navigator.vibrate&&navigator.vibrate([120,80,120]);}catch(e){}}}
+  else if(d<45000){msg.textContent='Minimum atteint, vise 45 s';if(!GN.v30){GN.v30=1;gbeep(660,1);try{navigator.vibrate&&navigator.vibrate(120);}catch(e){}}}
+  else{msg.textContent='Objectif 45 s atteint';if(!GN.v45){GN.v45=1;gbeep(880,2);try{navigator.vibrate&&navigator.vibrate([120,80,120]);}catch(e){}}}
 }
 function gainNext(){
-  if(!GN)return;
+  if(!GN)return;gaudio();
   if(GN.p<2){GN.p++;}else if(GN.r<2){GN.r++;GN.p=0;}else{gainClose();toast('Circuit terminé, bravo');return;}
   GN.t0=Date.now()+3000;GN.v30=0;GN.v45=0;gainDraw();gainTick();
 }
@@ -1957,7 +1961,7 @@ function importHealth(){
   }catch(e){}
 }
 /* ---------- mise à jour automatique : recharge si une version plus récente est en ligne ---------- */
-var APPVER='23 nov. 13h30';
+var APPVER='23 nov. 13h50';
 function checkUpdate(){
   try{
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{
