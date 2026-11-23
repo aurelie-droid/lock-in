@@ -860,6 +860,7 @@ nav.tabs button.bn .i{animation:tabhop .7s var(--ease)}
 .hvmap small{font-size:12px;color:#6B65A0}
 .ssub{margin:-6px 0 12px;font-size:12.5px;font-weight:600;color:#6B65A0}.mchip.plan{background:#fff;color:#2D2756;box-shadow:inset 0 0 0 1.5px #D2D4F6}.mchip.plan .i{color:#8E92DA}.enote{grid-column:2;margin:2px 0 0;font-size:12.5px;line-height:1.35;color:#6B65A0}.exph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#B9BCEB}
 .kexp{margin:12px 0 0;font-size:12.5px;line-height:1.4;color:#5B5585}.kleg{display:flex;flex-wrap:wrap;gap:6px 14px;margin:8px 0 0;font-size:12px;color:#5B5585;font-weight:600}.kleg span:before{content:'';display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:#5558BD}.kleg .low:before{background:#B9BCF6}.kleg .neg:before{background:#E3A3B5}.krows{display:flex;flex-direction:column;gap:6px;margin-top:16px}.krows h4{margin:0 0 4px;font-size:14px;color:#2D2756}.krow{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;border:0;font-family:inherit;padding:10px 12px;border-radius:14px;background:#F6F7FE;color:#2D2756;cursor:pointer}.krow .kd b{display:block;font-size:14px}.krow .kd small{font-size:12px;color:#6B65A0}.krow .kv{text-align:right;flex:none}.krow .kv b{display:block;font-family:var(--serif);font-size:20px;line-height:1.1}.krow .kv small{font-size:11.5px;color:#6B65A0}.krow .kv.ok b{color:#5558BD}.krow .kv.neg b{color:#B04B6B}
+.verbtn{border:0;background:none;padding:0;font:inherit;color:#5558BD;font-weight:700;text-decoration:underline;cursor:pointer}
 </style>
 </head>
 <body>
@@ -1861,7 +1862,7 @@ function viewTodo(){
 function render(){
   const y=window.scrollY;
   const v={aujourdhui:viewToday,suivi:viewSuivi,programme:viewProg,regles:viewRegles,todo:viewTodo}[tab]();
-  document.getElementById('view').innerHTML=v+'<p class="foot">D’après l’Opération Lock-in de zoeamalys · <a href="'+NOTION_URL+'">page d’origine</a><br>Version '+APPVER+'</p>';
+  document.getElementById('view').innerHTML=v+'<p class="foot">D’après l’Opération Lock-in de zoeamalys · <a href="'+NOTION_URL+'">page d’origine</a><br>Version '+APPVER+' · <button class="verbtn" data-act="upd">Vérifier les mises à jour</button></p>';
   document.getElementById('tabs').innerHTML='<span class="tabpill"></span>'+TABS.map(t=>'<button class="'+(t[0]===tab?'on':'')+'" data-act="tab" data-v="'+t[0]+'" aria-current="'+(t[0]===tab)+'">'+ic(t[2],26)+t[1]+'</button>').join('');
   document.title='Lock-in pastel';
   window.scrollTo(0,y);
@@ -1893,6 +1894,7 @@ document.addEventListener('click',function(e){
     if(HVLINK&&hvSi(o.t)>=0){Object.keys(S.hv).forEach(k2=>{const v=S.hv[k2];if(k2!==k&&hvSi(v.t)<0&&v.iso.slice(0,10)===o.iso.slice(0,10)){const l2=hvLink(v,hvSi(o.t));if(l2)hvApply(l2);}});}
     HVPREV=null;save();render();toast('Séance importée');return;}
   if(a==='hv-del'){if(S.hv&&S.hv[el.dataset.k]&&confirm('Supprimer cette séance de l’historique ?')){delete S.hv[el.dataset.k];save();render();}return;}
+  if(a==='upd'){toast('Vérification…');checkUpdate(true);return;}
   if(a==='tab'){go(el.dataset.v);return;}
   if(a==='tiktok'){e.preventDefault();toast('Recherche copiée : colle-la dans TikTok si besoin');openTikTok(el.dataset.q,el.href);return;}
   if(a==='pl'){const k=el.dataset.k;S.ex[k]=S.ex[k]||{};const pp=S.ex[k].pl=S.ex[k].pl||{},f=el.dataset.f,cur=pp[f]!=null?pp[f]:Number(el.dataset.b);pp[f]=Math.max(0,cur+Number(el.dataset.d));save();render();return;}
@@ -1984,15 +1986,19 @@ function importHealth(){
   }catch(e){}
 }
 /* ---------- mise à jour automatique : recharge si une version plus récente est en ligne ---------- */
-var APPVER='23 nov. 14h30';
-function checkUpdate(){
+var APPVER='23 nov. 14h50';
+function checkUpdate(manual){
   try{
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{
       const m=/var APPVER='([^']+)'/.exec(t);
-      if(m&&m[1]!==APPVER&&!sessionStorage.getItem('lockin-reload-'+m[1])){sessionStorage.setItem('lockin-reload-'+m[1],'1');location.reload();}
-    }).catch(()=>{});
+      if(m&&m[1]!==APPVER){
+        if(manual||!sessionStorage.getItem('lockin-reload-'+m[1])){sessionStorage.setItem('lockin-reload-'+m[1],'1');if(manual)toast('Nouvelle version trouvée, mise à jour…');setTimeout(()=>location.replace(location.pathname+'?v='+Date.now()+location.hash),manual?600:0);}
+      }else if(manual)toast('Tu as déjà la dernière version');
+    }).catch(()=>{if(manual)toast('Pas de connexion, réessaie plus tard');});
   }catch(e){}
 }
+/* sur iPhone l'app reste en mémoire : on revérifie à chaque retour au premier plan */
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate();});
 /* ---------- import unique des 5 premières séances Hevy (charges, sans écraser le reste) ---------- */
 const HVSEED=["Back\nLe mercredi 18 nov. 2026 à 13:03\n\nRameur\n\nTraction (Assistée)\nSérie 1: 3683 kg x 10\n\nRowing Inversé\nSérie 1: 10 répétitions\nSérie 2: 8 répétitions\nSérie 3: 8 répétitions\n\nTirage Poitrine (Poulie)\nSérie 1: 27.3 kg x 12\nSérie 2: 32 kg x 12\nSérie 3: 32 kg x 10\n\nRowing Poulie Assis - Prise en V\nSérie 1: 22.6 kg x 12\nSérie 2: 22.6 kg x 12\nSérie 3: 22.6 kg x 12\n\nDéveloppé Couché (Haltère)\nSérie 1: 16 kg x 12\nSérie 2: 16 kg x 10\nSérie 3: 16 kg x 10\n\nTirage vers le Visage\nSérie 1: 27 kg x 12\nSérie 2: 32 kg x 12\nSérie 3: 32 kg x 12\n\nÉlévation Latérale (Haltère)\nSérie 1: 4 kg x 12\nSérie 2: 4 kg x 12\nSérie 3: 4 kg x 12\n\nCurl Biceps (Haltère)\nSérie 1: 4 kg x 12\nSérie 2: 4 kg x 12\nSérie 3: 4 kg x 10\n\n@hevyapp\nhttps://hevy.com/workout/HUXntrORyTy\n", "Legs\nLe jeudi 19 nov. 2026 à 19:47\n\nRelevé de Bassin (Barre)\nSérie 1: 20 kg x 12\nSérie 2: 20 kg x 12\nSérie 3: 20 kg x 12\n\nSquat (Machine Smith)\nSérie 1: 20 kg x 12\nSérie 2: 20 kg x 12\nSérie 3: 20 kg x 12\n\nPresse à Cuisses\nSérie 1: 40 kg x 12\nSérie 2: 40 kg x 10\nSérie 3: 40 kg x 10\n\nSoulevé de Terre Jambes Tendues\nSérie 1: 20 kg x 12\nSérie 2: 24 kg x 12\nSérie 3: 20 kg x 10\n\nLeg Curl Assis (Machine)\nSérie 1: 32 kg x 12\nSérie 2: 36.6 kg x 12\nSérie 3: 36.6 kg x 12\n\n@hevyapp\nhttps://hevy.com/workout/IuFhJHWIXlv\n", "Arms - Jour 3\nLe dimanche 22 nov. 2026 à 16:23\n\nRameur\nSérie 1: 1 km - 5min 0s\n\nÉlévation Latérale (Haltère)\nSérie 1: 4 kg x 12\nSérie 2: 4 kg x 12\nSérie 3: 4 kg x 16\n\nCurl Biceps (Barre EZ)\nSérie 1: 10 kg x 12\nSérie 2: 10 kg x 12\nSérie 3: 10 kg x 12\n\nExtension Triceps Corde\nSérie 1: 14 kg x 12\nSérie 2: 14 kg x 10\nSérie 3: 14 kg x 8\n\nCurl Marteau (Haltère)\nSérie 1: 4 kg x 12\nSérie 2: 6 kg x 12\nSérie 3: 6 kg x 10\n\nExtension Triceps (Haltère)\nSérie 1: 7.5 kg x 12\nSérie 2: 7.5 kg x 12\nSérie 3: 7.5 kg x 12\n\n@hevyapp\nhttps://hevy.com/workout/f56h9itX8Ud\n", "Abs\nLe jeudi 19 nov. 2026 à 20:45\n\nPlanche\nSérie 1: 6min 1s\n\nRelevé de Jambes Allongé\nSérie 1: 20 répétitions\n\nCrunch Vélo\nSérie 1: 20 répétitions\n\nTouchers de Talons\nSérie 1: 20 répétitions\n\nCrunch Inversé\nSérie 1: 20 répétitions\n\n@hevyapp\nhttps://hevy.com/workout/9koRRQ77z4x\n", "Abs\nLe dimanche 22 nov. 2026 à 16:57\n\nPlanche\nSérie 1: 6min 31s\n\nRelevé de Jambes Allongé\nSérie 1: 20 répétitions\n\nCrunch Vélo\nSérie 1: 40 répétitions\n\nTouchers de Talons\nSérie 1: 40 répétitions\n\nCrunch Inversé\nSérie 1: 20 répétitions\n\n@hevyapp\nhttps://hevy.com/workout/Zs7700gTOBs\n"];
 function seedHevy(){
