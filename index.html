@@ -859,7 +859,7 @@ nav.tabs button.bn .i{animation:tabhop .7s var(--ease)}
 .hvmap b{font-weight:600}
 .hvmap small{font-size:12px;color:#6B65A0}
 .ssub{margin:-6px 0 12px;font-size:12.5px;font-weight:600;color:#6B65A0}.mchip.plan{background:#fff;color:#2D2756;box-shadow:inset 0 0 0 1.5px #D2D4F6}.mchip.plan .i{color:#8E92DA}.enote{grid-column:2;margin:2px 0 0;font-size:12.5px;line-height:1.35;color:#6B65A0}.exph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#B9BCEB}
-.kexp{margin:12px 0 0;font-size:12.5px;line-height:1.4;color:#5B5585}.kleg{display:flex;flex-wrap:wrap;gap:6px 14px;margin:8px 0 0;font-size:12px;color:#5B5585;font-weight:600}.kleg span:before{content:'';display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:#5558BD}.kleg .low:before{background:#B9BCF6}.kleg .neg:before{background:#E3A3B5}.krows{display:flex;flex-direction:column;gap:6px;margin-top:16px}.krows h4{margin:0 0 4px;font-size:14px;color:#2D2756}.krow{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;border:0;font-family:inherit;padding:10px 12px;border-radius:14px;background:#F6F7FE;color:#2D2756;cursor:pointer}.krow .kd b{display:block;font-size:14px}.krow .kd small{font-size:12px;color:#6B65A0}.krow .kv{text-align:right;flex:none}.krow .kv b{display:block;font-family:var(--serif);font-size:20px;line-height:1.1}.krow .kv small{font-size:11.5px;color:#6B65A0}.krow .kv.ok b{color:#5558BD}.krow .kv.neg b{color:#B04B6B}
+.ksum{flex-wrap:wrap}.ksum .sbig b{font-size:34px;white-space:nowrap}.ksum .schips{flex-wrap:wrap}.ksum .schips span{min-width:80px;white-space:nowrap}.kexp{margin:12px 0 0;font-size:12.5px;line-height:1.4;color:#5B5585}.kleg{display:flex;flex-wrap:wrap;gap:6px 14px;margin:8px 0 0;font-size:12px;color:#5B5585;font-weight:600}.kleg span:before{content:'';display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:#5558BD}.kleg .klow:before{background:#B9BCF6}.kleg .kneg:before{background:#E3A3B5}.krows{margin-top:16px;border-top:1px solid #ECEDFB;padding-top:4px}.krows summary{display:flex;align-items:center;gap:8px;padding:10px 0;cursor:pointer;list-style:none;font-size:14px;font-weight:700;color:#2D2756}.krows summary::-webkit-details-marker{display:none}.krows summary small{font-size:12px;font-weight:600;color:#6B65A0}.krows summary .rch{margin-left:auto;display:flex;color:#6B65A0;transition:transform .25s}.krows[open] summary .rch{transform:rotate(90deg)}.krows .kl{display:flex;flex-direction:column;gap:6px;padding-bottom:6px}.krow{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;border:0;font-family:inherit;padding:10px 12px;border-radius:14px;background:#F6F7FE;color:#2D2756;cursor:pointer}.krow .kd b{display:block;font-size:14px}.krow .kd small{font-size:12px;color:#6B65A0}.krow .kv{text-align:right;flex:none}.krow .kv b{display:block;font-family:var(--serif);font-size:20px;line-height:1.1}.krow .kv small{font-size:11.5px;color:#6B65A0}.krow .kv.kok b{color:#5558BD}.krow .kv.kneg b{color:#B04B6B}.rncard{padding:6px 16px}.rnwk{padding:12px 0;border-bottom:1px solid #ECEDFB}.rnwk:last-child{border-bottom:0}.rnh{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px;margin-bottom:6px}.rnh b{font-size:15px;color:#2D2756}.rnh small{flex-basis:100%;font-size:12.5px;color:#6B65A0;font-weight:600;order:3}.rnc{white-space:nowrap;margin-left:auto;font-size:12.5px;font-weight:700;padding:3px 10px;border-radius:99px;background:#F2F3FD;color:#5B5585}.rnc.full{background:#5558BD;color:#fff}.rnrow{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;border:0;font-family:inherit;text-align:left;padding:10px 12px;margin-top:6px;border-radius:14px;background:#F6F7FE;color:#2D2756;cursor:pointer;font-size:14px;font-weight:600}.rnd{display:flex;align-items:center;gap:8px}.rnd .i{color:#8E92DA}.rns{font-size:12.5px;font-weight:700;color:#5558BD;background:#fff;border-radius:99px;padding:3px 10px;box-shadow:inset 0 0 0 1.5px #D2D4F6}.rnnone{margin:0;font-size:13px;color:#6B65A0}
 .verbtn{border:0;background:none;padding:0;font:inherit;color:#5558BD;font-weight:700;text-decoration:underline;cursor:pointer}
 </style>
 </head>
@@ -1711,15 +1711,17 @@ function lineChart(o){
   return '<svg class="chart" viewBox="0 0 336 132" role="img" aria-label="'+esc(o.label)+'">'+g+(idx.length>1?'<polyline points="'+pts+'" fill="none" stroke="#8E92F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>':'')+dots+wl+'</svg>';
 }
 function barChart(o){
-  const idx=range(N).filter(i=>o.vals[i]!=null);
+  const st=o.start,cnt=o.count,idx=range(cnt).map(k=>st+k).filter(i=>i<N&&o.vals[i]!=null);
   let lo=0,hi=o.ref*1.25;idx.forEach(i=>{lo=Math.min(lo,o.vals[i]);hi=Math.max(hi,o.vals[i]);});if(lo<0)lo*=1.15;hi*=1.08;
-  const x0=44,x1=330,y0=12,y1=104,Y=v=>y0+(1-(v-lo)/(hi-lo))*(y1-y0),sl=(x1-x0)/N,bw=Math.max(3,sl*.6);
+  const x0=44,x1=330,y0=12,y1=104,Y=v=>y0+(1-(v-lo)/(hi-lo))*(y1-y0),sl=(x1-x0)/cnt,bw=Math.min(14,sl*.62);
   let g='<line x1="'+x0+'" y1="'+Y(0).toFixed(1)+'" x2="'+x1+'" y2="'+Y(0).toFixed(1)+'" stroke="#B9BCF6" stroke-width="1.5"/><text x="'+(x0-6)+'" y="'+(Y(0)+3.5).toFixed(1)+'" text-anchor="end" font-size="9.5" font-weight="600" fill="#6B65A0">0</text>';
   g+='<line x1="'+x0+'" y1="'+Y(o.ref).toFixed(1)+'" x2="'+x1+'" y2="'+Y(o.ref).toFixed(1)+'" stroke="#5558BD" stroke-width="1.5" opacity=".6"/><text x="'+(x0-6)+'" y="'+(Y(o.ref)+3.5).toFixed(1)+'" text-anchor="end" font-size="9.5" font-weight="700" fill="#5558BD">'+nfmt(o.ref)+'</text>';
-  idx.forEach(i=>{const v=o.vals[i],x=x0+i*sl+(sl-bw)/2,yv=Y(v),yz=Y(0),top=Math.min(yv,yz),h=Math.max(2,Math.abs(yv-yz)),col=v>=o.ref?'#5558BD':(v>=0?'#B9BCF6':'#E3A3B5');
-    g+='<g data-act="goto" data-i="'+i+'" style="cursor:pointer"><rect x="'+(x0+i*sl).toFixed(1)+'" y="0" width="'+sl.toFixed(1)+'" height="108" fill="transparent"/><rect x="'+x.toFixed(1)+'" y="'+top.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2" fill="'+col+'"><title>'+esc(dshort(i))+' : '+(v<0?'−':'')+nfmt(Math.abs(v))+' kcal</title></rect></g>';});
-  let wl='';for(let w=0;w<6;w++)wl+='<text x="'+(x0+(w*7+3.5)*sl).toFixed(1)+'" y="124" text-anchor="middle" font-size="10" font-weight="700" fill="#6B65A0">S'+(w+1)+'</text>';
-  return '<svg class="chart" viewBox="0 0 336 130" role="img" aria-label="'+esc(o.label)+'">'+g+wl+'</svg>';
+  range(cnt).forEach(k=>{const i=st+k;if(i>=N)return;const cx=x0+k*sl+sl/2,v=o.vals[i];
+    g+='<text x="'+cx.toFixed(1)+'" y="124" text-anchor="middle" font-size="9.5" font-weight="'+(i===o.today?'800':'600')+'" fill="'+(i===o.today?'#2D2756':'#6B65A0')+'">'+dateOf(i).getUTCDate()+'</text>';
+    if(v==null)return;
+    const yv=Y(v),yz=Y(0),top=Math.min(yv,yz),h=Math.max(2,Math.abs(yv-yz)),col=v>=o.ref?'#5558BD':(v>=0?'#B9BCF6':'#E3A3B5');
+    g+='<g data-act="goto" data-i="'+i+'" style="cursor:pointer"><rect x="'+(x0+k*sl).toFixed(1)+'" y="0" width="'+sl.toFixed(1)+'" height="130" fill="transparent"/><rect x="'+(cx-bw/2).toFixed(1)+'" y="'+top.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="3" fill="'+col+'"><title>'+esc(dshort(i))+' : '+(v<0?'−':'')+nfmt(Math.abs(v))+' kcal</title></rect></g>';});
+  return '<svg class="chart" viewBox="0 0 336 130" role="img" aria-label="'+esc(o.label)+'">'+g+'</svg>';
 }
 function kcalSection(){
   const t=todayIdx(),goal=GOAL();
@@ -1731,19 +1733,29 @@ function kcalSection(){
   const ce=range(N).filter(i=>S.cal[i]!=null),avgE=ce.length?ce.reduce((x,i)=>x+S.cal[i],0)/ce.length:null;
   h+='<div class="card">';
   if(bi.length){const ab=tot/bi.length;
-    h+='<div class="sumtop"><div class="sbig"><b>'+hit+' / '+bi.length+'</b><span>jours à l’objectif</span></div><div class="schips"><span><b>'+(ab>=0?'':'−')+nfmt(Math.abs(ab))+'</b>déficit moy.</span>'+(avgE!=null?'<span><b>'+nfmt(avgE)+'</b>mangé moy.</span>':'')+'</div></div>'
-      +'<p class="kexp">Chaque barre est un jour : ce que tu as dépensé moins ce que tu as mangé. Plus la barre est haute, plus le déficit est grand.</p>'
-      +barChart({vals:vals,ref:goal,label:'Déficit calorique par jour'})
-      +'<div class="kleg"><span class="ok">Objectif de '+nfmt(goal)+' atteint</span><span class="low">Déficit sous l’objectif</span><span class="neg">Surplus</span></div>';
+    h+='<div class="sumtop ksum"><div class="sbig"><b>'+hit+' / '+bi.length+'</b><span>jours à l’objectif</span></div><div class="schips"><span><b>'+(ab>=0?'':'−')+nfmt(Math.abs(ab))+'</b>déficit moy.</span>'+(avgE!=null?'<span><b>'+nfmt(avgE)+'</b>mangé moy.</span>':'')+'</div></div>'
+      +'<p class="kexp">Chaque barre est un jour (les 14 derniers) : ce que tu as dépensé moins ce que tu as mangé. Plus la barre est haute, plus le déficit est grand.</p>'
+      +barChart({vals:vals,ref:goal,label:'Déficit calorique par jour',start:Math.max(0,Math.min(t,N-1)-13),count:14,today:t})
+      +'<div class="kleg"><span class="kok">Objectif de '+nfmt(goal)+' atteint</span><span class="klow">Déficit sous l’objectif</span><span class="kneg">Surplus</span></div>';
   }else h+='<p class="kexp">Pour calculer ton déficit, note aussi ta dépense du jour dans « Aujourd’hui ».</p>';
   const rows=noted.slice(-7).reverse();
-  h+='<div class="krows"><h4>Les derniers jours</h4>'+rows.map(i=>{const m=S.cal[i],bl=balAt(i);let kv;
-    if(bl){const ok=bl.def>=goal;kv='<span class="kv '+(bl.def<0?'neg':(ok?'ok':'low'))+'"><b>'+(bl.def<0?'−':'')+nfmt(Math.abs(bl.def))+'</b><small>'+(bl.def<0?'surplus':'déficit')+(ok?' · objectif atteint':' · manque '+nfmt(goal-bl.def))+'</small></span>';}
-    else kv='<span class="kv low"><b>–</b><small>'+(S.dep[i]==null?'dépense à noter':'poids à noter')+'</small></span>';
-    return '<button class="krow" data-act="goto" data-i="'+i+'"><span class="kd"><b>'+dshort(i)+'</b><small>'+(m!=null?'Mangé '+nfmt(m):'Mangé : à noter')+(bl?' · Dépense '+nfmt(bl.tot):'')+'</small></span>'+kv+'</button>';}).join('')+'</div>';
+  h+='<details class="krows"><summary><span>Les derniers jours</span><small>'+rows.length+' jour'+(rows.length>1?'s':'')+'</small><span class="rch">'+ic('chevR',20)+'</span></summary><div class="kl">'+rows.map(i=>{const m=S.cal[i],bl=balAt(i);let kv;
+    if(bl){const ok=bl.def>=goal;kv='<span class="kv '+(bl.def<0?'kneg':(ok?'kok':'klow'))+'"><b>'+(bl.def<0?'−':'')+nfmt(Math.abs(bl.def))+'</b><small>'+(bl.def<0?'surplus':'déficit')+(ok?' · objectif atteint':' · manque '+nfmt(goal-bl.def))+'</small></span>';}
+    else kv='<span class="kv klow"><b>–</b><small>'+(S.dep[i]==null?'dépense à noter':'poids à noter')+'</small></span>';
+    return '<button class="krow" data-act="goto" data-i="'+i+'"><span class="kd"><b>'+dshort(i)+'</b><small>'+(m!=null?'Mangé '+nfmt(m):'Mangé : à noter')+(bl?' · Dépense '+nfmt(bl.tot):'')+'</small></span>'+kv+'</button>';}).join('')+'</div></details>';
   if(bi.length)h+='<p class="ckey">'+(tot>=0?'Déficit cumulé : ':'Surplus cumulé : ')+nfmt(Math.abs(tot))+' kcal, soit environ '+fkg(kg)+' kg de graisse (estimation à 7 700 kcal par kg).</p>';
   h+='<div class="goalrow"><span>Objectif de déficit par jour</span><div class="stp"><button data-act="goal" data-d="-50" aria-label="Moins">−</button><b>'+nfmt(goal)+'</b><button data-act="goal" data-d="50" aria-label="Plus">+</button></div></div></div></section>';
   return h;
+}
+function renfoSection(){
+  const t=todayIdx(),curW=Math.max(0,Math.min(Math.floor(t/7),5));
+  const sname=i=>{const k=Object.keys(S.hv||{}).find(k=>hvSi(S.hv[k].t)>=0&&S.hv[k].iso.slice(0,10)===(()=>{const d=dateOf(i);return d.toISOString().slice(0,10);})());return k?SNAMES[hvSi(S.hv[k].t)]:null;};
+  let h='<section class="block"><div class="sec-title"><h3>Mes séances de <span class="k">renfo</span></h3></div><div class="card rncard">';
+  h+=range(curW+1).reverse().map(w=>{
+    const days=range(7).map(k=>w*7+k).filter(i=>i<N&&has(i,'renfo')),lab=w===curW?'Cette semaine':(w===curW-1?'Semaine dernière':'Semaine '+(w+1));
+    return '<div class="rnwk"><div class="rnh"><b>'+lab+'</b><span class="rnc'+(days.length>=3?' full':'')+'">'+days.length+' / 3</span><small>du '+dateOf(w*7).getUTCDate()+' au '+dateOf(Math.min(N-1,w*7+6)).getUTCDate()+' '+MONTHS[dateOf(Math.min(N-1,w*7+6)).getUTCMonth()]+'</small></div>'
+      +(days.length?days.map(i=>'<button class="rnrow" data-act="goto" data-i="'+i+'"><span class="rnd">'+ic('dumbbell',18)+dshort(i)+'</span><span class="rns">'+(sname(i)||'Renfo')+'</span></button>').join(''):'<p class="rnnone">'+(w===curW?'Pas encore de séance cette semaine.':'Aucune séance cochée.')+'</p>')+'</div>';}).join('');
+  return h+'</div></section>';
 }
 function wtSection(){
   const idx=range(N).filter(i=>S.wt[i]!=null);
@@ -1799,14 +1811,13 @@ function viewSuivi(){
     h+='<span class="rf">'+renfoWeek(w)+'/3</span>';
   }
   h+='</div></div></section>';
-  h+=kcalSection()+wtSection();
-  h+='<p class="foot">'+(syncMode==='cloud'?'Enregistré sur ton compte, tu retrouves tout sur tous tes appareils.':'Enregistré sur cet appareil.')+'</p>';
+  h+=renfoSection()+kcalSection()+wtSection();
   const rows=[];
   SESS.map((ex,si)=>ex.map(e=>[si,e])).concat([LEGACY]).forEach(L=>L.forEach(q=>{const si=q[0],e=q[1];if(!isLoaded(e))return;const arr=range(6).map(w=>{const d=S.ex[exKey(si,w,e[0])];return d&&d.kg!=null?d.kg:null;});if(arr.some(x=>x!=null))rows.push({si,e,arr});}));
   h+='<section class="block"><div class="sec-title"><h3>Mes <span class="k">charges</span></h3></div>';
   if(!rows.length)h+='<div class="card empty-ch"><span class="gico">'+ic('dumbbell',24)+'</span><p>Dès que tu notes une charge dans le programme, ton évolution apparaît ici.</p></div>';
   else{const mx=Math.max(...rows.flatMap(r=>r.arr.filter(x=>x!=null)),1);h+='<div class="card chl">'+rows.map(r=>{const vals=r.arr.filter(x=>x!=null),last=vals[vals.length-1],first=vals[0],dl=last-first;return '<div class="chrow"><div class="chn"><b>'+esc(r.e[1])+'</b><span>'+SNAMES[r.si]+'</span></div><div class="chb">'+r.arr.map((x,w)=>'<i class="'+(x==null?'nil':'')+'" style="height:'+(x==null?14:Math.max(14,Math.round(x/mx*100)))+'%" title="S'+(w+1)+'"></i>').join('')+'</div><div class="chv"><b>'+fkg(last)+' kg</b>'+(vals.length>1?'<span class="'+(dl>0?'up':'')+'">'+(dl>0?'+':'')+fkg(dl)+' kg</span>':'<span>départ</span>')+'</div></div>';}).join('')+'</div>';}
-  h+='</section>';
+  h+='</section><p class="foot">'+(syncMode==='cloud'?'Enregistré sur ton compte, tu retrouves tout sur tous tes appareils.':'Enregistré sur cet appareil.')+'</p>';
   return h;
 }
 
@@ -1986,7 +1997,7 @@ function importHealth(){
   }catch(e){}
 }
 /* ---------- mise à jour automatique : recharge si une version plus récente est en ligne ---------- */
-var APPVER='23 nov. 14h50';
+var APPVER='23 nov. 15h30';
 function checkUpdate(manual){
   try{
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{
