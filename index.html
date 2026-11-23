@@ -820,6 +820,14 @@ nav.tabs button.bn .i{animation:tabhop .7s var(--ease)}
 .defbox.good .dk,.defbox.good .dd{color:#E1E3FA}.defbox.good b{font-size:42px}
 .plv{font-size:15px;color:#2D2756;white-space:nowrap}
 .holdb{margin-top:2px;padding:12px 16px;font-size:15px}
+.dtcard p{margin:0 0 12px;font-size:14px;line-height:1.45;color:#5B5585}
+.dtcard .dtsub{margin:16px 0 8px;font-weight:600}
+.dtbtns{display:grid;gap:8px}
+.dtb{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border-radius:16px;background:#ECEDFB;color:#2D2756;font-size:14px;font-weight:600;text-align:left;cursor:pointer;transition:transform .3s var(--spring)}
+.dtb .i{flex:none;color:#E7A06F}
+.dtb.main{background:#3A3156;color:#ECEDFB}
+.dtb.main .i{color:#F3B98F}
+.dtb:active{transform:scale(.97)}
 </style>
 </head>
 <body>
@@ -1313,6 +1321,10 @@ const KEY='lockin-pastel-v1';
 const blank=()=>({d:{},ex:{},todo:{},custom:[],ts:0,cal:{},wt:{},dep:{},act:{},prof:{}});
 let S=blank();
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(blank(),JSON.parse(r));}catch(e){}
+try{const r0=localStorage.getItem(KEY),tg=new Date().toISOString().slice(0,10);
+  if(r0&&r0.length>20&&!localStorage.getItem(KEY+'-bak-'+tg)){localStorage.setItem(KEY+'-bak-'+tg,r0);
+    const ks=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.indexOf(KEY+'-bak-')===0)ks.push(k);}
+    ks.sort().reverse().slice(3).forEach(k=>localStorage.removeItem(k));}}catch(e){}
 const LOGOPEN={};
 let tab='aujourdhui', sel=0, ruleSel=-1, progS=0, progW=0, syncMode='local';
 const TABS=[['aujourdhui','Aujourd’hui','flame'],['suivi','Suivi','bars'],['programme','Programme','dumbbell'],['regles','Règles','list'],['todo','To-do','todo']];
@@ -1347,6 +1359,28 @@ const BADGES=[
   {id:'ready',t:'ye3',n:'Prête pour 2027',d:'Toute la to-do terminée',ic:'todo',f:()=>todoDone()===10}
 ];
 const unlocked=()=>BADGES.filter(b=>b.f()).map(b=>b.id);
+
+
+/* ---------- mes données : sauvegarde / restauration ---------- */
+function backupJSON(){return JSON.stringify({app:'lock-in',v:1,exported:new Date().toISOString(),state:S},null,1);}
+function bakKeys(){const r=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.indexOf(KEY+'-bak-')===0)r.push(k);}}catch(e){}return r.sort().reverse();}
+function restoreFrom(txt){
+  let o;try{o=JSON.parse(txt);}catch(e){toast('Ce fichier n’est pas valide');return false;}
+  const st=o&&o.app==='lock-in'&&o.state?o.state:(o&&o.d?o:null);
+  if(!st||typeof st.d!=='object'){toast('Ce n’est pas une sauvegarde Lock-in');return false;}
+  if(!confirm('Remplacer tes données actuelles par cette sauvegarde ?'))return false;
+  try{localStorage.setItem(KEY+'-avant-restauration',JSON.stringify(S));}catch(e){}
+  S=Object.assign(blank(),st);save();render();toast('Sauvegarde restaurée');return true;
+}
+function dataSection(){
+  const days=Object.keys(S.d).filter(i=>S.d[i]&&S.d[i].length).length,loads=Object.keys(S.ex).filter(k=>S.ex[k]&&S.ex[k].kg!=null).length;
+  const bk=bakKeys();
+  return '<section class="block"><div class="sec-title"><h3>Mes <span class="k">données</span></h3></div><div class="card dtcard"><p>'+days+' jour'+(days>1?'s':'')+' renseigné'+(days>1?'s':'')+(loads?' · '+loads+' charge'+(loads>1?'s':'')+' notée'+(loads>1?'s':''):'')+'. Tout est enregistré sur ce téléphone : fais une sauvegarde de temps en temps.</p><div class="dtbtns"><button class="dtb main" data-act="bk-file">'+ic('shield',22)+'Sauvegarder (télécharger le fichier)</button><button class="dtb" data-act="bk-copy">'+ic('pen',22)+'Copier la sauvegarde</button><label class="dtb">'+ic('repeat',22)+'Restaurer depuis un fichier<input type="file" id="bkfile" accept=".json,application/json" hidden></label><button class="dtb" data-act="bk-paste">'+ic('gallery',22)+'Restaurer depuis le presse-papiers</button></div>'
+    +(bk.length?'<p class="dtsub">Sauvegardes automatiques de l’app :</p><div class="dtbtns">'+bk.map(k=>'<button class="dtb" data-act="bk-auto" data-k="'+esc(k)+'">'+ic('heart',22)+'Restaurer celle du '+esc(k.slice(-10).split('-').reverse().join('/'))+'</button>').join('')+'</div>':'')+'</div></section>';
+}
+document.addEventListener('change',function(e){
+  if(e.target&&e.target.id==='bkfile'){const f=e.target.files&&e.target.files[0];if(!f)return;const fr=new FileReader();fr.onload=()=>restoreFrom(String(fr.result));fr.readAsText(f);e.target.value='';}
+});
 
 /* ---------- sauvegarde ---------- */
 let ref=null,writing=false,pending=false,wt=null;
@@ -1628,7 +1662,7 @@ function viewSuivi(){
     h+='<span class="rf">'+renfoWeek(w)+'/3</span>';
   }
   h+='</div></div></section>';
-  h+=calSection()+balSection()+wtSection();
+  h+=calSection()+balSection()+wtSection()+dataSection();
   h+='<p class="foot">'+(syncMode==='cloud'?'Enregistré sur ton compte, tu retrouves tout sur tous tes appareils.':'Enregistré sur cet appareil.')+'</p>';
   const rows=[];
   SESS.forEach((ex,si)=>ex.forEach(e=>{if(!isLoaded(e))return;const arr=range(6).map(w=>{const d=S.ex[exKey(si,w,e[0])];return d&&d.kg!=null?d.kg:null;});if(arr.some(x=>x!=null))rows.push({si,e,arr});}));
@@ -1707,6 +1741,10 @@ function go(t){tab=t;try{history.replaceState(null,'','#'+t);}catch(e){try{locat
 document.addEventListener('click',function(e){
   const el=e.target.closest('[data-act]');if(!el)return;
   const a=el.dataset.act;
+  if(a==='bk-file'){const txt=backupJSON(),b=new Blob([txt],{type:'application/json'}),u=URL.createObjectURL(b),l=document.createElement('a');l.href=u;l.download='lock-in-sauvegarde-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(l);l.click();setTimeout(()=>{URL.revokeObjectURL(u);l.remove();},1500);toast('Sauvegarde téléchargée');return;}
+  if(a==='bk-copy'){const txt=backupJSON();(navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(txt).then(()=>toast('Sauvegarde copiée, colle-la dans Notes ou un mail')):Promise.reject()).catch(()=>toast('Copie impossible, utilise le téléchargement'));return;}
+  if(a==='bk-paste'){(navigator.clipboard&&navigator.clipboard.readText?navigator.clipboard.readText().then(restoreFrom):Promise.reject()).catch(()=>toast('Lecture du presse-papiers impossible'));return;}
+  if(a==='bk-auto'){const r=localStorage.getItem(el.dataset.k);if(r)restoreFrom(r);return;}
   if(a==='tab'){go(el.dataset.v);return;}
   if(a==='tiktok'){e.preventDefault();toast('Recherche copiée : colle-la dans TikTok si besoin');openTikTok(el.dataset.q,el.href);return;}
   if(a==='pl'){const k=el.dataset.k;S.ex[k]=S.ex[k]||{};const pp=S.ex[k].pl=S.ex[k].pl||{},f=el.dataset.f,cur=pp[f]!=null?pp[f]:Number(el.dataset.b);pp[f]=Math.max(0,cur+Number(el.dataset.d));save();render();return;}
@@ -1798,7 +1836,7 @@ function importHealth(){
   }catch(e){}
 }
 /* ---------- mise à jour automatique : recharge si une version plus récente est en ligne ---------- */
-var APPVER='17 nov. 05h00';
+var APPVER='23 nov. 10h55';
 function checkUpdate(){
   try{
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{
