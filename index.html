@@ -828,6 +828,32 @@ nav.tabs button.bn .i{animation:tabhop .7s var(--ease)}
 .dtb.main{background:#3A3156;color:#ECEDFB}
 .dtb.main .i{color:#F3B98F}
 .dtb:active{transform:scale(.97)}
+.hvcard p{margin:0 0 10px;font-size:14px;line-height:1.45;color:#5B5585}
+.hvcard textarea{display:block;width:100%;box-sizing:border-box;border:0;border-radius:14px;background:#F2F3FD;padding:12px;font:inherit;font-size:14px;color:#2D2756;resize:vertical;margin:0 0 10px}
+.hvcard textarea::placeholder{color:#8B86B5}
+.hvcard textarea:focus{outline:2px solid #8E92F0}
+.hvprev{display:flex;flex-direction:column;gap:10px;margin-top:2px;padding:12px;border-radius:16px;background:#ECEDFB;color:#2D2756}
+.hvprev>b{font-family:var(--serif);font-weight:600;font-size:19px}
+.hvprev>span{font-size:13px;color:#5B5585}
+.hvchk{display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:600;color:#2D2756;text-align:left}
+.hvchk .box{flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:9px;border:2px solid #3A3156;color:transparent;transition:background-color .3s,transform .35s var(--spring)}
+.hvchk.on .box{background:#3A3156;color:#ECEDFB}
+.hvchk:active .box{transform:scale(.88)}
+.hvlist{display:grid;gap:8px;margin-top:10px}
+.hvrow{border-radius:18px;background:#F2F3FD;color:#2D2756}
+.hvrow summary{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;list-style:none}
+.hvrow summary::-webkit-details-marker{display:none}
+.hvd{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.hvd b{font-size:15px}
+.hvd small{font-size:12.5px;color:#6B65A0}
+.hvn{font-size:12.5px;font-weight:700;color:#5B5585;padding:4px 10px;border-radius:99px;background:#fff}
+.hvrow .rch{display:grid;place-items:center;color:#5B5585;transition:transform .45s var(--ease)}
+.hvrow[open] .rch{transform:rotate(90deg)}
+.hvb{padding:0 14px 14px;display:grid;gap:8px}
+.hve{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:14px;background:#fff}
+.hve b{font-size:14px}
+.hve span{font-size:12.5px;color:#6B65A0}
+.hvdel{justify-self:start;font-size:12.5px;font-weight:600;color:#6B65A0;padding:6px 2px;text-decoration:underline}
 </style>
 </head>
 <body>
@@ -1318,7 +1344,7 @@ const fAdv=a=>fkg(a.kg)+' kg · '+(a.lo===a.hi?a.lo:a.lo+'-'+a.hi)+' reps';
 
 /* ---------- état ---------- */
 const KEY='lockin-pastel-v1';
-const blank=()=>({d:{},ex:{},todo:{},custom:[],ts:0,cal:{},wt:{},dep:{},act:{},prof:{}});
+const blank=()=>({d:{},ex:{},todo:{},custom:[],ts:0,cal:{},wt:{},dep:{},act:{},prof:{},hv:{}});
 let S=blank();
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(blank(),JSON.parse(r));}catch(e){}
 try{const r0=localStorage.getItem(KEY),tg=new Date().toISOString().slice(0,10);
@@ -1360,6 +1386,50 @@ const BADGES=[
 ];
 const unlocked=()=>BADGES.filter(b=>b.f()).map(b=>b.id);
 
+
+
+/* ---------- import des séances Hevy (texte partagé) ---------- */
+let HVPREV=null,HVRENFO=true;
+function hvMonth(w){w=w.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\./g,'');if(w.indexOf('juin')===0)return 5;if(w.indexOf('juil')===0)return 6;const m={jan:0,fev:1,mar:2,avr:3,mai:4,aou:7,sep:8,oct:9,nov:10,dec:11}[w.slice(0,3)];return m===undefined?-1:m;}
+function parseHevy(txt){
+  const lines=String(txt||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  const o={t:'',iso:'',ex:[],url:''};let cur=null;
+  const pad=n=>String(n).padStart(2,'0');
+  for(const L of lines){
+    if(/^@hevyapp/i.test(L))continue;
+    const u=L.match(/https?:\/\/\S*hevy\.com\S*/i);if(u){o.url=u[0];continue;}
+    const sm=L.match(/^(?:S[ée]rie|Set)\s*\d+\s*[:\-]?\s*(.*)$/i);
+    if(sm){if(!cur)continue;const r=sm[1],st={};
+      let m=r.match(/(\d+(?:[.,]\d+)?)\s*(kg|lbs?)/i);if(m){let v=parseFloat(m[1].replace(',','.'));if(/lb/i.test(m[2]))v=Math.round(v*0.4536*10)/10;st.kg=v;}
+      m=r.match(/(\d+)\s*(?:r[ée]p[ée]titions?|reps?)/i)||r.match(/[x×]\s*(\d+)/i);if(m)st.r=+m[1];
+      const mi=r.match(/(\d+)\s*min/i),se=r.match(/(\d+)\s*s\b/i),hh=r.match(/(\d+)\s*h\b/i);if(mi||se||hh)st.d=(hh?+hh[1]*3600:0)+(mi?+mi[1]*60:0)+(se?+se[1]:0);
+      m=r.match(/(\d+(?:[.,]\d+)?)\s*km/i);if(m)st.km=parseFloat(m[1].replace(',','.'));
+      if(!Object.keys(st).length)st.raw=r;cur.s.push(st);continue;}
+    const dm=L.match(/(\d{1,2})\s+([A-Za-zéûèôÉ]+)\.?\s+(\d{4})(?:\s+(?:à|a|at)\s+(\d{1,2})[:h](\d{2}))?/);
+    if(dm&&!o.iso&&hvMonth(dm[2])>=0){o.iso=dm[3]+'-'+pad(hvMonth(dm[2])+1)+'-'+pad(+dm[1])+'T'+pad(+(dm[4]||0))+':'+pad(+(dm[5]||0));continue;}
+    if(!o.iso&&!o.t){o.t=L;continue;}
+    if(!o.iso)continue;
+    cur={n:L,s:[]};o.ex.push(cur);
+  }
+  o.ex=o.ex.filter(e=>e.s.length);
+  return o.iso&&o.ex.length?o:null;
+}
+function hvDay(iso){const y=+iso.slice(0,4),m=+iso.slice(5,7)-1,d=+iso.slice(8,10);return Math.round((Date.UTC(y,m,d)-START)/864e5);}
+function hvSet(x){const p=[];if(x.kg!=null)p.push(fkg(x.kg)+' kg');if(x.r!=null)p.push((x.kg!=null?'× ':'')+x.r+(x.kg!=null?'':' reps'));if(x.d!=null){const m=Math.floor(x.d/60),s=x.d%60;p.push((m?m+' min ':'')+(s||!m?s+' s':'')); }if(x.km!=null)p.push(fkg(x.km)+' km');return p.join(' ')||x.raw||'—';}
+const hvKey=o=>o.url?o.url.replace(/\/+$/,'').split('/').pop():o.iso;
+function hvDateLabel(iso){const d=new Date(Date.UTC(+iso.slice(0,4),+iso.slice(5,7)-1,+iso.slice(8,10)));return DOW[d.getUTCDay()]+' '+d.getUTCDate()+' '+MONTHS[d.getUTCMonth()]+' · '+iso.slice(11,16).replace(':','h');}
+function hvSection(){
+  const list=Object.keys(S.hv||{}).map(k=>[k,S.hv[k]]).sort((a,b)=>b[1].iso.localeCompare(a[1].iso));
+  let h='<section class="block"><div class="sec-title"><h3>Mes séances <span class="k">Hevy</span></h3></div><div class="card hvcard"><p>Dans Hevy, ouvre une séance, touche Partager et copie le texte, puis colle-le ici.</p><textarea id="hvtxt" rows="4" placeholder="Colle ici le texte partagé depuis Hevy"></textarea>';
+  if(HVPREV){const i=hvDay(HVPREV.iso),inR=i>=0&&i<N,ns=HVPREV.ex.reduce((a,e)=>a+e.s.length,0);
+    h+='<div class="hvprev"><b>'+esc(HVPREV.t||'Séance')+'</b><span>'+hvDateLabel(HVPREV.iso)+' · '+HVPREV.ex.length+' exercice'+(HVPREV.ex.length>1?'s':'')+', '+ns+' série'+(ns>1?'s':'')+'</span>'
+      +(inR?'<button class="hvchk'+(HVRENFO?' on':'')+'" data-act="hv-toggle" aria-pressed="'+HVRENFO+'"><span class="box">'+ic('check',16)+'</span>Compter comme renfo du '+fmt(i)+'</button>':'<span class="muted">Cette date est hors du défi : elle sera seulement ajoutée à l’historique.</span>')
+      +'<div class="dtbtns"><button class="dtb main" data-act="hv-save">'+ic('check',22)+'Importer cette séance</button><button class="dtb" data-act="hv-cancel">'+ic('x',22)+'Annuler</button></div></div>';}
+  else h+='<button class="dtb main" data-act="hv-read">'+ic('dumbbell',22)+'Lire la séance</button>';
+  h+='</div>';
+  if(list.length)h+='<div class="hvlist">'+list.map(([k,v])=>'<details class="hvrow"><summary><span class="hvd"><b>'+esc(v.t||'Séance')+'</b><small>'+hvDateLabel(v.iso)+'</small></span><span class="hvn">'+v.ex.length+' exo'+(v.ex.length>1?'s':'')+'</span><span class="rch">'+ic('chevR',18)+'</span></summary><div class="hvb">'+v.ex.map(e=>'<div class="hve"><b>'+esc(e.n)+'</b><span>'+e.s.map(hvSet).join(' · ')+'</span></div>').join('')+'<button class="hvdel" data-act="hv-del" data-k="'+esc(k)+'">Supprimer cette séance</button></div></details>').join('')+'</div>';
+  return h+'</section>';
+}
 
 /* ---------- mes données : sauvegarde / restauration ---------- */
 function backupJSON(){return JSON.stringify({app:'lock-in',v:1,exported:new Date().toISOString(),state:S},null,1);}
@@ -1700,6 +1770,7 @@ function viewProg(){
   h+='</div>';
   const wk=progW,canTick=(wk*7)<=t;
   const full=done===ses.length,tdy=Math.min(Math.max(t,0),N-1),ticked=t>=0&&has(tdy,'renfo');
+  h+=hvSection();
   h+='<div class="finish"><button class="fbtn'+(ticked?' ok2':'')+(full&&!ticked?' go':'')+'" data-act="sessdone"'+(t<0?' disabled':'')+'><span class="fic">'+ic(ticked?'check':(full?'medal':'dumbbell'),24)+'</span><span class="ftx"><b>'+(ticked?'Renfo du jour validé':(full?'Séance complète, bravo':'J’ai terminé ma séance'))+'</b><small>'+(ticked?'Touche pour le décocher':(done+' / '+ses.length+' exercices cochés · valider le renfo du jour'))+'</small></span></button></div>';
   return h;
 }
@@ -1745,6 +1816,13 @@ document.addEventListener('click',function(e){
   if(a==='bk-copy'){const txt=backupJSON();(navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(txt).then(()=>toast('Sauvegarde copiée, colle-la dans Notes ou un mail')):Promise.reject()).catch(()=>toast('Copie impossible, utilise le téléchargement'));return;}
   if(a==='bk-paste'){(navigator.clipboard&&navigator.clipboard.readText?navigator.clipboard.readText().then(restoreFrom):Promise.reject()).catch(()=>toast('Lecture du presse-papiers impossible'));return;}
   if(a==='bk-auto'){const r=localStorage.getItem(el.dataset.k);if(r)restoreFrom(r);return;}
+  if(a==='hv-read'){const t=document.getElementById('hvtxt'),o=parseHevy(t?t.value:'');if(!o){toast('Je ne reconnais pas ce texte');return;}HVPREV=o;HVRENFO=true;render();return;}
+  if(a==='hv-toggle'){HVRENFO=!HVRENFO;render();return;}
+  if(a==='hv-cancel'){HVPREV=null;render();return;}
+  if(a==='hv-save'&&HVPREV){const o=HVPREV,k=hvKey(o);S.hv=S.hv||{};S.hv[k]={t:o.t,iso:o.iso,ex:o.ex,url:o.url};const i=hvDay(o.iso);
+    if(HVRENFO&&i>=0&&i<N){const arr=S.d[i]?S.d[i].slice():[];if(arr.indexOf('renfo')<0){arr.push('renfo');S.d[i]=arr;}}
+    HVPREV=null;save();render();toast('Séance importée');return;}
+  if(a==='hv-del'){if(S.hv&&S.hv[el.dataset.k]&&confirm('Supprimer cette séance de l’historique ?')){delete S.hv[el.dataset.k];save();render();}return;}
   if(a==='tab'){go(el.dataset.v);return;}
   if(a==='tiktok'){e.preventDefault();toast('Recherche copiée : colle-la dans TikTok si besoin');openTikTok(el.dataset.q,el.href);return;}
   if(a==='pl'){const k=el.dataset.k;S.ex[k]=S.ex[k]||{};const pp=S.ex[k].pl=S.ex[k].pl||{},f=el.dataset.f,cur=pp[f]!=null?pp[f]:Number(el.dataset.b);pp[f]=Math.max(0,cur+Number(el.dataset.d));save();render();return;}
@@ -1836,7 +1914,7 @@ function importHealth(){
   }catch(e){}
 }
 /* ---------- mise à jour automatique : recharge si une version plus récente est en ligne ---------- */
-var APPVER='23 nov. 10h55';
+var APPVER='23 nov. 11h10';
 function checkUpdate(){
   try{
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{
