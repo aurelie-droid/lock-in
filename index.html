@@ -431,7 +431,7 @@ nav.tabs button .i{width:26px;height:26px}
 /* programme : même teinte (corps), mise en page éditoriale */
 .picker{display:grid;gap:10px}
 .seg3,.seg6{display:grid;gap:6px}
-.seg3{grid-template-columns:repeat(3,1fr)}.seg6{grid-template-columns:repeat(6,1fr)}
+.seg3{grid-template-columns:repeat(3,1fr)}.seg4{grid-template-columns:repeat(4,1fr);gap:5px}.seg4 .chip{padding-left:6px;padding-right:6px;gap:5px;font-size:13px}.seg4 .chip .i{width:18px;height:18px}.seg6{grid-template-columns:repeat(6,1fr)}
 .picker .chip{padding:12px 0;text-align:center;border-radius:16px;background:#FBE6D6;color:#5A2E16;font-size:15px;font-weight:600}
 .picker .chip.on{background:#5A2E16;color:#FBE6D6}
 .picker .chip.now{box-shadow:inset 0 0 0 2px #E8A87A}
@@ -858,6 +858,7 @@ nav.tabs button.bn .i{animation:tabhop .7s var(--ease)}
 .hvmap span{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;color:#2D2756}
 .hvmap b{font-weight:600}
 .hvmap small{font-size:12px;color:#6B65A0}
+.ssub{margin:-6px 0 12px;font-size:12.5px;font-weight:600;color:#6B65A0}.mchip.plan{background:#fff;color:#2D2756;box-shadow:inset 0 0 0 1.5px #D2D4F6}.mchip.plan .i{color:#8E92DA}.enote{grid-column:2;margin:2px 0 0;font-size:12.5px;line-height:1.35;color:#6B65A0}.exph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#B9BCEB}
 </style>
 </head>
 <body>
@@ -1179,11 +1180,11 @@ D.heel={raw:'<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role=
 
 const FMAP={
 'Relevé de bassin (barre)':'thrust','Hip thrust bonus fessiers (barre)':'thrust','Squat (machine Smith)':'smith','Presse à cuisses':'lpress','Soulevé de terre jambes tendues':'rdlb','Leg curl assis (machine)':'legcurl',
-'Rameur':'rower','Rowing inversé':'invrow','Curl marteau (haltères)':'hammer','Traction assistée':'pull','Tirage poitrine (poulie)':'lat','Rowing poulie assis, prise en V':'crow','Développé couché (haltères)':'bench','Tirage vers le visage':'face','Élévation latérale (haltères)':'lateral','Curl biceps (haltères)':'curl',
+'Rameur':'rower','Leg extension (machine)':'legext','Rowing inversé':'invrow','Curl marteau (haltères)':'hammer','Traction assistée':'pull','Tirage poitrine (poulie)':'lat','Rowing poulie assis, prise en V':'crow','Développé couché (haltères)':'bench','Tirage vers le visage':'face','Élévation latérale (haltères)':'lateral','Curl biceps (haltères)':'curl',
 'Développé militaire (haltères)':'press','Extension triceps (haltère)':'skull','Curl biceps (barre EZ)':'curlez','Extension triceps à la corde':'pushdown','Dips triceps (assistés)':'dips',
 'Circuit gainage':'plank','Relevé de jambes allongé':'legraise','Crunch vélo':'bike','Touchers de talons':'heel','Crunch inversé':'rcrunch'};
-const FEQ={thrust:'Banc + barre',smith:'Smith',lpress:'Machine',rdlb:'Barre',legcurl:'Machine',rower:'Rameur',pull:'Machine',lat:'Poulie',crow:'Poulie',invrow:'Barre',hammer:'Haltères',bench:'Banc + haltères',face:'Poulie',lateral:'Haltères',curl:'Haltères',press:'Haltères',skull:'Haltère',curlez:'Barre EZ',pushdown:'Poulie',dips:'Machine',plank:'Tapis',legraise:'Tapis',bike:'Tapis',heel:'Tapis',rcrunch:'Tapis'};
-D.hammer=D.curl;D.invrow=D.crow;window.FDEF=D;window.FMAP=FMAP;window.FEQ=FEQ;
+const FEQ={thrust:'Banc + barre',smith:'Smith',lpress:'Machine',rdlb:'Barre',legcurl:'Machine',rower:'Rameur',pull:'Machine',lat:'Poulie',crow:'Poulie',invrow:'Barre',legext:'Machine',hammer:'Haltères',bench:'Banc + haltères',face:'Poulie',lateral:'Haltères',curl:'Haltères',press:'Haltères',skull:'Haltère',curlez:'Barre EZ',pushdown:'Poulie',dips:'Machine',plank:'Tapis',legraise:'Tapis',bike:'Tapis',heel:'Tapis',rcrunch:'Tapis'};
+D.legext=D.legcurl;D.hammer=D.curl;D.invrow=D.crow;window.FDEF=D;window.FMAP=FMAP;window.FEQ=FEQ;
 })();
 function figHTML(name,big){const k=window.FMAP[name],d=k&&window.FDEF[k];if(!d)return '';
   const still=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1279,13 +1280,22 @@ const RULES=[
 /* routines Hevy : Legs, Back, Arms (+ finisher abdos à la fin de chaque séance) */
 const FIN=[['F1','Circuit gainage','3 tours',''],['F2','Relevé de jambes allongé','1 × 20 reps','1 min'],['F3','Crunch vélo','1 × 20 reps','1 min'],['F4','Touchers de talons','1 × 20 reps','1 min'],['F5','Crunch inversé','1 × 20 reps','1 min']];
 const SESS=[
- [['S1','Relevé de bassin (barre)','3 × 12 reps','1 min 30'],['S2','Squat (machine Smith)','3 × 8-12 reps','2 min'],['S3','Presse à cuisses','3 × 8-12 reps','1 min 30'],['S4','Soulevé de terre jambes tendues','3 × 12 reps','1 min 30'],['S5','Leg curl assis (machine)','3 × 12 reps','1 min']].concat(FIN),
- [['S1','Rameur','1 série',''],['S2','Traction assistée','3 × 10 reps','1 min 30'],['S9','Rowing inversé','3 × 8-10 reps','1 min'],['S3','Tirage poitrine (poulie)','3 × 12 reps','1 min 30'],['S4','Rowing poulie assis, prise en V','3 × 12 reps','1 min'],['S5','Développé couché (haltères)','3 × 10-12 reps','1 min 15'],['S6','Tirage vers le visage','3 × 12 reps','1 min'],['S7','Élévation latérale (haltères)','3 × 12 reps','1 min'],['S8','Curl biceps (haltères)','3 × 10-12 reps','45 s']].concat(FIN),
- [['S8','Rameur','1 km · 5 min',''],['S2','Élévation latérale (haltères)','3 × 12-16 reps','1 min'],['S4','Curl biceps (barre EZ)','3 × 10-12 reps','1 min'],['S5','Extension triceps à la corde','3 × 8-12 reps','1 min'],['S9','Curl marteau (haltères)','3 × 10-12 reps','1 min'],['S3','Extension triceps (haltère)','3 × 12 reps','1 min']].concat(FIN)
+ [['S20','Rameur','5 min','',undefined,'Échauffement facile, 5 minutes'],['S1','Relevé de bassin (barre)','3 × 10-12 reps','2 min',20],['S2','Squat (machine Smith)','3 × 8-10 reps','2 min 30',20],['S4','Soulevé de terre jambes tendues','3 × 8-12 reps','2 min',20],['S3','Presse à cuisses','2 × 10-12 reps','2 min',40],['S5','Leg curl assis (machine)','2 × 10-15 reps','1 min 15',32],['S21','Abduction des hanches (machine)','2 × 12-20 reps','1 min',null]].concat(FIN),
+ [['S1','Rameur','5 min','',undefined,'Échauffement facile, 5 minutes'],['S2','Traction assistée','3 × 8-10 reps','2 min',36,'36 kg = assistance, pas résistance'],['S4','Rowing poulie assis, prise en V','3 × 10-12 reps','1 min 30',22.6],['S5','Développé couché (haltères)','3 × 8-12 reps','2 min',16],['S3','Tirage poitrine (poulie)','2 × 10-12 reps','1 min 30',27.3],['S6','Tirage vers le visage','3 × 12-15 reps','1 min 15',27],['S22','Extension triceps à la corde','2 × 10-12 reps','1 min 15',14]].concat(FIN),
+ [['S8','Rameur','5 min','',undefined,'Échauffement facile, 5 minutes'],['S23','Squat bulgare (haltères)','3 × 8-12 reps','2 min',null,'Par jambe, charge à définir'],['S24','Kickback fessier (machine)','3 × 10-15 reps','1 min 30',null,'Par jambe, charge à définir'],['S2','Élévation latérale (haltères)','3 × 12-16 reps','1 min 15',4],['S4','Curl biceps (barre EZ)','3 × 10-12 reps','1 min 15',10],['S5','Extension triceps à la corde','3 × 8-12 reps','1 min 30',14],['S25','Oiseau inversé (machine)','2 × 12-15 reps','1 min 15',null,'Charge à définir']].concat(FIN),
+ [['S1','Rameur','5 min','',undefined,'Échauffement facile, 5 minutes'],['S2','Relevé de bassin (barre)','2 × 10-12 reps','2 min',20],['S3','Presse à cuisses','2 × 10-12 reps','2 min',40],['S4','Rowing poulie assis, prise en V','2 × 10-12 reps','1 min 30',22.6],['S5','Développé couché (haltères)','2 × 8-12 reps','2 min',16],['S6','Leg extension (machine)','2 × 12-15 reps','1 min 15',null,'Charge à définir'],['S7','Curl marteau (haltères)','2 × 10-12 reps','1 min 15',4]].concat(FIN)
 ];
-const SICO=['running','torso','dumbbells'];
-const SNAMES=['Legs','Back','Arms'];
-const BLOCKS={S:'Exercices',F:'Finisher abdos'};
+/* e = [id, nom, séries, repos, charge programmée (kg ; null = à définir ; absent = sans charge), note]. La charge réellement faite est notée à part (S.ex). */
+/* identifiants Hevy des routines et des exercices (traçabilité) */
+const HVROUT=[{"t": "Jour 1 - Legs & Glutes + Abs", "id": "c41dfbe4-4e60-4a5d-b7c9-748f6a4dd75a", "opt": false}, {"t": "Jour 2 - Back & Upper + Abs", "id": "970528eb-edd5-4437-b57e-feb3b46f8403", "opt": false}, {"t": "Jour 3 - Glutes & Arms + Abs", "id": "6af743b9-47e6-45c2-9be7-f36e81085150", "opt": false}, {"t": "Jour 4 (optionnel) - Full Body + Abs", "id": "690b3323-463b-4364-86fd-ebb967d5c896", "opt": true}];
+const HVTPL={"Rameur": "0222DB42", "Relevé de bassin (barre)": "D57C2EC7", "Squat (machine Smith)": "DDCC3821", "Soulevé de terre jambes tendues": "2A48E443", "Presse à cuisses": "C7973E0E", "Leg curl assis (machine)": "11A123F3", "Abduction des hanches (machine)": "F4B4C6EE", "Traction assistée": "2C37EC5E", "Rowing poulie assis, prise en V": "0393F233", "Développé couché (haltères)": "3601968B", "Tirage poitrine (poulie)": "6A6C31A5", "Tirage vers le visage": "BE640BA0", "Extension triceps à la corde": "94B7239B", "Squat bulgare (haltères)": "B5D3A742", "Kickback fessier (machine)": "CBA02382", "Élévation latérale (haltères)": "422B08F1", "Curl biceps (barre EZ)": "01A35BF9", "Oiseau inversé (machine)": "D8281C62", "Leg extension (machine)": "75A4F6C4", "Curl marteau (haltères)": "7E3BC8B6"};
+/* anciens exercices retirés du programme : gardés pour l'évolution des charges dans Suivi */
+const LEGACY=[[1,['S7','Élévation latérale (haltères)','3 × 12 reps']],[1,['S8','Curl biceps (haltères)','3 × 10-12 reps']],[2,['S3','Extension triceps (haltère)','3 × 12 reps']],[2,['S9','Curl marteau (haltères)','3 × 10-12 reps']]];
+const SICO=['running','torso','dumbbells','pulse'];
+const SNAMES=['Legs','Back','Arms','Full'];
+const SLONG=['Jour 1 · Legs & Glutes','Jour 2 · Back & Upper','Jour 3 · Glutes & Arms','Jour 4 · Full Body, facultatif'];
+const BLOCKS={W:'Échauffement',S:'Exercices',F:'Finisher abdos'};
+const blk=e=>e[0][0]==='F'?'F':(e[1]==='Rameur'?'W':'S');
 
 const TODO_G=[
   {g:'Être fière de 2026',items:[['t1','Lister mes 5 plus grandes fiertés de l’année'],['t2','Faire le bilan de mes apprentissages et de mes évolutions']]},
@@ -1315,6 +1325,11 @@ const TIPS={
 'Leg curl assis (machine)':['Dos bien calé, coussin au-dessus des chevilles.','Tire talons vers les fesses, pause 1 s, retour en 2-3 s.','Ne décolle pas les fesses du siège.'],
 'Rowing inversé':['Allongée sous la barre, corps gainé de la tête aux talons.','Tire la poitrine vers la barre en serrant les omoplates.','Descends en 2 s : plus tes pieds sont reculés, plus c’est dur.'],
 'Curl marteau (haltères)':['Paumes face à face (prise neutre), coudes collés au corps.','Monte en 1 s sans balancer, descends en 2-3 s.','Travaille aussi l’avant-bras : garde les poignets droits.'],
+'Abduction des hanches (machine)':['Dos bien calé, bassin plaqué au siège.','Écarte les jambes sans à-coup, pause 1 s en position ouverte.','Reviens en 2-3 s sans laisser retomber la charge.'],
+'Squat bulgare (haltères)':['Pied arrière sur le banc, grand pas en avant, buste droit.','Descends en gardant le genou avant dans l’axe du pied.','Pousse dans le talon avant. Les séries se font par jambe.'],
+'Kickback fessier (machine)':['Appuie-toi bien sur le support, buste stable.','Pousse la jambe vers l’arrière en serrant le fessier, sans cambrer.','Reviens lentement. Les séries se font par jambe.'],
+'Oiseau inversé (machine)':['Poitrine contre le support, coudes légèrement fléchis.','Ouvre les bras vers l’arrière en serrant les omoplates.','Charge légère : c’est le haut du dos, pas les trapèzes.'],
+'Leg extension (machine)':['Dos calé, genoux alignés avec l’axe de la machine.','Tends les jambes sans verrouiller brutalement, pause 1 s.','Redescends en 2-3 s sans poser les poids.'],
 'Rameur':['Pousse avec les jambes, puis le dos, puis tire avec les bras.','Au retour, l’ordre s’inverse : bras, buste, jambes.','Dos droit, rythme régulier, c’est un échauffement : reste souple.'],
 'Traction assistée':['Mains un peu plus larges que les épaules, épaules basses.','Tire les coudes vers les hanches, menton au-dessus de la barre.','Descends en 2-3 s jusqu’aux bras tendus.'],
 'Tirage poitrine (poulie)':['Poitrine sortie, buste légèrement incliné en arrière.','Amène la barre en haut de la poitrine en serrant les omoplates.','Remonte lentement, ne balance pas le buste.'],
@@ -1422,11 +1437,12 @@ function parseHevy(txt){
 }
 
 function nrm(x){const stop=['a','la','le','les','de','du','des','en','au','aux','et','x'];return String(x).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[()\-–,.'’]/g,' ').split(/\s+/).filter(w=>w&&stop.indexOf(w)<0).map(w=>w.replace(/s$/,''));}
-const hvSi=t=>['legs','back','arms'].findIndex(n=>(t||'').toLowerCase().indexOf(n)>-1);
+const hvSi=t=>['legs','back','arms','full'].findIndex(n=>(t||'').toLowerCase().indexOf(n)>-1);
 function hvMatch(name,sis){
   const a=nrm(name);
   if(a.join(' ')==='planche'){for(const si of sis){const e=SESS[si].find(x=>x[0]==='F1');if(e)return {si,e};}}
-  let best=null,bs=0;sis.forEach(si=>SESS[si].forEach(e=>{const b=nrm(e[1]),it=a.filter(w=>b.indexOf(w)>-1).length,sc=it/Math.max(a.length,b.length);if(sc>bs){bs=sc;best={si,e};}}));return bs>=0.6?best:null;}
+  const EQT=['corde','haltere','barre','ez','machine','poulie','smith'],ea=a.filter(w=>EQT.indexOf(w)>-1);
+  let best=null,bs=0;sis.forEach(si=>SESS[si].forEach(e=>{const b=nrm(e[1]),eb=b.filter(w=>EQT.indexOf(w)>-1);if(ea.length&&eb.length&&!ea.some(w=>eb.indexOf(w)>-1))return;const it=a.filter(w=>b.indexOf(w)>-1).length,sc=it/Math.max(a.length,b.length);if(sc>bs){bs=sc;best={si,e};}}));return bs>=0.6?best:null;}
 function hvLink(o,force){
   const i=hvDay(o.iso);if(!(i>=0&&i<N))return null;
   let si=force!=null?force:hvSi(o.t),fin=false;
@@ -1627,7 +1643,8 @@ function tabPill(){
 const streakDays=()=>{let t=todayIdx();if(t<0)return 0;let i=Math.min(t,N-1),c=0;if(score(i)<3)i--;for(;i>=0&&score(i)>=3;i--)c++;return c;};
 
 /* ---------- TikTok : ouvre l'app avec la recherche du mouvement ---------- */
-const ttq=n=>n.replace(/[()]/g,'').replace(/\s+/g,' ').trim()+' comment bien faire';
+const TTQ={'Abduction des hanches (machine)':'abduction hanches machine fessiers comment bien faire','Squat bulgare (haltères)':'squat bulgare haltères comment bien faire','Kickback fessier (machine)':'kickback fessiers machine comment bien faire','Oiseau inversé (machine)':'oiseau inversé machine deltoïde postérieur comment bien faire','Leg extension (machine)':'leg extension machine quadriceps comment bien faire'};
+const ttq=n=>TTQ[n]||(n.replace(/[()]/g,'').replace(/\s+/g,' ').trim()+' comment bien faire');
 function openTikTok(q,href){
   const enc=encodeURIComponent(q),ua=navigator.userAgent||'';
   try{if(navigator.clipboard)navigator.clipboard.writeText(q);}catch(e){}
@@ -1759,7 +1776,7 @@ function viewSuivi(){
   h+=calSection()+balSection()+wtSection()+dataSection();
   h+='<p class="foot">'+(syncMode==='cloud'?'Enregistré sur ton compte, tu retrouves tout sur tous tes appareils.':'Enregistré sur cet appareil.')+'</p>';
   const rows=[];
-  SESS.forEach((ex,si)=>ex.forEach(e=>{if(!isLoaded(e))return;const arr=range(6).map(w=>{const d=S.ex[exKey(si,w,e[0])];return d&&d.kg!=null?d.kg:null;});if(arr.some(x=>x!=null))rows.push({si,e,arr});}));
+  SESS.map((ex,si)=>ex.map(e=>[si,e])).concat([LEGACY]).forEach(L=>L.forEach(q=>{const si=q[0],e=q[1];if(!isLoaded(e))return;const arr=range(6).map(w=>{const d=S.ex[exKey(si,w,e[0])];return d&&d.kg!=null?d.kg:null;});if(arr.some(x=>x!=null))rows.push({si,e,arr});}));
   h+='<section class="block"><div class="sec-title"><h3>Mes <span class="k">charges</span></h3></div>';
   if(!rows.length)h+='<div class="card empty-ch"><span class="gico">'+ic('dumbbell',24)+'</span><p>Dès que tu notes une charge dans le programme, ton évolution apparaît ici.</p></div>';
   else{const mx=Math.max(...rows.flatMap(r=>r.arr.filter(x=>x!=null)),1);h+='<div class="card chl">'+rows.map(r=>{const vals=r.arr.filter(x=>x!=null),last=vals[vals.length-1],first=vals[0],dl=last-first;return '<div class="chrow"><div class="chn"><b>'+esc(r.e[1])+'</b><span>'+SNAMES[r.si]+'</span></div><div class="chb">'+r.arr.map((x,w)=>'<i class="'+(x==null?'nil':'')+'" style="height:'+(x==null?14:Math.max(14,Math.round(x/mx*100)))+'%" title="S'+(w+1)+'"></i>').join('')+'</div><div class="chv"><b>'+fkg(last)+' kg</b>'+(vals.length>1?'<span class="'+(dl>0?'up':'')+'">'+(dl>0?'+':'')+fkg(dl)+' kg</span>':'<span>départ</span>')+'</div></div>';}).join('')+'</div>';}
@@ -1770,10 +1787,10 @@ function viewSuivi(){
 function viewProg(){
   const t=todayIdx();const cur=Math.max(0,Math.min(Math.floor(t/7),5));
   const ses=SESS[progS];const done=ses.filter(e=>(S.ex['s'+progS+'w'+progW+e[0]]||{}).ok).length;
-  let h=banner('3 séances par semaine','<span class="l">Mon</span><br>programme','Jambes, dos et bras, avec un finisher abdos à la fin de chaque séance.','la2');
+  let h=banner('3 séances par semaine','<span class="l">Mon</span><br>programme','Trois séances principales et une quatrième facultative. Chaque séance commence par 5 min de rameur et finit par le finisher abdos.','la2');
   const exd=(si,w)=>SESS[si].filter(e=>(S.ex['s'+si+'w'+w+e[0]]||{}).ok).length,st=(n,tot)=>n>=tot?' full':(n>0?' part':'');
-  h+='<section class="block stick"><div class="picker"><div class="seg3" role="group" aria-label="Séance">'+range(3).map(k=>{const n=exd(k,progW);return '<button class="chip'+(k===progS?' on':'')+st(n,SESS[k].length)+'" data-act="ps" data-v="'+k+'">'+ic(SICO[k],20)+SNAMES[k]+'</button>';}).join('')+'</div><div class="seg6" role="group" aria-label="Semaine">'+range(6).map(k=>{const n=exd(progS,k);return '<button class="chip'+(k===progW?' on':'')+(k===cur&&t>=0?' now':'')+st(n,ses.length)+'" data-act="pw" data-v="'+k+'" aria-label="Semaine '+(k+1)+'">S'+(k+1)+'</button>';}).join('')+'</div></div></section>';
-  h+='<section class="block progress"><div class="ptop"><h3>'+ic(SICO[progS],24)+SNAMES[progS]+' <span class="k">semaine '+(progW+1)+'</span></h3><span class="pcount">'+done+' / '+ses.length+'</span></div><div class="bar"><i style="width:'+Math.round(done/ses.length*100)+'%"></i></div></section>';
+  h+='<section class="block stick"><div class="picker"><div class="seg3 seg4" role="group" aria-label="Séance">'+range(SESS.length).map(k=>{const n=exd(k,progW);return '<button class="chip'+(k===progS?' on':'')+st(n,SESS[k].length)+'" data-act="ps" data-v="'+k+'">'+ic(SICO[k],20)+SNAMES[k]+'</button>';}).join('')+'</div><div class="seg6" role="group" aria-label="Semaine">'+range(6).map(k=>{const n=exd(progS,k);return '<button class="chip'+(k===progW?' on':'')+(k===cur&&t>=0?' now':'')+st(n,ses.length)+'" data-act="pw" data-v="'+k+'" aria-label="Semaine '+(k+1)+'">S'+(k+1)+'</button>';}).join('')+'</div></div></section>';
+  h+='<section class="block progress"><div class="ptop"><h3>'+ic(SICO[progS],24)+SNAMES[progS]+' <span class="k">semaine '+(progW+1)+'</span></h3><span class="pcount">'+done+' / '+ses.length+'</span></div><p class="ssub">'+SLONG[progS]+'</p><div class="bar"><i style="width:'+Math.round(done/ses.length*100)+'%"></i></div></section>';
   h+='<section class="block"><details class="rule"><summary><span class="rsi">'+ic('medal',22)+'</span><span class="rtx"><b>Règle d’or</b><small>3 règles pour progresser · touche pour ouvrir</small></span></summary><div class="rules">'
   +'<div class="rl"><span class="rn">'+ic('target',22)+'</span><div><h4>Garde 1 à 2 reps en réserve</h4><p>À la fin de chaque série, tu pourrais en faire encore 1 ou 2, pas plus.</p><div class="dots" aria-hidden="true">'+'<i></i>'.repeat(10)+'<i class="res"></i><i class="res"></i><span>10 faites + 2 en réserve</span></div></div></div>'
   +'<div class="rl"><span class="rn">'+ic('dumbbell',22)+'</span><div><h4>Pas à fond ? C’est trop léger</h4><p>Si tu finis la série facilement, augmente la charge à la prochaine série ou séance.</p><div class="vs"><span class="chip">Facile</span><em>→</em><span class="chip on">Plus lourd</span></div></div></div>'
@@ -1781,12 +1798,12 @@ function viewProg(){
   +'</div></details></section>';
   let last='';
   ses.forEach(e=>{
-    const b=e[0][0];
-    if(b!==last){if(last)h+='</div>';const bs=ses.filter(x=>x[0][0]===b),bd=bs.filter(x=>(S.ex['s'+progS+'w'+progW+x[0]]||{}).ok).length;h+='<div class="group"><div class="gh"><h3>'+BLOCKS[b]+'</h3><span class="gcount'+(bd===bs.length?' full':'')+'">'+bd+' / '+bs.length+'</span></div>';last=b;}
+    const b=blk(e);
+    if(b!==last){if(last)h+='</div>';const bs=ses.filter(x=>blk(x)===b),bd=bs.filter(x=>(S.ex['s'+progS+'w'+progW+x[0]]||{}).ok).length;h+='<div class="group"><div class="gh"><h3>'+BLOCKS[b]+'</h3><span class="gcount'+(bd===bs.length?' full':'')+'">'+bd+' / '+bs.length+'</span></div>';last=b;}
     const k='s'+progS+'w'+progW+e[0],v=S.ex[k]||{},pk=progW>0?(S.ex['s'+progS+'w'+(progW-1)+e[0]]||{}).v:'';
     const ld=isLoaded(e),op=ld&&!!LOGOPEN[k],sg=ld?sugg(progS,progW,e):null,hasd=v.kg!=null;
     let adv=null;if(ld&&hasd)adv=advice(e,v.kg,v.rp,v.eff);
-    h+='<div class="ex'+(v.ok?' done':'')+'"><div class="exv"><span class="exn">'+e[0]+'</span>'+figHTML(e[1])+'</div><h4>'+esc(e[1])+'</h4><button class="ok'+(v.ok?' on':'')+'" data-act="exok" data-k="'+k+'" aria-label="Exercice fait" aria-pressed="'+(!!v.ok)+'">'+ic('check',22)+'</button><div class="meta"><span class="mchip">'+ic('repeat',16)+e[2]+'</span>'+(e[3]?'<button class="mchip rest" data-act="rest" data-s="'+restSec(e[3])+'" aria-label="Lancer le chrono de récupération, '+restLbl(e[3])+'">'+ic('stopwatch',16)+'récup '+restLbl(e[3])+'</button>':'')+'</div><div class="acts"><a href="https://www.tiktok.com/search?q='+encodeURIComponent(ttq(e[1]))+'" data-act="tiktok" data-q="'+esc(ttq(e[1]))+'" target="_blank" rel="noopener">'+ic('play',18)+'Tutoriel</a>'+(ld&&!op?'<button class="ldchip'+(hasd?' set':'')+'" data-act="note" data-k="'+k+'">'+ic(hasd?'dumbbell':(sg?'target':'pen'),18)+(hasd?fkg(v.kg)+' kg'+(v.rp!=null?' × '+v.rp:''):(sg?'Objectif '+fkg(sg.kg)+' kg':'Charge'))+'</button>':'')+'</div>'+(e[1]==='Circuit gainage'?plBox(k,progS,progW):'')+(op?(()=>{const bk=hasd?v.kg:(sg?sg.kg:0),br=v.rp!=null?v.rp:(sg?sg.lo:repRange(e).lo),R=repRange(e),lg=lastLog(progS,progW,e[0]),a2=advice(e,hasd?v.kg:null,hasd?v.rp:null);
+    h+='<div class="ex'+(v.ok?' done':'')+'"><div class="exv"><span class="exn">'+e[0]+'</span>'+(figHTML(e[1])||'<span class="exph">'+ic('dumbbell',30)+'</span>')+'</div><h4>'+esc(e[1])+'</h4><button class="ok'+(v.ok?' on':'')+'" data-act="exok" data-k="'+k+'" aria-label="Exercice fait" aria-pressed="'+(!!v.ok)+'">'+ic('check',22)+'</button><div class="meta"><span class="mchip">'+ic('repeat',16)+e[2]+'</span>'+(ld?'<span class="mchip plan">'+ic('target',16)+(e[4]!=null?(isAssist(e)?'Assistance prévue ':'Prévu ')+fkg(e[4])+' kg':'Charge à définir')+'</span>':'')+(e[3]?'<button class="mchip rest" data-act="rest" data-s="'+restSec(e[3])+'" aria-label="Lancer le chrono de récupération, '+restLbl(e[3])+'">'+ic('stopwatch',16)+'récup '+restLbl(e[3])+'</button>':'')+'</div><div class="acts"><a href="https://www.tiktok.com/search?q='+encodeURIComponent(ttq(e[1]))+'" data-act="tiktok" data-q="'+esc(ttq(e[1]))+'" target="_blank" rel="noopener">'+ic('play',18)+'Tutoriel</a>'+(ld&&!op?'<button class="ldchip'+(hasd?' set':'')+'" data-act="note" data-k="'+k+'">'+ic(hasd?'dumbbell':(sg?'target':'pen'),18)+(hasd?'Fait : '+fkg(v.kg)+' kg'+(v.rp!=null?' × '+v.rp:''):(sg?'Objectif '+fkg(sg.kg)+' kg':'Noter ma charge'))+'</button>':'')+'</div>'+(e[5]?'<p class="enote">'+esc(e[5])+'</p>':'')+(e[1]==='Circuit gainage'?plBox(k,progS,progW):'')+(op?(()=>{const bk=hasd?v.kg:(sg?sg.kg:(e[4]!=null?e[4]:0)),br=v.rp!=null?v.rp:(sg?sg.lo:repRange(e).lo),R=repRange(e),lg=lastLog(progS,progW,e[0]),a2=advice(e,hasd?v.kg:null,hasd?v.rp:null);
       return '<div class="loadbox"><div class="lrow"><span class="lab">'+(isAssist(e)?'Assistance':'Charge')+'</span><div class="stp"><button data-act="kg" data-k="'+k+'" data-b="'+bk+'" data-d="-'+kgStep(bk)+'" aria-label="Moins">−</button><label><input class="kgin" type="number" inputmode="decimal" step="0.5" min="0" data-k="'+k+'" data-f="kg" value="'+(hasd?v.kg:'')+'" placeholder="'+fkg(bk)+'"><small>kg</small></label><button data-act="kg" data-k="'+k+'" data-b="'+bk+'" data-d="'+kgStep(bk)+'" aria-label="Plus">+</button></div></div><div class="lrow"><span class="lab">Reps tenues<small>sur ta série la plus basse</small></span><div class="stp"><button data-act="rp" data-k="'+k+'" data-b="'+br+'" data-d="-1" aria-label="Moins">−</button><label><input class="kgin" type="number" inputmode="numeric" min="0" data-k="'+k+'" data-f="rp" value="'+(v.rp!=null?v.rp:'')+'" placeholder="'+br+'"><small>reps</small></label><button data-act="rp" data-k="'+k+'" data-b="'+br+'" data-d="1" aria-label="Plus">+</button></div></div>'
       +(lg?'<p class="lhist">Dernière fois (S'+(lg.w+1)+') : '+fkg(lg.kg)+' kg'+(lg.rp!=null?' × '+lg.rp:'')+'</p>':'')
       +(a2&&a2.why?'<div class="ladv'+(a2.up?' up':'')+'">'+ic(a2.up?'medal':'target',22)+'<div><b>Prochaine séance : '+fAdv(a2)+'</b><span>'+a2.why+'</span></div></div>':'<div class="ladv">'+ic('target',22)+'<div><b>Objectif : '+R.sets+' séries de '+(R.lo===R.hi?R.lo:R.lo+'-'+R.hi)+' reps</b><span>Quand tu tiens '+R.hi+' reps partout, on ajoute de la charge.</span></div></div>')+'</div>';})():'')+'</div>';
@@ -1941,7 +1958,7 @@ function importHealth(){
   }catch(e){}
 }
 /* ---------- mise à jour automatique : recharge si une version plus récente est en ligne ---------- */
-var APPVER='23 nov. 12h10';
+var APPVER='23 nov. 13h00';
 function checkUpdate(){
   try{
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{
