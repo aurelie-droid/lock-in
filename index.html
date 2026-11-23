@@ -1652,7 +1652,9 @@ function tabPill(){
 const streakDays=()=>{let t=todayIdx();if(t<0)return 0;let i=Math.min(t,N-1),c=0;if(score(i)<3)i--;for(;i>=0&&score(i)>=3;i--)c++;return c;};
 
 /* ---------- TikTok : ouvre l'app avec la recherche du mouvement ---------- */
-const ttq=n=>n.replace(/[()]/g,'').replace(/\s+/g,' ').trim();
+/* recherche TikTok en anglais : c'est là qu'on trouve les bons tutos de salle */
+const TTEN={'Rameur':'rowing machine technique','Relevé de bassin (barre)':'barbell hip thrust form','Hip thrust bonus fessiers (barre)':'barbell hip thrust form','Squat (machine Smith)':'smith machine squat form','Soulevé de terre jambes tendues':'romanian deadlift form','Presse à cuisses':'leg press form','Leg curl assis (machine)':'seated leg curl machine','Leg extension (machine)':'leg extension machine form','Squat bulgare (haltères)':'dumbbell bulgarian split squat','Traction assistée':'assisted pull up machine','Tirage poitrine (poulie)':'lat pulldown form','Rowing poulie assis, prise en V':'seated cable row v grip','Rowing inversé':'inverted row','Tirage vers le visage':'face pull cable form','Élévation latérale (haltères)':'dumbbell lateral raise form','Développé couché (haltères)':'dumbbell bench press form','Curl biceps (haltères)':'dumbbell bicep curl form','Curl biceps (barre EZ)':'ez bar bicep curl form','Curl marteau (haltères)':'dumbbell hammer curl form','Extension triceps à la corde':'rope triceps pushdown form','Extension triceps (haltère)':'dumbbell overhead triceps extension','Crunch inversé':'reverse crunch','Crunch vélo':'bicycle crunch','Relevé de jambes allongé':'lying leg raise','Touchers de talons':'heel touches abs','Circuit gainage':'plank variations core workout'};
+const ttq=n=>TTEN[n]||n.replace(/[()]/g,'').replace(/\s+/g,' ').trim();
 function openTikTok(q,href){
   const enc=encodeURIComponent(q),ua=navigator.userAgent||'';
   try{if(navigator.clipboard)navigator.clipboard.writeText(q);}catch(e){}
@@ -1998,7 +2000,7 @@ function importHealth(){
   }catch(e){}
 }
 /* ---------- mise à jour automatique : recharge si une version plus récente est en ligne ---------- */
-var APPVER='23 nov. 15h50';
+var APPVER='23 nov. 16h05';
 function checkUpdate(manual){
   try{
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{
