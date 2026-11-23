@@ -1179,11 +1179,11 @@ D.heel={raw:'<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role=
 
 const FMAP={
 'Relevé de bassin (barre)':'thrust','Hip thrust bonus fessiers (barre)':'thrust','Squat (machine Smith)':'smith','Presse à cuisses':'lpress','Soulevé de terre jambes tendues':'rdlb','Leg curl assis (machine)':'legcurl',
-'Rameur':'rower','Traction assistée':'pull','Tirage poitrine (poulie)':'lat','Rowing poulie assis, prise en V':'crow','Développé couché (haltères)':'bench','Tirage vers le visage':'face','Élévation latérale (haltères)':'lateral','Curl biceps (haltères)':'curl',
+'Rameur':'rower','Rowing inversé':'invrow','Curl marteau (haltères)':'hammer','Traction assistée':'pull','Tirage poitrine (poulie)':'lat','Rowing poulie assis, prise en V':'crow','Développé couché (haltères)':'bench','Tirage vers le visage':'face','Élévation latérale (haltères)':'lateral','Curl biceps (haltères)':'curl',
 'Développé militaire (haltères)':'press','Extension triceps (haltère)':'skull','Curl biceps (barre EZ)':'curlez','Extension triceps à la corde':'pushdown','Dips triceps (assistés)':'dips',
 'Circuit gainage':'plank','Relevé de jambes allongé':'legraise','Crunch vélo':'bike','Touchers de talons':'heel','Crunch inversé':'rcrunch'};
-const FEQ={thrust:'Banc + barre',smith:'Smith',lpress:'Machine',rdlb:'Barre',legcurl:'Machine',rower:'Rameur',pull:'Machine',lat:'Poulie',crow:'Poulie',bench:'Banc + haltères',face:'Poulie',lateral:'Haltères',curl:'Haltères',press:'Haltères',skull:'Haltère',curlez:'Barre EZ',pushdown:'Poulie',dips:'Machine',plank:'Tapis',legraise:'Tapis',bike:'Tapis',heel:'Tapis',rcrunch:'Tapis'};
-window.FDEF=D;window.FMAP=FMAP;window.FEQ=FEQ;
+const FEQ={thrust:'Banc + barre',smith:'Smith',lpress:'Machine',rdlb:'Barre',legcurl:'Machine',rower:'Rameur',pull:'Machine',lat:'Poulie',crow:'Poulie',invrow:'Barre',hammer:'Haltères',bench:'Banc + haltères',face:'Poulie',lateral:'Haltères',curl:'Haltères',press:'Haltères',skull:'Haltère',curlez:'Barre EZ',pushdown:'Poulie',dips:'Machine',plank:'Tapis',legraise:'Tapis',bike:'Tapis',heel:'Tapis',rcrunch:'Tapis'};
+D.hammer=D.curl;D.invrow=D.crow;window.FDEF=D;window.FMAP=FMAP;window.FEQ=FEQ;
 })();
 function figHTML(name,big){const k=window.FMAP[name],d=k&&window.FDEF[k];if(!d)return '';
   const still=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1280,8 +1280,8 @@ const RULES=[
 const FIN=[['F1','Circuit gainage','3 tours',''],['F2','Relevé de jambes allongé','1 × 20 reps','1 min'],['F3','Crunch vélo','1 × 20 reps','1 min'],['F4','Touchers de talons','1 × 20 reps','1 min'],['F5','Crunch inversé','1 × 20 reps','1 min']];
 const SESS=[
  [['S1','Relevé de bassin (barre)','3 × 12 reps','1 min 30'],['S2','Squat (machine Smith)','3 × 8-12 reps','2 min'],['S3','Presse à cuisses','3 × 8-12 reps','1 min 30'],['S4','Soulevé de terre jambes tendues','3 × 12 reps','1 min 30'],['S5','Leg curl assis (machine)','3 × 12 reps','1 min']].concat(FIN),
- [['S1','Rameur','1 série',''],['S2','Traction assistée','3 × 10 reps','1 min 30'],['S3','Tirage poitrine (poulie)','3 × 12 reps','1 min 30'],['S4','Rowing poulie assis, prise en V','3 × 12 reps','1 min'],['S5','Développé couché (haltères)','3 × 10-12 reps','1 min 15'],['S6','Tirage vers le visage','2 × 10 reps','45 s'],['S7','Élévation latérale (haltères)','3 × 12 reps','1 min'],['S8','Curl biceps (haltères)','3 × 10-12 reps','45 s']].concat(FIN),
- [['S1','Développé militaire (haltères)','3 × 12-15 reps','1 min'],['S2','Élévation latérale (haltères)','3 × 10-12 reps','1 min'],['S3','Extension triceps (haltère)','3 × 12 reps','1 min'],['S4','Curl biceps (barre EZ)','3 × 10-12 reps','1 min'],['S5','Extension triceps à la corde','3 × 9-12 reps','1 min'],['S6','Dips triceps (assistés)','3 × 10 reps','55 s'],['S7','Hip thrust bonus fessiers (barre)','2 × 10-12 reps','1 min 30']].concat(FIN)
+ [['S1','Rameur','1 série',''],['S2','Traction assistée','3 × 10 reps','1 min 30'],['S9','Rowing inversé','3 × 8-10 reps','1 min'],['S3','Tirage poitrine (poulie)','3 × 12 reps','1 min 30'],['S4','Rowing poulie assis, prise en V','3 × 12 reps','1 min'],['S5','Développé couché (haltères)','3 × 10-12 reps','1 min 15'],['S6','Tirage vers le visage','3 × 12 reps','1 min'],['S7','Élévation latérale (haltères)','3 × 12 reps','1 min'],['S8','Curl biceps (haltères)','3 × 10-12 reps','45 s']].concat(FIN),
+ [['S8','Rameur','1 km · 5 min',''],['S2','Élévation latérale (haltères)','3 × 12-16 reps','1 min'],['S4','Curl biceps (barre EZ)','3 × 10-12 reps','1 min'],['S5','Extension triceps à la corde','3 × 8-12 reps','1 min'],['S9','Curl marteau (haltères)','3 × 10-12 reps','1 min'],['S3','Extension triceps (haltère)','3 × 12 reps','1 min']].concat(FIN)
 ];
 const SICO=['running','torso','dumbbells'];
 const SNAMES=['Legs','Back','Arms'];
@@ -1313,6 +1313,8 @@ const TIPS={
 'Presse à cuisses':['Bas du dos collé au dossier tout le long du mouvement.','Descends jusqu’à ~90° aux genoux, sans décoller le bassin.','Ne verrouille pas les genoux en haut.'],
 'Soulevé de terre jambes tendues':['Genoux à peine fléchis, bassin qui recule comme pour fermer une porte.','Dos plat, barre qui frôle les cuisses.','Descends jusqu’à sentir l’étirement derrière les cuisses, remonte en serrant les fessiers.'],
 'Leg curl assis (machine)':['Dos bien calé, coussin au-dessus des chevilles.','Tire talons vers les fesses, pause 1 s, retour en 2-3 s.','Ne décolle pas les fesses du siège.'],
+'Rowing inversé':['Allongée sous la barre, corps gainé de la tête aux talons.','Tire la poitrine vers la barre en serrant les omoplates.','Descends en 2 s : plus tes pieds sont reculés, plus c’est dur.'],
+'Curl marteau (haltères)':['Paumes face à face (prise neutre), coudes collés au corps.','Monte en 1 s sans balancer, descends en 2-3 s.','Travaille aussi l’avant-bras : garde les poignets droits.'],
 'Rameur':['Pousse avec les jambes, puis le dos, puis tire avec les bras.','Au retour, l’ordre s’inverse : bras, buste, jambes.','Dos droit, rythme régulier, c’est un échauffement : reste souple.'],
 'Traction assistée':['Mains un peu plus larges que les épaules, épaules basses.','Tire les coudes vers les hanches, menton au-dessus de la barre.','Descends en 2-3 s jusqu’aux bras tendus.'],
 'Tirage poitrine (poulie)':['Poitrine sortie, buste légèrement incliné en arrière.','Amène la barre en haut de la poitrine en serrant les omoplates.','Remonte lentement, ne balance pas le buste.'],
@@ -1939,7 +1941,7 @@ function importHealth(){
   }catch(e){}
 }
 /* ---------- mise à jour automatique : recharge si une version plus récente est en ligne ---------- */
-var APPVER='23 nov. 11h50';
+var APPVER='23 nov. 12h10';
 function checkUpdate(){
   try{
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{
@@ -1948,11 +1950,22 @@ function checkUpdate(){
     }).catch(()=>{});
   }catch(e){}
 }
+/* ---------- import unique des 5 premières séances Hevy (charges, sans écraser le reste) ---------- */
+const HVSEED=["Back\nLe mercredi 18 nov. 2026 à 13:03\n\nRameur\n\nTraction (Assistée)\nSérie 1: 3683 kg x 10\n\nRowing Inversé\nSérie 1: 10 répétitions\nSérie 2: 8 répétitions\nSérie 3: 8 répétitions\n\nTirage Poitrine (Poulie)\nSérie 1: 27.3 kg x 12\nSérie 2: 32 kg x 12\nSérie 3: 32 kg x 10\n\nRowing Poulie Assis - Prise en V\nSérie 1: 22.6 kg x 12\nSérie 2: 22.6 kg x 12\nSérie 3: 22.6 kg x 12\n\nDéveloppé Couché (Haltère)\nSérie 1: 16 kg x 12\nSérie 2: 16 kg x 10\nSérie 3: 16 kg x 10\n\nTirage vers le Visage\nSérie 1: 27 kg x 12\nSérie 2: 32 kg x 12\nSérie 3: 32 kg x 12\n\nÉlévation Latérale (Haltère)\nSérie 1: 4 kg x 12\nSérie 2: 4 kg x 12\nSérie 3: 4 kg x 12\n\nCurl Biceps (Haltère)\nSérie 1: 4 kg x 12\nSérie 2: 4 kg x 12\nSérie 3: 4 kg x 10\n\n@hevyapp\nhttps://hevy.com/workout/HUXntrORyTy\n", "Legs\nLe jeudi 19 nov. 2026 à 19:47\n\nRelevé de Bassin (Barre)\nSérie 1: 20 kg x 12\nSérie 2: 20 kg x 12\nSérie 3: 20 kg x 12\n\nSquat (Machine Smith)\nSérie 1: 20 kg x 12\nSérie 2: 20 kg x 12\nSérie 3: 20 kg x 12\n\nPresse à Cuisses\nSérie 1: 40 kg x 12\nSérie 2: 40 kg x 10\nSérie 3: 40 kg x 10\n\nSoulevé de Terre Jambes Tendues\nSérie 1: 20 kg x 12\nSérie 2: 24 kg x 12\nSérie 3: 20 kg x 10\n\nLeg Curl Assis (Machine)\nSérie 1: 32 kg x 12\nSérie 2: 36.6 kg x 12\nSérie 3: 36.6 kg x 12\n\n@hevyapp\nhttps://hevy.com/workout/IuFhJHWIXlv\n", "Arms - Jour 3\nLe dimanche 22 nov. 2026 à 16:23\n\nRameur\nSérie 1: 1 km - 5min 0s\n\nÉlévation Latérale (Haltère)\nSérie 1: 4 kg x 12\nSérie 2: 4 kg x 12\nSérie 3: 4 kg x 16\n\nCurl Biceps (Barre EZ)\nSérie 1: 10 kg x 12\nSérie 2: 10 kg x 12\nSérie 3: 10 kg x 12\n\nExtension Triceps Corde\nSérie 1: 14 kg x 12\nSérie 2: 14 kg x 10\nSérie 3: 14 kg x 8\n\nCurl Marteau (Haltère)\nSérie 1: 4 kg x 12\nSérie 2: 6 kg x 12\nSérie 3: 6 kg x 10\n\nExtension Triceps (Haltère)\nSérie 1: 7.5 kg x 12\nSérie 2: 7.5 kg x 12\nSérie 3: 7.5 kg x 12\n\n@hevyapp\nhttps://hevy.com/workout/f56h9itX8Ud\n", "Abs\nLe jeudi 19 nov. 2026 à 20:45\n\nPlanche\nSérie 1: 6min 1s\n\nRelevé de Jambes Allongé\nSérie 1: 20 répétitions\n\nCrunch Vélo\nSérie 1: 20 répétitions\n\nTouchers de Talons\nSérie 1: 20 répétitions\n\nCrunch Inversé\nSérie 1: 20 répétitions\n\n@hevyapp\nhttps://hevy.com/workout/9koRRQ77z4x\n", "Abs\nLe dimanche 22 nov. 2026 à 16:57\n\nPlanche\nSérie 1: 6min 31s\n\nRelevé de Jambes Allongé\nSérie 1: 20 répétitions\n\nCrunch Vélo\nSérie 1: 40 répétitions\n\nTouchers de Talons\nSérie 1: 40 répétitions\n\nCrunch Inversé\nSérie 1: 20 répétitions\n\n@hevyapp\nhttps://hevy.com/workout/Zs7700gTOBs\n"];
+function seedHevy(){
+  if(S.seed1)return;
+  S.hv=S.hv||{};
+  HVSEED.forEach(txt=>{const o=parseHevy(txt);if(!o)return;const k=hvKey(o);if(S.hv[k])return;
+    S.hv[k]={t:o.t,iso:o.iso,ex:o.ex,url:o.url};
+    const i=hvDay(o.iso);if(i>=0&&i<N){const arr=S.d[i]?S.d[i].slice():[];if(arr.indexOf('renfo')<0){arr.push('renfo');S.d[i]=arr;}}
+    const l=hvLink(o);if(l)hvApply(l);});
+  S.seed1=1;save();
+}
 /* ---------- démarrage ---------- */
 (function(){
   const t=todayIdx();sel=Math.max(0,Math.min(t,N-1));progW=Math.max(0,Math.min(Math.floor(t/7),5));
   const h=location.hash.replace('#','');if(TABS.some(x=>x[0]===h))tab=h;
-  importHealth();
+  importHealth();seedHevy();
   render();initRemote();checkUpdate();
 })();
 })();
