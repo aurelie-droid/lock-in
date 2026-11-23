@@ -1404,11 +1404,11 @@ function parseHevy(txt){
     const u=L.match(/https?:\/\/\S*hevy\.com\S*/i);if(u){o.url=u[0];continue;}
     const sm=L.match(/^(?:S[ée]rie|Set)\s*\d+\s*[:\-]?\s*(.*)$/i);
     if(sm){if(!cur)continue;const r=sm[1],st={};
-      let m=r.match(/(\d+(?:[.,]\d+)?)\s*(kg|lbs?)/i);if(m){let v=parseFloat(m[1].replace(',','.'));if(/lb/i.test(m[2]))v=Math.round(v*0.4536*10)/10;st.kg=v;}
+      let m=r.match(/(\d+(?:[.,]\d+)?)\s*(kg|lbs?)/i);if(m){let v=parseFloat(m[1].replace(',','.'));if(/lb/i.test(m[2]))v=Math.round(v*0.4536*10)/10;if(v<=500)st.kg=v;else st.bad=1;}
       m=r.match(/(\d+)\s*(?:r[ée]p[ée]titions?|reps?)/i)||r.match(/[x×]\s*(\d+)/i);if(m)st.r=+m[1];
       const mi=r.match(/(\d+)\s*min/i),se=r.match(/(\d+)\s*s\b/i),hh=r.match(/(\d+)\s*h\b/i);if(mi||se||hh)st.d=(hh?+hh[1]*3600:0)+(mi?+mi[1]*60:0)+(se?+se[1]:0);
       m=r.match(/(\d+(?:[.,]\d+)?)\s*km/i);if(m)st.km=parseFloat(m[1].replace(',','.'));
-      if(!Object.keys(st).length)st.raw=r;cur.s.push(st);continue;}
+      delete st.bad;if(!Object.keys(st).length)st.raw=r;cur.s.push(st);continue;}
     const dm=L.match(/(\d{1,2})\s+([A-Za-zéûèôÉ]+)\.?\s+(\d{4})(?:\s+(?:à|a|at)\s+(\d{1,2})[:h](\d{2}))?/);
     if(dm&&!o.iso&&hvMonth(dm[2])>=0){o.iso=dm[3]+'-'+pad(hvMonth(dm[2])+1)+'-'+pad(+dm[1])+'T'+pad(+(dm[4]||0))+':'+pad(+(dm[5]||0));continue;}
     if(!o.iso&&!o.t){o.t=L;continue;}
@@ -1939,7 +1939,7 @@ function importHealth(){
   }catch(e){}
 }
 /* ---------- mise à jour automatique : recharge si une version plus récente est en ligne ---------- */
-var APPVER='23 nov. 11h40';
+var APPVER='23 nov. 11h50';
 function checkUpdate(){
   try{
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{
