@@ -1710,6 +1710,7 @@ function bilanCard(i,ok){
   h+='<label class="brow"><span class="bico">'+ic('apple',26)+'</span><span class="blab"><b>Calories du jour</b><small>Le total de ce que tu as mangé</small></span><span class="bin"><input class="bnum" type="number" inputmode="numeric" min="0" step="10" data-bk="cal" data-i="'+i+'" value="'+(kc!=null?kc:'')+'" placeholder="0" aria-label="Calories du jour"'+dis+'><small>kcal</small></span></label>';
   const dp=S.dep[i],ac=S.act[i];
   h+='<label class="brow"><span class="bico">'+ic('flame',26)+'</span><span class="blab"><b>Dépense du jour</b><small>'+(ac&&(ac.p||ac.m)?'Santé : '+(ac.p?nfmt(ac.p)+' pas':'')+(ac.p&&ac.m?' · ':'')+(ac.m?ac.m+' min d’exercice':''):'Se remplit seule depuis Santé (Raccourci)')+'</small></span><span class="bin"><input class="bnum" type="number" inputmode="numeric" min="0" step="10" data-bk="dep" data-i="'+i+'" value="'+(dp!=null?dp:'')+'" placeholder="0" aria-label="Dépense du jour"'+dis+'><small>kcal</small></span></label>';
+  if(ok)h+='<button class="dtb" data-act="hl-paste" style="margin:4px 0 10px">'+ic('flame',22)+'Importer depuis Santé (Raccourci)</button>';
   const bl=balAt(i),pf=S.prof,needw=wAt(i)==null,goal=GOAL();
   const bb=bmrAt(i),bdp=S.dep[i],hasB=(bb!=null&&bdp!=null),eat=kc!=null?kc:0,tot0=hasB?bb+bdp:0,def0=tot0-eat,rem=def0-goal;
   if(hasB&&(kc!=null||rem>=0)){const fine=rem>=0;h+='<div class="defbox '+(fine?'good':(def0>=0?'deficit':'surplus'))+'"><span class="dk">'+(fine?(kc==null?'À manger au maximum aujourd’hui':'Il te reste à manger'):'Au-dessus de ton budget de')+'</span><b>'+nfmt(Math.abs(rem))+' <small>kcal</small></b><span class="dd">Pour garder ton déficit de '+nfmt(goal)+' kcal. Déficit du jour : '+(def0<0?'−':'')+nfmt(Math.abs(def0))+' kcal (dépense totale '+nfmt(tot0)+' − mangé '+nfmt(eat)+').</span></div>';}
@@ -1933,6 +1934,7 @@ document.addEventListener('click',function(e){
     if(HVLINK&&hvSi(o.t)>=0){Object.keys(S.hv).forEach(k2=>{const v=S.hv[k2];if(k2!==k&&hvSi(v.t)<0&&v.iso.slice(0,10)===o.iso.slice(0,10)){const l2=hvLink(v,hvSi(o.t));if(l2)hvApply(l2);}});}
     HVPREV=null;save();render();toast('Séance importée');return;}
   if(a==='hv-del'){if(S.hv&&S.hv[el.dataset.k]&&confirm('Supprimer cette séance de l’historique ?')){delete S.hv[el.dataset.k];save();render();}return;}
+  if(a==='hl-paste'){pasteHealth();return;}
   if(a==='upd'){toast('Vérification…');checkUpdate(true);return;}
   if(a==='tab'){go(el.dataset.v);return;}
   if(a==='tiktok'){e.preventDefault();toast('Recherche copiée : colle-la dans TikTok si besoin');openTikTok(el.dataset.q,el.href);return;}
@@ -2012,20 +2014,32 @@ document.addEventListener('click',function(e){
 window.addEventListener('hashchange',function(){const h=location.hash.replace('#','');if(TABS.some(t=>t[0]===h)&&h!==tab){tab=h;render();}});
 
 /* ---------- import depuis l'app Santé (Raccourci iPhone) : ?dep=520&pas=8400&min=45&d=2026-11-17 ---------- */
+function applyHealth(q){
+  let i=todayIdx();const dd=q.get('d');if(dd&&/^\d{4}-\d{2}-\d{2}$/.test(dd)){const p=dd.split('-').map(Number);i=Math.round((Date.UTC(p[0],p[1]-1,p[2])-START)/864e5);}
+  const num=k=>{const v=parseFloat(String(q.get(k)).replace(',','.'));return isNaN(v)?null:Math.round(v);};
+  if(i<0||i>=N)return false;
+  const dep=num('dep'),pas=num('pas'),mn=num('min');
+  if(dep!=null)S.dep[i]=dep;
+  if(pas!=null||mn!=null){S.act[i]=Object.assign(S.act[i]||{},pas!=null?{p:pas}:{},mn!=null?{m:mn}:{});}
+  save();return true;
+}
 function importHealth(){
   try{
     const q=new URLSearchParams(location.search);if(!q.has('dep')&&!q.has('pas')&&!q.has('min'))return;
-    let i=todayIdx();const dd=q.get('d');if(dd&&/^\d{4}-\d{2}-\d{2}$/.test(dd)){const p=dd.split('-').map(Number);i=Math.round((Date.UTC(p[0],p[1]-1,p[2])-START)/864e5);}
-    const num=k=>{const v=parseFloat(String(q.get(k)).replace(',','.'));return isNaN(v)?null:Math.round(v);};
-    if(i>=0&&i<N){const dep=num('dep'),pas=num('pas'),mn=num('min');
-      if(dep!=null)S.dep[i]=dep;
-      if(pas!=null||mn!=null){S.act[i]=Object.assign(S.act[i]||{},pas!=null?{p:pas}:{},mn!=null?{m:mn}:{});}
-      save();setTimeout(()=>toast('Données Santé importées'),400);}
+    if(applyHealth(q))setTimeout(()=>toast('Données Santé importées'),400);
     history.replaceState(null,'',location.pathname+location.hash);
   }catch(e){}
 }
+/* même import, depuis le presse-papiers : le Raccourci copie « dep=520&pas=8400&min=45&d=2026-11-17 » */
+function pasteHealth(){
+  (navigator.clipboard&&navigator.clipboard.readText?navigator.clipboard.readText():Promise.reject()).then(t=>{
+    const q=new URLSearchParams(String(t).trim().replace(/^.*\?/,'').replace(/^\?/,''));
+    if(!q.has('dep')&&!q.has('pas')&&!q.has('min')){toast('Je ne reconnais pas ce texte');return;}
+    if(applyHealth(q)){render();toast('Données Santé importées');}else toast('Cette date n’est pas dans le challenge');
+  }).catch(()=>toast('Lecture du presse-papiers impossible'));
+}
 /* ---------- mise à jour automatique : recharge si une version plus récente est en ligne ---------- */
-var APPVER='23 nov. 16h30';
+var APPVER='24 nov. 12h00';
 function checkUpdate(manual){
   try{
     fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{
